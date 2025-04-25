@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import '../App.css';
 
-const Filter = () => {
-    const [activeFilter, setActiveFilter] = useState('newest');
-    
+const Filter = ({ activeFilter = 'newest', onFilterChange }) => {
     const filters = [
         { id: 'newest', label: 'Newest' },
         { id: 'oldest', label: 'Oldest' },
@@ -12,8 +10,9 @@ const Filter = () => {
     ];
     
     const handleFilterChange = (filterId) => {
-        setActiveFilter(filterId);
-        // add logic
+        if (onFilterChange) {
+            onFilterChange(filterId);
+        }
     };
 
     return (

@@ -49,6 +49,17 @@ const Navbar = () => {
     e.stopPropagation();
     menuSetter(prev => !prev);
   };
+
+  /*
+  const handleProfileClick = (e) => {
+    e.preventDefault();
+    if (!isLoggedIn) {
+      navigate('/signin');
+    } else {
+      handleMenuClick(e, setShowProfileMenu);
+    }
+  };
+  */
   
   return (
     <div className="navbar">
@@ -63,11 +74,21 @@ const Navbar = () => {
         {showProfileMenu && (
           <div className="dropdown-menu">
             <Link to="/profile">Settings</Link>
-            <Link to="/history">History</Link>
-            <button onClick={() => {
-              localStorage.removeItem('session');
-              setIsLoggedIn(false);
-              alert("Logged out!");
+            {/*<Link to="/history">History</Link>*/}
+            <button onClick={async () => {
+              try {
+                const { error } = await supabase.auth.signOut();
+                if (error) throw error;
+                
+                localStorage.removeItem('session');
+                
+                setIsLoggedIn(false);
+                
+                window.location.href = '/';
+              } catch (error) {
+                console.error('Error signing out:', error);
+                alert("Failed to log out. Please try again.");
+              }
             }}>Log out</button>
           </div>
         )}

@@ -18,7 +18,7 @@ const SignUp = () => {
             password: password,
             options: {
                 data: {
-                  name: name
+                    displayName: name
                 }
             }
         });
@@ -55,7 +55,7 @@ const SignUp = () => {
                     <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" className='google-logo'/>
                     Log in with Google
                 </button>
-
+                <br/>
                 {message && <span className='message'>{message}</span>}
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
