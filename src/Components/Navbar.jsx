@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router'; 
+import { Link, useNavigate } from 'react-router'; 
 import '../App.css';
 import supabase from '../Services/supabaseClient';
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showCreateMenu, setShowCreateMenu] = useState(false);
@@ -49,8 +50,7 @@ const Navbar = () => {
     e.stopPropagation();
     menuSetter(prev => !prev);
   };
-
-  /*
+  
   const handleProfileClick = (e) => {
     e.preventDefault();
     if (!isLoggedIn) {
@@ -59,7 +59,6 @@ const Navbar = () => {
       handleMenuClick(e, setShowProfileMenu);
     }
   };
-  */
   
   return (
     <div className="navbar">
@@ -68,13 +67,13 @@ const Navbar = () => {
       <input type="text" placeholder="Search..." />
 
       <div className="dropdown">
-        <h3 onClick={(e) => handleMenuClick(e, setShowProfileMenu)} style={{ cursor: 'pointer' }}>
+        <h3 onClick={handleProfileClick} style={{ cursor: 'pointer' }}>
           Profile
         </h3>
-        {showProfileMenu && (
+        {showProfileMenu && isLoggedIn && (
           <div className="dropdown-menu">
             <Link to="/profile">Settings</Link>
-            {/*<Link to="/history">History</Link>*/}
+            {/*<Link to="/history">History</Link> */}
             <button onClick={async () => {
               try {
                 const { error } = await supabase.auth.signOut();

@@ -12,26 +12,59 @@ const SignUp = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage("");
-
-        const {data, error} = await supabase.auth.signUp({
-            email: email,
-            password: password,
-            options: {
-                data: {
-                    displayName: name
+    
+        try {
+            console.log("Signing up user:", { email, name });
+            
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: {
+                        displayName: name
+                    }
+                }
+            });
+    
+            if (error) {
+                console.error("Signup error:", error);
+                setMessage(error.message);
+                return;
+            }
+    
+            console.log("User created successfully:", data);
+    
+            // Create the profile entry
+            if (data && data.user) {
+                console.log("Creating profile for user:", data.user.id);
+                
+                const { error: profileError } = await supabase
+                    .from('profiles')
+                    .insert([
+                        { 
+                            id: data.user.id,
+                            display_name: name,
+                            full_name: name,
+                            avatar_url: null
+                        }
+                    ]);
+    
+                if (profileError) {
+                    console.error("Error creating profile:", profileError);
+                    setMessage("Account created but profile setup failed. Please update your profile later.");
+                } else {
+                    console.log("Profile created successfully");
+                    setMessage("Account successfully created! Check your email to confirm your account.");
                 }
             }
-        });
-
-        if (error) {
-            setMessage(error.message);
-            return;
-        } else {
-            setMessage("Account successfully created!");
+    
+            setName("");
+            setEmail("");
+            setPassword("");
+        } catch (err) {
+            console.error("Signup process error:", err);
+            setMessage("An unexpected error occurred. Please try again.");
         }
-        setName("");
-        setEmail("");
-        setPassword("");
     };
 
     const handleGoogleLogin = async () => {
