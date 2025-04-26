@@ -1277,3 +1277,85 @@ body.dark textarea {
   color: white;
   font-weight: 600;
 }
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .navbar h2 {
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+  
+  .dropdown {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-page,
+  .post-page,
+  .create-page,
+  .profile-page,
+  .edit-page,
+  .Group-page {
+    margin: 0.5rem;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dropdown-menu {
+    min-width: 100%;
+    right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .post-cards {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .post-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .post-actions {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .comments-section {
+    padding: 1rem 0;
+  }
+
+  .comment-form textarea {
+    min-height: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-container,
+  .profile-posts {
+    padding: 1rem;
+  }
+  
+  .profile-post-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+}
+
