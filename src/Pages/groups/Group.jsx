@@ -1,5 +1,5 @@
 import React from 'react';
-import '../App.css';
+import './Groups.css';
 
 const Group = () => {
   return (

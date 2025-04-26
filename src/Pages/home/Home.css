@@ -1,0 +1,109 @@
+/* Home Page */
+.home-page {
+    margin-top: 1rem;
+    padding-bottom: 2rem;
+  }
+  
+  /* Filter Component */
+  .filter {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.5rem;
+    padding: 0.5rem;
+  }
+  
+  .filter p {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+  
+  .filter button {
+    background-color: var(--gray-100);
+    color: var(--text-dark);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-md);
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+    transition: var(--transition);
+    margin-left: 0.25rem;
+    cursor: pointer;
+  }
+  
+  .filter button:hover {
+    background-color: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  
+  .filter button.active {
+    background-color: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+  
+  /* No Posts Message */
+  .no-posts {
+    color: var(--gray-800);
+    font-style: italic;
+    text-align: center;
+    padding: 2rem;
+    background-color: var(--background-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    margin: 2rem 0;
+  }
+  
+  /* Loading State */
+  .home-page.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    font-size: 1.2rem;
+    color: var(--primary);
+  }
+  
+  /* Dark Mode Styles */
+  body.dark .filter button {
+    background-color: #334155;
+    color: var(--text-light);
+    border-color: #475569;
+  }
+  
+  body.dark .filter button:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+  }
+  
+  body.dark .no-posts {
+    background-color: #1e293b;
+    color: var(--gray-300);
+  }
+  
+  body.dark .home-page.loading {
+    color: var(--primary);
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .home-page {
+      margin: 0.5rem;
+    }
+    
+    .filter {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .filter p {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .filter button {
+      margin: 0.25rem;
+    }
+  }

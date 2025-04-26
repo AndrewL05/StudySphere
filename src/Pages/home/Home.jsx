@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import supabase from '../Services/supabaseClient';
-import PostCard from '../Components/PostCard';
-import Filter from '../Components/Filter';
-import '../App.css';
+import supabase from '../../Services/supabaseClient';
+import PostCard from '../../Components/PostCard';
+import Filter from '../../Components/Filter';
+import './Home.css';
 
 const Home = () => {
   const [posts, setPosts] = useState([]);

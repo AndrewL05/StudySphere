@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router';
-import supabase from '../Services/supabaseClient';
-import '../App.css';
+import supabase from '../../Services/supabaseClient';
+import './Auth.css';
 
 const SignUp = () => {
     const [name, setName] = useState(""); 

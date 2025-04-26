@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router';
-import supabase from '../Services/supabaseClient';
-import '../App.css';
+import supabase from '../../Services/supabaseClient';
+import './Profile.css';
 
 const Profile = () => {
   const [user, setUser] = useState(null);

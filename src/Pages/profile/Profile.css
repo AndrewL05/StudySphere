@@ -1,0 +1,279 @@
+/* Profile Page Styles */
+.profile-page {
+    padding: 1.5rem;
+    max-width: 900px;
+    margin: 1rem auto;
+  }
+  
+  .profile-container {
+    background-color: var(--background-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .profile-info {
+    text-align: left;
+  }
+  
+  .profile-detail {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+  
+  .profile-avatar {
+    margin: 1.5rem 0;
+  }
+  
+  .profile-avatar img {
+    max-width: 150px;
+    border-radius: 50%;
+  }
+  
+  .profile-form {
+    text-align: left;
+  }
+  
+  .profile-email {
+    margin: 1rem 0;
+  }
+  
+  .email-note {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 0.25rem;
+  }
+  
+  .edit-profile-btn {
+    background-color: var(--primary);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+  }
+  
+  .save-btn {
+    background-color: var(--primary);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  
+  /* Appearance Section */
+  .appearance-section {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--gray-200);
+  }
+  
+  .dark-mode-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+  }
+  
+  /* Danger Zone */
+  .danger-zone {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--gray-200);
+  }
+  
+  .delete-account-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+  }
+  
+  /* Delete Account Modal */
+  .delete-account-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background-color: var(--background-light);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    max-width: 500px;
+    width: 90%;
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .modal-content h3 {
+    color: #f44336;
+    margin-top: 0;
+  }
+  
+  .modal-content ul {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+  
+  .modal-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  
+  .confirm-delete-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+  }
+  
+  /* User Posts Section */
+  .profile-posts {
+    background-color: var(--background-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 2rem;
+    text-align: left;
+  }
+  
+  .profile-post-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  
+  .profile-post-item:last-child {
+    border-bottom: none;
+  }
+  
+  .post-info {
+    flex: 1;
+  }
+  
+  .post-info h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+  }
+  
+  .post-date, .post-stats {
+    font-size: 0.85rem;
+    color: var(--gray-800);
+    margin: 0.25rem 0;
+  }
+  
+  .post-management {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .view-post-btn, .edit-post-btn, .delete-post-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  
+  .view-post-btn {
+    background-color: var(--gray-200);
+    color: var(--text-dark);
+  }
+  
+  .edit-post-btn {
+    background-color: var(--primary);
+    color: white;
+  }
+  
+  .delete-post-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+  }
+  
+  /* Dark Mode Styles */
+  body.dark .profile-container,
+  body.dark .profile-posts {
+    background-color: #1e293b;
+    color: var(--text-light);
+  }
+  
+  body.dark .profile-page h2,
+  body.dark .profile-page h3 {
+    color: var(--text-light);
+  }
+  
+  body.dark .email-note {
+    color: var(--gray-300);
+  }
+  
+  body.dark .appearance-section,
+  body.dark .danger-zone {
+    border-top-color: #334155;
+  }
+  
+  body.dark .profile-post-item {
+    border-bottom-color: #334155;
+  }
+  
+  body.dark .post-date, 
+  body.dark .post-stats {
+    color: var(--gray-300);
+  }
+  
+  body.dark .view-post-btn {
+    background-color: #475569;
+    color: var(--text-light);
+  }
+  
+  body.dark .modal-content {
+    background-color: #1e293b;
+    color: var(--text-light);
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .profile-container,
+    .profile-posts {
+      padding: 1rem;
+    }
+    
+    .profile-post-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    
+    .form-actions {
+      flex-direction: column;
+    }
+    
+    .post-management {
+      width: 100%;
+      justify-content: space-between;
+    }
+    
+    .modal-actions {
+      flex-direction: column;
+    }
+  }

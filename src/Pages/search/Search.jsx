@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router';
-import supabase from '../Services/supabaseClient';
-import PostCard from '../Components/PostCard';
-import '../App.css';
+import supabase from '../../Services/supabaseClient';
+import PostCard from '../../Components/PostCard';
+import './Search.css';
 
 const Search = () => {
   const [posts, setPosts] = useState([]);
