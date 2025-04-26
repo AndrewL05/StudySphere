@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router'; 
+import { Link, useNavigate, useLocation } from 'react-router';
 import '../App.css';
 import supabase from '../Services/supabaseClient';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [darkMode, setDarkMode] = useState(false);
+  const location = useLocation();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showCreateMenu, setShowCreateMenu] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const checkUser = async () => {
@@ -17,22 +18,15 @@ const Navbar = () => {
           data: { user },
           error
         } = await supabase.auth.getUser();
-  
         if (error) throw error;
-  
         setIsLoggedIn(!!user);
       } catch (error) {
         console.error('Error checking auth:', error);
         setIsLoggedIn(false);
       }
     };
-  
     checkUser();
   }, []);
-
-  useEffect(() => {
-    document.body.className = darkMode ? 'dark' : '';
-  }, [darkMode]);
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -50,7 +44,7 @@ const Navbar = () => {
     e.stopPropagation();
     menuSetter(prev => !prev);
   };
-  
+
   const handleProfileClick = (e) => {
     e.preventDefault();
     if (!isLoggedIn) {
@@ -59,12 +53,51 @@ const Navbar = () => {
       handleMenuClick(e, setShowProfileMenu);
     }
   };
-  
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   return (
     <div className="navbar">
       <Link to="/"><h2>StudySphere</h2></Link>
 
-      <input type="text" placeholder="Search..." />
+      <form onSubmit={handleSearch} className="search-form">
+        <input
+          type="text"
+          placeholder="Search posts..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <button
+          type="submit"
+          style={{
+            backgroundColor: '#3b82f6',
+            border: 'none',
+            padding: '7px',
+            borderRadius: '8px',
+            cursor: 'pointer'
+          }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </button>
+      </form>
 
       <div className="dropdown">
         <h3 onClick={handleProfileClick} style={{ cursor: 'pointer' }}>
@@ -73,16 +106,12 @@ const Navbar = () => {
         {showProfileMenu && isLoggedIn && (
           <div className="dropdown-menu">
             <Link to="/profile">Settings</Link>
-            {/*<Link to="/history">History</Link> */}
             <button onClick={async () => {
               try {
                 const { error } = await supabase.auth.signOut();
                 if (error) throw error;
-                
                 localStorage.removeItem('session');
-                
                 setIsLoggedIn(false);
-                
                 window.location.href = '/';
               } catch (error) {
                 console.error('Error signing out:', error);
@@ -104,15 +133,6 @@ const Navbar = () => {
           </div>
         )}
       </div>
-
-      <label className="switch">
-        <input
-          type="checkbox"
-          checked={darkMode}
-          onChange={() => setDarkMode(!darkMode)}
-        />
-        <span className="slider"></span>
-      </label>
 
       {!isLoggedIn && (
         <div className="sign-in">
