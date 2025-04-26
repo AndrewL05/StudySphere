@@ -5,8 +5,7 @@ const Filter = ({ activeFilter = 'newest', onFilterChange }) => {
     const filters = [
         { id: 'newest', label: 'Newest' },
         { id: 'oldest', label: 'Oldest' },
-        { id: 'popular', label: 'Most Popular' },
-        { id: 'unanswered', label: 'Unanswered' }
+        { id: 'popular', label: 'Most Popular' }
     ];
     
     const handleFilterChange = (filterId) => {

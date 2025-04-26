@@ -8,33 +8,42 @@ const SignIn = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage("");
+        setLoading(true);
 
-        const {data, error} = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password,
-        });
+        try {
+            const {data, error} = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
 
-        if (error) {
-            setMessage(error.message);
-            return;
-        } else {
+            if (error) {
+                throw error;
+            }
+            
             navigate("/");
-            return null;
+        } catch (err) {
+            setMessage(err.message || "Login failed. Please check your credentials.");
+        } finally {
+            setLoading(false);
         }
-
-        setEmail("");
-        setPassword("");
     };
 
     const handleGoogleLogin = async () => {
-        const { error } = await supabase.auth.signInWithOAuth({
-          provider: 'google',
-        });
-        if (error) console.error("Google Login Error:", error.message);
+        try {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+            });
+            
+            if (error) throw error;
+        } catch (err) {
+            console.error("Google Login Error:", err.message);
+            setMessage("Failed to login with Google. Please try again.");
+        }
     };
 
     return (
@@ -52,7 +61,7 @@ const SignIn = () => {
                     Log in with Google
                 </button> 
                 <br/>
-                {message && <span className='message'>{message}</span>}
+                {message && <div className="error-message">{message}</div>}
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label htmlFor="email">Email</label>
@@ -78,7 +87,9 @@ const SignIn = () => {
                         />
                     </div>
                     
-                    <button type="submit" className="auth-button">Sign In</button>
+                    <button type="submit" className="auth-button" disabled={loading}>
+                        {loading ? 'Signing in...' : 'Sign In'}
+                    </button>
                 
                     <div className="auth-links">
                         <Link to="/reset-password" className="forgot-password">Forgot password?</Link>

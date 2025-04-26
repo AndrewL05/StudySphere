@@ -13,8 +13,10 @@ const Profile = () => {
     full_name: '',
     avatar_url: ''
   });
+  const [darkMode, setDarkMode] = useState(document.body.classList.contains('dark'));
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -78,7 +80,7 @@ const Profile = () => {
     setSuccess(null);
     
     try {
-      // Update profile in database
+      // Update profile 
       const { error: profileError } = await supabase
         .from('profiles')
         .upsert({
@@ -140,6 +142,64 @@ const Profile = () => {
         console.error("Error deleting post:", err);
         setError("Failed to delete post. Please try again.");
       }
+    }
+  };
+
+  const toggleDarkMode = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    
+    if (newDarkMode) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
+    
+    // Optionally, save preference to localStorage
+    localStorage.setItem('darkMode', newDarkMode ? 'true' : 'false');
+  };
+
+  const handleDeleteAccount = async () => {
+    setDeleteModalOpen(false);
+    
+    try {
+      // Delete all user's comments
+      await supabase
+        .from('comments')
+        .delete()
+        .eq('user_id', user.id);
+      
+      // Delete all user's post votes
+      await supabase
+        .from('post_votes')
+        .delete()
+        .eq('user_id', user.id);
+      
+      // Delete all user's posts
+      await supabase
+        .from('posts')
+        .delete()
+        .eq('user_id', user.id);
+      
+      // Delete profile
+      await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', user.id);
+      
+      // Delete user account
+      const { error } = await supabase.auth.admin.deleteUser(user.id);
+      
+      if (error) throw error;
+      
+      // Sign out
+      await supabase.auth.signOut();
+      
+      alert("Your account has been deleted successfully.");
+      navigate('/');
+    } catch (err) {
+      console.error("Error deleting account:", err);
+      setError("Failed to delete account. Please try again or contact support.");
     }
   };
 
@@ -232,6 +292,30 @@ const Profile = () => {
             </button>
           </div>
         )}
+        
+        <div className="appearance-section">
+          <h3>Appearance</h3>
+          <div className="dark-mode-toggle">
+            <label htmlFor="dark-mode-switch">Dark Mode</label>
+            <label className="switch">
+              <input
+                id="dark-mode-switch"
+                type="checkbox"
+                checked={darkMode}
+                onChange={toggleDarkMode}
+              />
+              <span className="slider"></span>
+            </label>
+          </div>
+        </div>
+        
+        <div className="danger-zone">
+          <h3>Danger Zone</h3>
+          <p>Permanently delete your account and all of your content.</p>
+          <button onClick={() => setDeleteModalOpen(true)} className="delete-account-btn">
+            Delete Account
+          </button>
+        </div>
       </div>
 
       <div className="profile-posts">
@@ -268,6 +352,29 @@ const Profile = () => {
           </div>
         )}
       </div>
+
+      {deleteModalOpen && (
+        <div className="delete-account-modal">
+          <div className="modal-content">
+            <h3>Delete Account</h3>
+            <p>Are you sure you want to delete your account? This action cannot be undone and will:</p>
+            <ul>
+              <li>Delete all your posts and comments</li>
+              <li>Remove all your upvotes</li>
+              <li>Delete your profile information</li>
+              <li>Permanently delete your account</li>
+            </ul>
+            <div className="modal-actions">
+              <button onClick={() => setDeleteModalOpen(false)} className="cancel-btn">
+                Cancel
+              </button>
+              <button onClick={handleDeleteAccount} className="confirm-delete-btn">
+                Yes, Delete My Account
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -236,7 +236,7 @@ const Post = () => {
             className={`upvote-btn ${upvoted ? 'upvoted' : ''}`}
             onClick={handleUpvote}
           >
-            ↑ {post.upvotes || 0} Upvotes
+            ↑ {post.upvotes || 0} upvotes
           </button>
         </div>
 

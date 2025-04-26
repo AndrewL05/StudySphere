@@ -43,6 +43,10 @@ body.dark {
   color: var(--text-light);
 }
 
+body.dark h3 {
+  color: var(--text-light);
+}
+
 body.dark .navbar {
   background-color: #1e293b;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
@@ -83,7 +87,6 @@ body.dark .auth-container {
   border-color: #334155;
 }
 
-/* Add these new styles for dark mode form inputs */
 body.dark .auth-container input[type="text"],
 body.dark .auth-container input[type="password"],
 body.dark .auth-container input[type="email"],
@@ -461,7 +464,7 @@ input:checked + .slider:before {
 .reset-password-page,
 .Group-page {
   padding: 1.5rem;
-  background-color: var(--background-light);
+  background-color: transparent;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   margin-top: 1rem;
@@ -604,7 +607,7 @@ input:checked + .slider:before {
 }
 
 .upvote-btn.upvoted {
-  color: var(--primary);
+  color: white;
   font-weight: 600;
 }
 
@@ -715,7 +718,7 @@ body.dark .post-actions button:hover {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background-color: transparent;
+  background-color: grey;
   border: 1px solid var(--gray-300);
   border-radius: var(--radius-md);
   font-size: 1rem;
@@ -724,7 +727,7 @@ body.dark .post-actions button:hover {
 }
 
 .upvote-btn.upvoted {
-  color: var(--primary);
+  background-color: var(--primary);
   font-weight: 600;
 }
 
@@ -1061,4 +1064,216 @@ body.dark .edit-page .success-message {
   background-color: rgba(27, 94, 32, 0.2);
   color: #a5d6a7;
   border-color: rgba(165, 214, 167, 0.3);
+}
+
+/* Create Page Styling */
+.create-page {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: var(--background-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+}
+
+.create-page h2 {
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+  text-align: center;
+}
+
+.create-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.create-page input[type="text"],
+.create-page textarea {
+  width: 100%;
+  padding: 0.85rem;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: var(--transition);
+  background-color: var(--background-light);
+  color: var(--text-dark);
+}
+
+.create-page textarea {
+  min-height: 200px;
+  resize: vertical;
+}
+
+.create-page input[type="text"]:focus,
+.create-page textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.create-page button[type="submit"] {
+  padding: 0.85rem;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-top: 0.5rem;
+  align-self: flex-end;
+  min-width: 120px;
+}
+
+.create-page button[type="submit"]:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.create-page button[type="submit"]:disabled {
+  background-color: var(--gray-300);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.create-page .error-message,
+.create-page .success-message {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-weight: 500;
+}
+
+.create-page .error-message {
+  background-color: #ffebee;
+  color: #b71c1c;
+  border: 1px solid #ef9a9a;
+}
+
+.create-page .success-message {
+  background-color: #e8f5e9;
+  color: #1b5e20;
+  border: 1px solid #a5d6a7;
+}
+
+/* Dark mode support */
+body.dark .create-page {
+  background-color: #1e293b;
+}
+
+body.dark .create-page h2 {
+  color: var(--primary);
+}
+
+body.dark .create-page input[type="text"],
+body.dark .create-page textarea {
+  background-color: #334155;
+  border-color: #475569;
+  color: var(--text-light);
+}
+
+body.dark .create-page .error-message {
+  background-color: rgba(183, 28, 28, 0.2);
+  color: #ef9a9a;
+  border-color: rgba(239, 154, 154, 0.3);
+}
+
+body.dark .create-page .success-message {
+  background-color: rgba(27, 94, 32, 0.2);
+  color: #a5d6a7;
+  border-color: rgba(165, 214, 167, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .create-page {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .create-page button[type="submit"] {
+    width: 100%;
+  }
+}
+
+.post-image {
+  width: 100%;
+  max-height: 400px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-200);
+}
+
+.post-image img {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  display: block;
+}
+
+.post-page .post-image {
+  max-height: 500px;
+}
+
+.post-page .post-image img {
+  max-height: 500px;
+}
+
+
+body.dark .post-image {
+  border-color: #475569;
+}
+
+
+@media (max-width: 768px) {
+  .post-image, .post-image img {
+    max-height: 300px;
+  }
+  
+  .post-page .post-image, 
+  .post-page .post-image img {
+    max-height: 350px;
+  }
+}
+
+textarea {
+  background-color: var(--background-light) !important;
+  color: var(--text-dark) !important;
+}
+
+body.dark textarea {
+  background-color: #334155 !important;
+  color: var(--text-light) !important;
+}
+
+.post-actions .upvote-btn,
+.post-interactions .upvote-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: white;
+  color: #3b82f6;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.post-actions .upvote-btn.upvoted,
+.post-interactions .upvote-btn.upvoted {
+  background-color: var(--primary);
+  color: white;
+  font-weight: 600;
 }

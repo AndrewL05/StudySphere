@@ -60,9 +60,6 @@ const Home = () => {
         case 'popular':
           query = query.order('upvotes', { ascending: false });
           break;
-        case 'unanswered':
-          query = query.order('created_at', { ascending: false });
-          break;
         default:
           query = query.order('created_at', { ascending: false });
       }
