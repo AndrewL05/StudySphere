@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import supabase from '../Services/supabaseClient';
-import '../App.css';
+import supabase from '../../Services/supabaseClient';
+import './Auth.css';
 
 const SignIn = () => { 
     const navigate = useNavigate();

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import supabase from '../Services/supabaseClient';
-import UserName from '../Components/Username';
-import '../App.css';
+import supabase from '../../Services/supabaseClient';
+import UserName from '../../Components/Username';
+import './Posts.css';
 
 const Post = () => {
   const { id } = useParams();

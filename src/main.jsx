@@ -4,18 +4,18 @@ import './index.css';
 import { BrowserRouter, Routes, Route } from 'react-router';
 
 import App from './App.jsx';
-import Home from './Pages/Home';
-import Create from './Pages/Create';
-import Edit from './Pages/Edit';
-import Group from './Pages/Group.jsx';
-import CreateGroup from './Pages/CreateGroup.jsx';
-import Post from './Pages/Post';
-import Profile from './Pages/Profile';
-import ResetPassword from './Pages/ResetPassword';
-import ResetPasswordConfirm from './Pages/ResetPasswordConfirm';
-import SignIn from './Pages/SignIn.jsx';
-import SignUp from './Pages/SignUp';
-import Search from './Pages/Search.jsx';
+import Home from './Pages/home/Home';
+import Create from './Pages/posts/Create';
+import Edit from './Pages/posts/Edit';
+import Group from './Pages/groups/Group.jsx';
+import CreateGroup from './Pages/groups/CreateGroup.jsx';
+import Post from './Pages/posts/Post';
+import Profile from './Pages/profile/Profile';
+import ResetPassword from './Pages/auth/ResetPassword';
+import ResetPasswordConfirm from './Pages/auth/ResetPasswordConfirm';
+import SignIn from './Pages/auth/SignIn.jsx';
+import SignUp from './Pages/auth/SignUp';
+import Search from './Pages/search/Search.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

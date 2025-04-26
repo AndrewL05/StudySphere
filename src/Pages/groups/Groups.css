@@ -1,0 +1,258 @@
+/* Group Page Styles */
+.Group-page {
+    padding: 1.5rem;
+    background-color: var(--background-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    margin-top: 1rem;
+    transition: var(--transition);
+    max-width: 1024px;
+    margin: 1rem auto;
+  }
+  
+  /* Group Header */
+  .group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--gray-200);
+    padding-bottom: 1rem;
+  }
+  
+  .group-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .group-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+  }
+  
+  .group-description {
+    font-size: 1rem;
+    color: var(--gray-800);
+    line-height: 1.5;
+  }
+  
+  .group-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: var(--gray-800);
+    margin-top: 0.5rem;
+  }
+  
+  .group-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+  
+  .join-group-btn, 
+  .leave-group-btn {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  
+  .join-group-btn {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+  }
+  
+  .leave-group-btn {
+    background-color: transparent;
+    color: var(--text-dark);
+    border: 1px solid var(--gray-300);
+  }
+  
+  .join-group-btn:hover {
+    background-color: var(--primary-dark);
+  }
+  
+  .leave-group-btn:hover {
+    background-color: var(--gray-100);
+  }
+  
+  /* Group Body */
+  .group-content {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 1.5rem;
+  }
+  
+  .group-main {
+    border-radius: var(--radius-md);
+  }
+  
+  .group-sidebar {
+    background-color: var(--gray-100);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+  }
+  
+  /* Group Members */
+  .group-members {
+    margin-bottom: 1.5rem;
+  }
+  
+  .group-members h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+  }
+  
+  .member-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .member-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--background-light);
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+  }
+  
+  .member-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  /* Group Rules */
+  .group-rules {
+    margin-bottom: 1.5rem;
+  }
+  
+  .group-rules h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+  }
+  
+  .rules-list {
+    font-size: 0.875rem;
+    color: var(--gray-800);
+    list-style-type: disc;
+    padding-left: 1.5rem;
+  }
+  
+  .rules-list li {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Create Group Page */
+  .create-group-page {
+    padding: 2rem;
+    background-color: var(--background-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    margin: 1.5rem auto;
+    max-width: 800px;
+  }
+  
+  .create-group-page h2 {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+    text-align: center;
+  }
+  
+  .create-group-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  /* Dark Mode Styles */
+  body.dark .Group-page {
+    background-color: #1e293b;
+  }
+  
+  body.dark .group-title {
+    color: var(--text-light);
+  }
+  
+  body.dark .group-description, 
+  body.dark .group-meta {
+    color: var(--gray-300);
+  }
+  
+  body.dark .leave-group-btn {
+    color: var(--text-light);
+    border-color: #475569;
+  }
+  
+  body.dark .leave-group-btn:hover {
+    background-color: #334155;
+  }
+  
+  body.dark .group-header {
+    border-bottom-color: #334155;
+  }
+  
+  body.dark .group-sidebar {
+    background-color: #334155;
+  }
+  
+  body.dark .member-item {
+    background-color: #1e293b;
+  }
+  
+  body.dark .group-members h3,
+  body.dark .group-rules h3 {
+    color: var(--text-light);
+  }
+  
+  body.dark .rules-list {
+    color: var(--gray-300);
+  }
+  
+  body.dark .create-group-page {
+    background-color: #1e293b;
+  }
+  
+  body.dark .create-group-page h2 {
+    color: var(--primary);
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .Group-page {
+      padding: 1rem;
+      margin: 0.5rem;
+    }
+    
+    .group-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    
+    .group-content {
+      grid-template-columns: 1fr;
+    }
+    
+    .group-actions {
+      width: 100%;
+      justify-content: space-between;
+    }
+    
+    .create-group-page {
+      padding: 1.5rem;
+      margin: 1rem;
+    }
+  }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import supabase from '../Services/supabaseClient';
-import '../App.css';
+import supabase from '../../Services/supabaseClient';
+import './Posts.css';
 
 const Edit = () => {
   const { id } = useParams();

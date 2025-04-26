@@ -1,0 +1,98 @@
+/* Search Page Styles */
+.search-page {
+    padding: 1.5rem;
+    max-width: 1024px;
+    margin: 1rem auto;
+  }
+  
+  .search-header {
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+  
+  .search-header h2 {
+    color: var(--text-dark);
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .results-count {
+    color: var(--gray-800);
+    font-size: 0.9rem;
+  }
+  
+  .no-results {
+    padding: 2rem;
+    background-color: var(--background-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    font-style: italic;
+    color: var(--gray-800);
+    margin: 2rem 0;
+  }
+  
+  /* Search Form in Navbar */
+  .search-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex: 1;
+  }
+  
+  .search-form input {
+    flex: 1;
+    max-width: 300px;
+  }
+  
+  /* Loading State */
+  .search-page.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    font-size: 1.2rem;
+    color: var(--primary);
+  }
+  
+  /* Dark Mode Styles */
+  body.dark .search-header h2 {
+    color: var(--text-light);
+  }
+  
+  body.dark .results-count {
+    color: var(--gray-300);
+  }
+  
+  body.dark .no-results {
+    background-color: #1e293b;
+    color: var(--gray-300);
+  }
+  
+  body.dark .search-page.loading {
+    color: var(--primary);
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .search-page {
+      padding: 1rem;
+      margin: 0.5rem;
+    }
+    
+    .search-header {
+      text-align: center;
+    }
+    
+    .search-header h2 {
+      font-size: 1.5rem;
+    }
+    
+    .search-form {
+      width: 100%;
+    }
+    
+    .search-form input {
+      max-width: 100%;
+    }
+  }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
-import '../App.css';
+//import '../App.css';
 import supabase from '../Services/supabaseClient';
 
 const Navbar = () => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import '../App.css';
-import supabase from '../Services/supabaseClient';
+import './Posts.css';
+import supabase from '../../Services/supabaseClient';
 
 const Create = () => {
   const [postData, setPostData] = useState({

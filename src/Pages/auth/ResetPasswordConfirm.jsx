@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import supabase from '../Services/supabaseClient';
-import '../App.css';
+import supabase from '../../Services/supabaseClient';
+import './Auth.css';
 
 const ResetPasswordConfirm = () => {
     const [password, setPassword] = useState('');
