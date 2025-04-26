@@ -121,7 +121,7 @@ const PostCard = ({ id, title, content, image = null, upvotesNum = 0, userId = n
         <span className="post-time">• Posted {time}</span>
       </div>
       
-      <h4>{title}</h4>
+      <h3>{title}</h3>
       
       {content && <p className="post-content">{content}</p>}
       

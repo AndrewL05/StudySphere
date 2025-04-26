@@ -4,7 +4,7 @@ import '../App.css';
 const Group = () => {
   return (
     <div className="Group-page">
-
+      
     </div>
   );
 };
