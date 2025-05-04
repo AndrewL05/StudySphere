@@ -1,22 +1,24 @@
-import { useState } from 'react'
-import './App.css'
+import React from 'react'; 
+import './App.css';
 import Navbar from './Components/Navbar';
-import { Outlet, useLocation } from 'react-router';
+import { Outlet, useLocation } from 'react-router'; 
+import { ThemeProvider } from './Context/ThemeContext'; 
 
 const App = () => {
   const location = useLocation();
-  
-  // List of auth routes where navbar will be hidden
-  const authRoutes = ['/signin', '/signup', '/reset-password'];
+
+  const authRoutes = ['/signin', '/signup', '/reset-password', '/reset-password-confirm'];
   const isAuthPage = authRoutes.includes(location.pathname);
-  
+
   return (
-    <div className="app">
-      {!isAuthPage && <Navbar />}
-      <main className={isAuthPage ? "auth-layout" : "main-content"}>
-        <Outlet />
-      </main>
-    </div>
+    <ThemeProvider>
+      <div className="app">
+        {!isAuthPage && <Navbar />}
+        <main className={isAuthPage ? "auth-layout" : "main-content"}>
+          <Outlet />
+        </main>
+      </div>
+    </ThemeProvider>
   );
 };
 
