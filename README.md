@@ -12,7 +12,7 @@
 - 💬 Comment on posts, upvote content, and bookmark your favorites
 - 🔍 Search and filter posts by title, popularity, or recency
 - 📚 Organize content by **Topics** 
-- 🔐 **Authentication** – Secure login via Supabase Auth with Google
-- 📖 Quiz creation (in development)
+- 🔐 Authentication – Secure login via Supabase Auth 
+- 📖 AI Quiz creation (in development)
 - 💬 Real-time **group chat** for each topic (in development)
 - 🧠 **Ask AI** questions using OpenRouter's API (in development)
