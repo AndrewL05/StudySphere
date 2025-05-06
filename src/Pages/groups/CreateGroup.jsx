@@ -18,7 +18,7 @@ const CreateGroup = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      setIsLoading(true); // Start loading while checking auth
+      setIsLoading(true); 
       try {
         const { data: { user }, error: userError } = await supabase.auth.getUser();
 
@@ -28,29 +28,26 @@ const CreateGroup = () => {
         }
 
         if (!user) {
-          // If no user is logged in, redirect to the sign-in page
           navigate('/signin');
-          return; // Stop execution if not logged in
+          return; 
         }
-        setCurrentUser(user); // Store the user object
+        setCurrentUser(user); 
       } catch (err) {
         setError(err.message || "An error occurred fetching user data.");
-        navigate('/signin'); // Redirect on error as well
+        navigate('/signin'); 
       } finally {
-        setIsLoading(false); // Stop loading after check
+        setIsLoading(false); 
       }
     };
 
     fetchUser();
-  }, [navigate]); // Dependency array includes navigate
+  }, [navigate]); 
 
-  // Handler for form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default browser form submission
-    setError(null); // Clear previous errors
-    setSuccess(false); // Reset success state
+    e.preventDefault(); 
+    setError(null); 
+    setSuccess(false); 
 
-    // Basic validation
     if (!groupName.trim()) {
       setError("Group name cannot be empty.");
       return;
@@ -60,25 +57,24 @@ const CreateGroup = () => {
         return;
     }
 
-    setIsLoading(true); // Set loading state
+    setIsLoading(true); 
 
     try {
-      // 1. Insert the new group into the 'study_groups' table
       const { data: groupData, error: groupError } = await supabase
         .from('study_groups')
         .insert([
           {
             name: groupName.trim(),
-            description: description.trim() || null, // Use null if description is empty
-            creator_id: currentUser.id, // Set the creator ID
+            description: description.trim() || null, 
+            creator_id: currentUser.id, 
           },
         ])
-        .select() // Select the newly inserted row to get its ID
-        .single(); // Expecting a single row back
+        .select()
+        .single();
 
       if (groupError) {
         console.error('Error inserting group:', groupError);
-        throw groupError; // Throw error to be caught by catch block
+        throw groupError; 
       }
 
       if (!groupData || !groupData.id) {
@@ -88,30 +84,28 @@ const CreateGroup = () => {
       const newGroupId = groupData.id;
       console.log('Group created successfully with ID:', newGroupId);
 
-      // 2. Add the creator as the first member (and admin) in 'group_members'
       const { error: memberError } = await supabase
         .from('group_members')
         .insert([
           {
             group_id: newGroupId,
             user_id: currentUser.id,
-            role: 'admin', // Assign the creator as admin
+            role: 'admin', 
           },
         ]);
 
       if (memberError) {
         console.error('Error adding creator to group members:', memberError);
-        // Optional: Consider deleting the created group if adding member fails (rollback logic)
+        // maybe delete the created group if adding member fails (rollback logic)
         // await supabase.from('study_groups').delete().eq('id', newGroupId);
         throw new Error("Group created, but failed to add creator as member.");
       }
 
-      console.log('Creator added as admin member.');
-      setSuccess(true); // Set success state
-      setGroupName(''); // Clear form fields
+      // console.log('Creator added as admin member.');
+      setSuccess(true); 
+      setGroupName(''); 
       setDescription('');
 
-      // Redirect to the newly created group's page after a short delay
       setTimeout(() => {
         navigate(`/group/${newGroupId}`);
       }, 1500); // Redirect after 1.5 seconds
@@ -120,23 +114,20 @@ const CreateGroup = () => {
       console.error('Error in handleSubmit:', err);
       setError(err.message || 'Failed to create study group. Please try again.');
     } finally {
-      setIsLoading(false); // Reset loading state regardless of outcome
+      setIsLoading(false); 
     }
   };
 
-  // Render loading state if checking user or submitting
   if (isLoading && !currentUser) {
-     return <div className="create-group-page loading">Verifying user...</div>; // Specific loading message
+     return <div className="create-group-page loading">Verifying user...</div>; 
   }
 
   return (
-    // Use existing CSS classes for structure and styling
-    <div className="create-group-page"> {/* Main container class */}
+    <div className="create-group-page"> 
       <h2>Create a New Study Group</h2>
 
-      <form onSubmit={handleSubmit} className="create-group-form"> {/* Form specific class */}
-        {/* Group Name Input */}
-        <div className="form-group"> {/* Re-use form-group style */}
+      <form onSubmit={handleSubmit} className="create-group-form"> 
+        <div className="form-group"> 
           <label htmlFor="groupName">Group Name</label>
           <input
             type="text"
@@ -144,12 +135,11 @@ const CreateGroup = () => {
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
             placeholder="e.g., CS 101 Study Buddies"
-            required // HTML5 required attribute
-            disabled={isLoading} // Disable input while loading
+            required 
+            disabled={isLoading} 
           />
         </div>
 
-        {/* Group Description Textarea */}
         <div className="form-group">
           <label htmlFor="description">Description (Optional)</label>
           <textarea
@@ -157,21 +147,17 @@ const CreateGroup = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="What is this group about?"
-            rows="4" // Suggest a height
+            rows="4" 
             disabled={isLoading}
           />
         </div>
 
-        {/* Submit Button */}
-        {/* Use auth-button style or create a specific one */}
         <button type="submit" className="auth-button" disabled={isLoading}>
           {isLoading ? 'Creating...' : 'Create Group'}
         </button>
 
-        {/* Error Message Display */}
         {error && <div className="error-message">{error}</div>}
 
-        {/* Success Message Display */}
         {success && <div className="success-message">Group created successfully! Redirecting...</div>}
       </form>
     </div>

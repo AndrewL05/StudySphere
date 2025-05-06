@@ -1,109 +1,154 @@
-/* Home Page */
 .home-page {
-    margin-top: 1rem;
-    padding-bottom: 2rem;
+  margin-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+.feed-header {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.home-content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2.5rem;
+}
+
+.feed-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sidebar-column {
+  position: sticky;
+  top: 80px;
+  align-self: start;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+.filter {
+  display: flex;
+  justify-content: flex-start;
+  padding: 0;
+  margin-bottom: 0;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter p {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.filter button {
+  background-color: transparent;
+  color: var(--gray-800);
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: border-color 0.2s ease, color 0.2s ease;
+  margin-left: 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.filter button:hover {
+  color: var(--primary);
+  background-color: transparent;
+  border-color: var(--primary);
+}
+
+.filter button.active {
+  color: var(--primary);
+  border-color: var(--primary);
+  background-color: transparent;
+  font-weight: 600;
+}
+
+.no-posts {
+  color: var(--gray-800);
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--background-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  margin-top: 1rem;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 150px;
+  font-size: 1.1rem;
+  color: var(--primary);
+}
+
+body.dark .feed-header {
+  border-bottom-color: #334155;
+}
+
+body.dark .filter button {
+  color: var(--gray-300);
+}
+
+body.dark .filter button:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+body.dark .filter button.active {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+body.dark .no-posts {
+  background-color: #1e293b;
+  color: var(--gray-300);
+}
+
+body.dark .loading {
+  color: var(--primary);
+}
+
+@media (max-width: 900px) {
+  .home-content-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
   }
-  
-  /* Filter Component */
+
+  .sidebar-column {
+    position: relative;
+    top: auto;
+    max-height: none;
+    overflow-y: visible;
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-page {
+    margin: 0.5rem;
+  }
+  .feed-column {
+    gap: 1rem;
+  }
   .filter {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 1.5rem;
-    padding: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
   }
-  
-  .filter p {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-  }
-  
   .filter button {
-    background-color: var(--gray-100);
-    color: var(--text-dark);
-    border: 1px solid var(--gray-200);
-    border-radius: var(--radius-md);
-    padding: 0.4rem 0.8rem;
-    font-size: 0.75rem;
-    transition: var(--transition);
-    margin-left: 0.25rem;
-    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
-  
-  .filter button:hover {
-    background-color: var(--primary);
-    color: white;
-    border-color: var(--primary);
-  }
-  
-  .filter button.active {
-    background-color: var(--primary);
-    color: white;
-    border-color: var(--primary);
-  }
-  
-  /* No Posts Message */
-  .no-posts {
-    color: var(--gray-800);
-    font-style: italic;
-    text-align: center;
-    padding: 2rem;
-    background-color: var(--background-light);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    margin: 2rem 0;
-  }
-  
-  /* Loading State */
-  .home-page.loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 300px;
-    font-size: 1.2rem;
-    color: var(--primary);
-  }
-  
-  /* Dark Mode Styles */
-  body.dark .filter button {
-    background-color: #334155;
-    color: var(--text-light);
-    border-color: #475569;
-  }
-  
-  body.dark .filter button:hover {
-    background-color: var(--primary);
-    border-color: var(--primary);
-  }
-  
-  body.dark .no-posts {
-    background-color: #1e293b;
-    color: var(--gray-300);
-  }
-  
-  body.dark .home-page.loading {
-    color: var(--primary);
-  }
-  
-  /* Responsive Adjustments */
-  @media (max-width: 768px) {
-    .home-page {
-      margin: 0.5rem;
-    }
-    
-    .filter {
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    
-    .filter p {
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    
-    .filter button {
-      margin: 0.25rem;
-    }
-  }
+}

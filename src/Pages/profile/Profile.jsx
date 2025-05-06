@@ -106,7 +106,7 @@ const Profile = () => {
        await supabase.from('post_votes').delete().eq('user_id', user.id);
        await supabase.from('posts').delete().eq('user_id', user.id);
        await supabase.from('profiles').delete().eq('id', user.id);
-       // Ensure you have admin rights configured in Supabase for this:
+       // Check admin rights configured in Supabase for this:
        // const { error } = await supabase.auth.admin.deleteUser(user.id);
        // if (error) throw error;
        // alert("Account deletion requires admin privileges. Cannot complete action."); // Placeholder if admin delete isn't set up

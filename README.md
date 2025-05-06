@@ -1,102 +1,18 @@
-# Web Development Final Project - *Study Sphere*
+# 📚 StudySphere
 
-Submitted by: **Andrew Li**
+**StudySphere** is a full-stack learning hub designed to help students and educators create, explore, and share summarized study notes and quizzes by topic. It includes interactive features like real-time group chats, AI-powered assistance, and content organization through topic-based spaces.
 
-This web app: **StudySphere - An academic platform where people can share knowledge, ask questions, and collaborate on educational topics.**
+🔗 **Live Site:** [andrewl-studysphere.netlify.app](https://andrewl-studysphere.netlify.app/)
 
-Time spent: **10** hours spent in total
+---
 
-## Required Features
+## 🚀 Features
 
-The following **required** functionality is completed:
-
-
-- [X] **Web app includes a create form that allows the user to create posts**
-  - Form requires users to add a post title
-  - Forms should have the *option* for users to add: 
-    - additional textual content
-    - an image added as an external image URL
-- [X] **Web app includes a home feed displaying previously created posts**
-  - Web app must include home feed displaying previously created posts
-  - By default, each post on the posts feed should show only the post's:
-    - creation time
-    - title 
-    - upvotes count
-  - Clicking on a post should direct the user to a new page for the selected post
-- [X] **Users can view posts in different ways**
-  - Users can sort posts by either:
-    -  creation time
-    -  upvotes count
-  - Users can search for posts by title
-- [X] **Users can interact with each post in different ways**
-  - The app includes a separate post page for each created post when clicked, where any additional information is shown, including:
-    - content
-    - image
-    - comments
-  - Users can leave comments underneath a post on the post page
-  - Each post includes an upvote button on the post page. 
-    - Each click increases the post's upvotes count by one
-    - Users can upvote any post any number of times
-
-- [X] **A post that a user previously created can be edited or deleted from its post pages**
-  - After a user creates a new post, they can go back and edit the post
-  - A previously created post can be deleted from its post page
-
-The following **optional** features are implemented:
-
-
-- [ ] Web app implements pseudo-authentication
-  - Users can only edit and delete posts or delete comments by entering the secret key, which is set by the user during post creation
-  - **or** upon launching the web app, the user is assigned a random user ID. It will be associated with all posts and comments that they make and displayed on them
-  - For both options, only the original user author of a post can update or delete it
-- [ ] Users can repost a previous post by referencing its post ID. On the post page of the new post
-  - Users can repost a previous post by referencing its post ID
-  - On the post page of the new post, the referenced post is displayed and linked, creating a thread
-- [X] Users can customize the interface
-  - e.g., selecting the color scheme or showing the content and image of each post on the home feed
-- [ ] Users can add more characterics to their posts
-  - Users can share and view web videos
-  - Users can set flags such as "Question" or "Opinion" while creating a post
-  - Users can filter posts by flags on the home feed
-  - Users can upload images directly from their local machine as an image file
-- [X] Web app displays a loading animation whenever data is being fetched
-
-The following **additional** features are implemented:
-
-* [ ] Users can create folders or groups to store posts & information
-* [x] Users can update their profile and data
-
-## Video Walkthrough
-
-Here's a walkthrough of implemented user stories:
-
-![My GIF](src/assets/walkthrough.gif)
-
-https://imgur.com/gallery/studysphere-walkthrough-video-yoAhPKr  <-- Video
-
-<!-- Replace this with whatever GIF tool you used! -->
-GIF created with ezgif
-<!-- Recommended tools:
-[Kap](https://getkap.co/) for macOS
-[ScreenToGif](https://www.screentogif.com/) for Windows
-[peek](https://github.com/phw/peek) for Linux. -->
-
-## Notes
-
--Working through Supabase debugging was challenging but insightful.
-
-## License
-
-    Copyright [2025] [Andrew Li]
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+- 📝 Create, edit, and delete **posts** with titles, descriptions, and optional images
+- 💬 Comment on posts, upvote content, and bookmark your favorites
+- 🔍 Search and filter posts by title, popularity, or recency
+- 📚 Organize content by **Topics** 
+- 🔐 **Authentication** – Secure login via Supabase Auth with Google
+- 📖 Quiz creation (in development)
+- 💬 Real-time **group chat** for each topic (in development)
+- 🧠 **Ask AI** questions using OpenRouter's API (in development)

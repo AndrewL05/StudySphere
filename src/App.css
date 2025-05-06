@@ -456,3 +456,341 @@ body.dark .profile-icon-btn:hover {
      }
 }
 
+/* Available Groups Section */
+.available-groups-section {
+  background-color: var(--gray-100); 
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  text-align: left;
+}
+
+.available-groups-section h3 {
+  color: var(--primary);
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.4rem;
+  border-bottom: 1px solid var(--gray-200);
+  padding-bottom: 0.75rem;
+}
+
+/* Loading and Error States */
+.available-groups.loading,
+.available-groups.error {
+  text-align: center;
+  padding: 1rem;
+  color: var(--gray-800);
+  font-style: italic;
+}
+.available-groups.error {
+    color: #f44336; 
+}
+
+
+/* Group List */
+.group-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.group-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--gray-200);
+  gap: 1rem;
+}
+
+.group-list-item:last-child {
+  border-bottom: none;
+}
+
+.group-item-info h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
+  color: var(--text-dark);
+}
+
+.group-item-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--gray-800);
+  line-height: 1.4;
+}
+
+.group-item-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.group-item-actions .view-button,
+.group-item-actions .join-button {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.group-item-actions .view-button {
+  background-color: var(--gray-200);
+  color: var(--text-dark);
+}
+.group-item-actions .view-button:hover {
+  background-color: var(--gray-300);
+}
+
+.group-item-actions .join-button {
+  background-color: var(--primary);
+  color: white;
+}
+.group-item-actions .join-button:hover {
+  background-color: var(--primary-dark);
+}
+
+/* View All Link/Button */
+.view-all-container {
+    text-align: center; 
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-200);
+}
+
+.view-all-button {
+    background-color: transparent;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.view-all-button:hover {
+    background-color: var(--primary);
+    color: white;
+}
+
+
+/* Dark Mode Styles */
+body.dark .available-groups-section {
+  background-color: #1e293b; 
+  border-color: #334155;
+}
+
+body.dark .available-groups-section h3 {
+  color: var(--primary); 
+  border-bottom-color: #334155;
+}
+
+body.dark .available-groups.loading,
+body.dark .available-groups.error {
+  color: var(--gray-300);
+}
+body.dark .available-groups.error {
+    color: #ef9a9a; 
+}
+
+body.dark .group-list-item {
+  border-bottom-color: #334155;
+}
+
+body.dark .group-item-info h4 {
+  color: var(--text-light);
+}
+
+body.dark .group-item-info p {
+  color: var(--gray-300);
+}
+
+body.dark .group-item-actions .view-button {
+  background-color: #334155;
+  color: var(--text-light);
+}
+body.dark .group-item-actions .view-button:hover {
+  background-color: #475569;
+}
+
+body.dark .view-all-container {
+    border-top-color: #334155;
+}
+
+body.dark .view-all-button {
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+body.dark .view-all-button:hover {
+    background-color: var(--primary);
+    color: var(--text-light);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .group-list-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .group-item-actions {
+        margin-top: 0.75rem;
+        width: 100%;
+        justify-content: flex-start; 
+    }
+}
+
+/* Available Groups Sidebar Styles */
+.available-groups-sidebar {
+  background-color: var(--background-light);
+  border: 1px solid var(--gray-200); 
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-md); 
+  text-align: left;
+}
+
+.available-groups-sidebar h3 {
+  color: var(--text-dark); 
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem; 
+  font-weight: 600; 
+}
+
+/* Loading and Error States */
+.available-groups-sidebar .loading,
+.available-groups-sidebar .error {
+  text-align: center;
+  padding: 1rem 0;
+  color: var(--gray-800);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+.available-groups-sidebar .error {
+    color: #f44336;
+}
+
+
+/* Group List for Sidebar */
+.group-list-sidebar {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem 0; 
+}
+
+.group-list-item-sidebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0; 
+  border-bottom: 1px solid var(--gray-200);
+  gap: 1rem;
+  cursor: pointer; 
+  transition: background-color 0.15s ease;
+}
+.group-list-item-sidebar:hover {
+     background-color: var(--gray-100); 
+}
+
+
+.group-list-item-sidebar:last-child {
+  border-bottom: none;
+}
+
+.group-name-sidebar {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.join-button-sidebar {
+  padding: 0.3rem 0.8rem; 
+  font-size: 0.8rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  border: 1px solid var(--primary); 
+  background-color: transparent;
+  color: var(--primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.join-button-sidebar:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Create Group Button for Sidebar */
+.create-group-button-sidebar {
+    display: block; 
+    width: 100%;
+    padding: 0.75rem; 
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: center;
+}
+
+.create-group-button-sidebar:hover {
+    background-color: var(--primary-dark);
+}
+
+/* --- Dark Mode Styles --- */
+body.dark .available-groups-sidebar {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+body.dark .available-groups-sidebar h3 {
+  color: var(--text-light);
+}
+
+body.dark .available-groups-sidebar .loading,
+body.dark .available-groups-sidebar .error {
+  color: var(--gray-300);
+}
+body.dark .available-groups-sidebar .error {
+    color: #ef9a9a;
+}
+
+body.dark .group-list-item-sidebar {
+  border-bottom-color: #334155;
+}
+body.dark .group-list-item-sidebar:hover {
+  background-color: #334155; 
+}
+
+body.dark .group-name-sidebar {
+  color: var(--text-light);
+}
+
+body.dark .join-button-sidebar {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+body.dark .join-button-sidebar:hover {
+  background-color: var(--primary);
+  color: var(--text-light); 
+}
+
+body.dark .create-group-button-sidebar {
+    background-color: var(--primary);
+}
+body.dark .create-group-button-sidebar:hover {
+    background-color: var(--primary-dark);
+}
+
+
+.available-groups-section { display: none; }

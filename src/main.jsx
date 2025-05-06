@@ -9,6 +9,7 @@ import Create from './Pages/posts/Create';
 import Edit from './Pages/posts/Edit';
 import Group from './Pages/groups/Group.jsx';
 import CreateGroup from './Pages/groups/CreateGroup.jsx';
+import AllGroups from './Pages/groups/AllGroups.jsx';
 import Post from './Pages/posts/Post';
 import Profile from './Pages/profile/Profile';
 import ResetPassword from './Pages/auth/ResetPassword';
@@ -16,6 +17,7 @@ import ResetPasswordConfirm from './Pages/auth/ResetPasswordConfirm';
 import SignIn from './Pages/auth/SignIn.jsx';
 import SignUp from './Pages/auth/SignUp';
 import Search from './Pages/search/Search.jsx';
+import Error from './Pages/NotFound.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -27,6 +29,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="edit/:id" element={<Edit />} />
           <Route path="group/:id" element={<Group />} />
           <Route path="create-group" element={<CreateGroup/>} />
+          <Route path="groups" element={<AllGroups/>} />
           <Route path="post/:id" element={<Post />} />
           <Route path="search" element={<Search />} />
           <Route path="profile" element={<Profile />} />
@@ -34,6 +37,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="reset-password-confirm" element={<ResetPasswordConfirm />} />
           <Route path="signin" element={<SignIn />} />
           <Route path="signup" element={<SignUp />} />
+          <Route path="*" element={<Error/>} />
         </Route>
       </Routes>
     </BrowserRouter>
