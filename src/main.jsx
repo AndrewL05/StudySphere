@@ -17,6 +17,7 @@ import ResetPasswordConfirm from './Pages/auth/ResetPasswordConfirm';
 import SignIn from './Pages/auth/SignIn.jsx';
 import SignUp from './Pages/auth/SignUp';
 import Search from './Pages/search/Search.jsx';
+import Bookmarks from './Pages/bookmarks/Bookmarks.jsx';
 import Error from './Pages/NotFound.jsx';
 
 createRoot(document.getElementById('root')).render(
@@ -37,6 +38,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="reset-password-confirm" element={<ResetPasswordConfirm />} />
           <Route path="signin" element={<SignIn />} />
           <Route path="signup" element={<SignUp />} />
+          <Route path="bookmarks" element={<Bookmarks />} />
           <Route path="*" element={<Error/>} />
         </Route>
       </Routes>

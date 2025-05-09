@@ -22,7 +22,6 @@ const Post = () => {
         const { data: { user } } = await supabase.auth.getUser();
         setCurrentUser(user);
 
-        // Fetch post data
         const { data: postData, error: postError } = await supabase
           .from('posts')
           .select('*')
@@ -32,7 +31,6 @@ const Post = () => {
         if (postError) throw postError;
         setPost(postData);
 
-        // Check if user has upvoted this post
         if (user) {
           const { data: voteData } = await supabase
             .from('post_votes')
@@ -44,7 +42,6 @@ const Post = () => {
           setUpvoted(!!voteData);
         }
 
-        // Fetch comments
         const { data: commentsData, error: commentsError } = await supabase
           .from('comments')
           .select('*')
@@ -80,14 +77,12 @@ const Post = () => {
         .single();
 
       if (existingVote) {
-        // Remove upvote
         await supabase
           .from('post_votes')
           .delete()
           .eq('post_id', id)
           .eq('user_id', currentUser.id);
 
-        // Update post upvotes
         await supabase
           .from('posts')
           .update({ upvotes: post.upvotes - 1 })
@@ -96,12 +91,10 @@ const Post = () => {
         setPost({ ...post, upvotes: post.upvotes - 1 });
         setUpvoted(false);
       } else {
-        // Add upvote
         await supabase
           .from('post_votes')
           .insert([{ post_id: id, user_id: currentUser.id, vote_type: 'upvote' }]);
 
-        // Update post upvotes
         await supabase
           .from('posts')
           .update({ upvotes: post.upvotes + 1 })
@@ -140,7 +133,6 @@ const Post = () => {
 
       if (error) throw error;
 
-      // Add the new comment 
       setComments([data[0], ...comments]);
       setNewComment('');
     } catch (err) {
@@ -159,19 +151,16 @@ const Post = () => {
 
     if (window.confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
       try {
-        // Delete all comments
         await supabase
           .from('comments')
           .delete()
           .eq('post_id', id);
 
-        // Delete all votes
         await supabase
           .from('post_votes')
           .delete()
           .eq('post_id', id);
 
-        // Delete the post
         const { error } = await supabase
           .from('posts')
           .delete()
@@ -252,6 +241,7 @@ const Post = () => {
             />
             <button 
               type="submit" 
+              className="submit-comment-btn"
               disabled={!currentUser || !newComment.trim() || commentLoading}
             >
               {commentLoading ? 'Posting...' : 'Post Comment'}

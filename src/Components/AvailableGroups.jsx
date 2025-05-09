@@ -123,7 +123,7 @@ const AvailableGroups = ({
 
             {showCreateButton && (
                 <button onClick={handleCreateGroup} className="create-group-button-sidebar">
-                    Create Study Group
+                    Create Group
                 </button>
             )}
 

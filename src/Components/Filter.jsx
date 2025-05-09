@@ -17,12 +17,12 @@ const Filter = ({ filters = [], activeFilter, onFilterChange }) => {
         }
     };
 
-    // Basic validation or handling if no filters/handler provided
+    /*
     if (displayFilters.length === 0 || !onFilterChange) {
-        // Optionally return null or a placeholder if the component can't function
-        // console.warn("Filter component requires 'filters' array and 'onFilterChange' handler.");
-        // return null;
+        console.warn("Filter component requires 'filters' array and 'onFilterChange' handler.");
+        return null;
     }
+    */
 
     return (
         <div className="filter">

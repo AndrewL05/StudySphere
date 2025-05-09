@@ -6,58 +6,72 @@ const UserName = ({ userId }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true; 
+
     const fetchUserName = async () => {
       if (!userId) {
-        setDisplayName('Anonymous');
-        setLoading(false);
+        if (isMounted) {
+          setDisplayName('Anonymous');
+          setLoading(false);
+        }
         return;
       }
 
+      setLoading(true);
       try {
-        // Try to get from profiles table
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('display_name, full_name')
           .eq('id', userId)
           .single();
-          
-        console.log("Profile query for user:", userId, { profile, profileError });
-          
-        if (!profileError && profile && (profile.display_name || profile.full_name)) {
+
+        if (!isMounted) return; 
+
+        if (profile && (profile.display_name || profile.full_name)) {
           setDisplayName(profile.display_name || profile.full_name);
-          setLoading(false);
-          return;
-        }
-        
-        // If no profile or error, try to get from current user
-        const { data, error } = await supabase.auth.getUser();
-        
-        if (!error && data?.user && data.user.id === userId) {
-          const metadata = data.user.user_metadata;
-          setDisplayName(
-            metadata?.displayName || 
-            metadata?.full_name || 
-            metadata?.name || 
-            data.user.email || 
-            'User-' + userId.substring(0, 6)
-          );
         } else {
-          // For other users, just use a placeholder with their ID
-          setDisplayName(`User-${userId.substring(0, 6)}`);
+          const { data: { user: currentUser } } = await supabase.auth.getUser();
+          if (!isMounted) return;
+
+          if (currentUser && currentUser.id === userId && currentUser.user_metadata) {
+            const metadata = currentUser.user_metadata;
+            const nameFromMeta = metadata.displayName || metadata.name || metadata.full_name;
+            if (nameFromMeta) {
+              setDisplayName(nameFromMeta);
+            } else {
+              setDisplayName(`User-${userId.substring(0, 6)}`);
+            }
+          } else {
+            setDisplayName(`User-${userId.substring(0, 6)}`);
+          }
         }
+        if (profileError && profileError.code !== 'PGRST116') {
+            console.warn(`Error fetching profile for ${userId}:`, profileError.message);
+        }
+
       } catch (error) {
-        console.error('Error fetching user name:', error);
-        setDisplayName(`User-${userId ? userId.substring(0, 6) : 'Anonymous'}`);
+        if (isMounted) {
+          console.error('Error fetching user name:', error);
+          setDisplayName(`User-${userId.substring(0, 6)}`); 
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchUserName();
-  }, [userId]);
 
-  if (loading) return <span>...</span>;
-  
+    return () => {
+      isMounted = false; 
+    };
+  }, [userId]); 
+
+  if (loading) {
+    return <span className="user-name-loading">...</span>;
+  }
+
   return <span className="user-name">{displayName}</span>;
 };
 

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router'; 
+import { Link, useNavigate, useLocation } from 'react-router';
 import '../App.css';
 import supabase from '../Services/supabaseClient';
-import { useTheme } from '../Context/ThemeContext'; 
+import { useTheme } from '../Context/ThemeContext';
 
 const SunIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="theme-icon">
@@ -31,7 +31,6 @@ const Navbar = () => {
 
   const { isDarkMode, toggleDarkMode } = useTheme();
  
-  // Check user login status
   useEffect(() => {
     const checkUser = async () => {
       try {
@@ -45,7 +44,6 @@ const Navbar = () => {
     };
     checkUser();
 
-    // Listen for auth changes
      const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
          if (event === 'SIGNED_OUT') {
@@ -138,6 +136,7 @@ const Navbar = () => {
             </button>
             {showProfileMenu && (
               <div className="dropdown-menu">
+                <Link to="/bookmarks">Bookmarks</Link>
                 <Link to="/profile" onClick={() => setShowProfileMenu(false)}>Settings</Link>
                 <button onClick={async () => {
                   setShowProfileMenu(false);

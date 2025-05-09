@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'; 
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import supabase from '../../Services/supabaseClient';
 import PostCard from '../../Components/PostCard';
@@ -9,139 +9,114 @@ import './Home.css';
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
-  const [currentFilter, setCurrentFilter] = useState('recent'); 
+  const [currentFilter, setCurrentFilter] = useState('recent');
   const [userId, setUserId] = useState(null);
-  const [fetchError, setFetchError] = useState(null); 
+  const [fetchError, setFetchError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const getCurrentUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUserId(session?.user?.id || null);
+    const session = supabase.auth.getSession();
+    setUserId(session?.user?.id ?? null);
 
-      // Fetch user again to be sure, especially on initial load
-      const { data: { user } } = await supabase.auth.getUser();
-      setUserId(user?.id || null);
-    };
-
-    getCurrentUser(); // Call on initial mount
-
-    // Listen for auth state changes (login/logout)
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        setUserId(session?.user?.id || null);
-        // Optionally refetch posts if filter is 'bookmarked' when user logs in/out
-        // setCurrentFilter('recent'); // Or reset filter on auth change
+        const currentUser = session?.user;
+        setUserId(currentUser?.id ?? null);
+        if (!currentUser && currentFilter === 'bookmarked') {
+           setCurrentFilter('recent');
+        }
       }
     );
 
-    // Cleanup listener on component unmount
     return () => {
       authListener?.subscription?.unsubscribe();
     };
-  }, []); // Run only once on mount
+  }, []);
 
-  // Fetch posts logic wrapped in useCallback to stabilize the function reference
   const fetchPosts = useCallback(async (filter) => {
     setLoadingPosts(true);
-    setFetchError(null); // Clear previous errors
-    console.log(`Fetching posts with filter: ${filter}, User ID: ${userId}`); // Debug log
+    setFetchError(null);
+    console.log(`Fetching posts with filter: ${filter}, User ID: ${userId}`);
 
     try {
-      // Base query - fetch comment count using relationship
-      // Ensure 'comments' relationship is defined in Supabase
-      let query = supabase
-        .from('posts')
-        .select('*, comments(count)'); // Fetch all post columns and count of related comments
+      let query; 
 
-      switch(filter) {
-        case 'recent':
-          query = query.order('created_at', { ascending: false });
-          break;
-        case 'popular':
-          query = query.order('upvotes', { ascending: false })
-                       .order('created_at', { ascending: false }); // Secondary sort
-          break;
-        case 'oldest':
-          query = query.order('created_at', { ascending: true });
-          break;
-        case 'bookmarked':
-          if (!userId) {
-            console.log("User must be logged in to see bookmarks.");
-            setPosts([]); // Clear posts
-            setFetchError("Please log in to view your bookmarked posts."); // Set error message
-            setLoadingPosts(false); // Stop loading
-            return; // Exit function early
-          }
-          // 1. Get bookmarked post IDs for the current user
-          const { data: bookmarks, error: bookmarkError } = await supabase
-            .from('bookmarked_posts')
-            .select('post_id')
-            .eq('user_id', userId);
+      if (filter === 'bookmarked') {
+        if (!userId) {
+          setPosts([]);
+          setFetchError("Please log in to view your bookmarked posts.");
+          setLoadingPosts(false);
+          return;
+        }
 
-          if (bookmarkError) {
-            console.error('Error fetching bookmarks:', bookmarkError);
-            throw new Error("Could not fetch your bookmarks.");
-          }
+        const { data: bookmarks, error: bookmarkError } = await supabase
+          .from('bookmarked_posts')
+          .select('post_id')
+          .eq('user_id', userId);
 
-          if (!bookmarks || bookmarks.length === 0) {
-            setPosts([]); // No bookmarks found
-          } else {
-            // 2. Fetch posts whose IDs are in the bookmarked list
-            const postIds = bookmarks.map(b => b.post_id);
-            // Re-initialize query for bookmarks, including comment count
-            query = supabase
-              .from('posts')
-              .select('*, comments(count)')
-              .in('id', postIds)
-              .order('created_at', { ascending: false }); // Order bookmarks by date
-          }
-          break;
-        // Add 'trending' case here if needed later
-        default:
-          // Default to 'recent' if filter is unknown
-          query = query.order('created_at', { ascending: false });
+        if (bookmarkError) throw bookmarkError;
+
+        if (!bookmarks || bookmarks.length === 0) {
+          setPosts([]); 
+        } else {
+          const postIds = bookmarks.map(b => b.post_id);
+          query = supabase
+            .from('posts')
+            .select('*, comments(count)') 
+            .in('id', postIds)
+            .order('created_at', { ascending: false }); 
+        }
+      } else {
+        query = supabase
+          .from('posts')
+          .select('*, comments(count)'); 
+
+        switch(filter) {
+          case 'recent':
+            query = query.order('created_at', { ascending: false });
+            break;
+          case 'popular':
+            query = query.order('upvotes', { ascending: false })
+                         .order('created_at', { ascending: false });
+            break;
+          case 'oldest':
+            query = query.order('created_at', { ascending: true });
+            break;
+          default:
+            query = query.order('created_at', { ascending: false });
+        }
       }
 
-      // Only execute the query if it wasn't handled entirely within the switch (like bookmark error)
-      if (filter !== 'bookmarked' || userId) { // Avoid re-querying if bookmark check failed/returned early
+      if (query) {
           const { data, error } = await query;
-
-          if (error) {
-            console.error('Error fetching posts:', error);
-            throw error; // Throw error to be caught by the catch block
-          }
-
-          console.log("Fetched posts data:", data); // Debug log
+          if (error) throw error;
           setPosts(data || []);
+      } else if (filter === 'bookmarked' && userId) {
+          setPosts([]);
       }
+
 
     } catch (err) {
-      console.error('Unexpected error fetching posts:', err);
-      setPosts([]); // Clear posts on error
-      // Set a generic error message or use err.message
+      console.error('Error fetching posts:', err);
+      setPosts([]);
       setFetchError(err.message || "Failed to load posts. Please try again.");
     } finally {
-      setLoadingPosts(false); // Ensure loading is set to false
+      setLoadingPosts(false);
     }
-  }, [userId]); // Include userId as a dependency for useCallback
+  }, [userId]); 
 
-  // Effect to fetch posts when the filter or userId changes
   useEffect(() => {
     fetchPosts(currentFilter);
-  }, [currentFilter, fetchPosts]); // fetchPosts is now stable due to useCallback
+  }, [currentFilter, fetchPosts]);
 
-  // Handler for changing the filter
   const handleFilterChange = (filterId) => {
     setCurrentFilter(filterId);
   };
 
-  // Handler for clicking on a post
   const handlePostClick = (postId) => {
     navigate(`/post/${postId}`);
   };
 
-  // Utility function to format time (remains the same)
   const formatTimeAgo = (dateString) => {
     if (!dateString) return 'unknown time';
     const now = new Date();
@@ -159,14 +134,11 @@ const Home = () => {
   return (
     <div className="home-page">
         <div className="feed-header">
-             {/* Update Filter component props to include 'Bookmarked' */}
              <Filter
                  filters={[
                      { id: 'popular', label: 'Popular' },
                      { id: 'recent', label: 'Recent' },
                      { id: 'oldest', label: 'Oldest' },
-                     // Add Bookmarked option - only show if user is logged in?
-                     // Or handle the logged-out state within fetchPosts as done above
                      { id: 'bookmarked', label: 'Bookmarked' }
                  ]}
                  activeFilter={currentFilter}
@@ -178,8 +150,8 @@ const Home = () => {
              <div className="feed-column">
                  {loadingPosts ? (
                     <div className="loading">Loading posts...</div>
-                 ) : fetchError ? ( // Display fetch error message
-                    <p className="error-message">{fetchError}</p> // Use a suitable class for styling errors
+                 ) : fetchError ? (
+                    <p className="error-message">{fetchError}</p>
                  ) : posts.length === 0 ? (
                    <p className="no-posts">
                      {currentFilter === 'bookmarked'
@@ -188,27 +160,24 @@ const Home = () => {
                    </p>
                  ) : (
                    posts.map((post) => (
-                     <div key={post.id} onClick={() => handlePostClick(post.id)} style={{ cursor: 'pointer' }}>
-                       <PostCard
-                         id={post.id}
-                         title={post.title}
-                         content={post.content || ''}
-                         image={post.image_url}
-                         authorId={post.user_id}
-                         time={formatTimeAgo(post.created_at)}
-                         upvotesNum={post.upvotes || 0}
-                         // Pass the comment count fetched from the 'comments' relationship
-                         // Ensure the relationship is named 'comments' in Supabase or adjust here
-                         commentCount={post.comments?.[0]?.count ?? 0} // Access count safely
-                         userId={userId} // Pass current user ID for upvote logic in PostCard
-                       />
-                     </div>
+                     <PostCard
+                       key={post.id}
+                       id={post.id}
+                       title={post.title}
+                       content={post.content || ''}
+                       image={post.image_url}
+                       authorId={post.user_id}
+                       time={formatTimeAgo(post.created_at)}
+                       upvotesNum={post.upvotes || 0}
+                       commentCount={post.comments?.[0]?.count ?? 0}
+                       userId={userId} 
+                     />
                    ))
                  )}
              </div>
 
              <div className="sidebar-column">
-                  <AvailableGroups title="Popular Study Groups" showCreateButton={true} showViewAllButton={true} />
+                  <AvailableGroups title="Popular Groups" showCreateButton={true} showViewAllButton={true} />
              </div>
         </div>
     </div>

@@ -49,6 +49,9 @@ const SignIn = () => {
     return (
         <div className="auth-page">
             <div className="auth-container">
+                <Link to="/" className="back-to-home-link-corner">
+                    &larr; Home 
+                </Link>
                 <div className="auth-logo">
                     <h2>StudySphere</h2>
                     <p>Your academic community</p>

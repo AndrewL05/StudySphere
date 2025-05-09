@@ -102,7 +102,7 @@ const AllGroups = () => {
     return (
         <div className="all-groups-page">
             <div className="all-groups-header">
-                <h2>All Study Groups</h2>
+                <h2>All Groups</h2>
                 <button onClick={() => navigate('/create-group')} className="create-group-link-button">
                     Create New Group
                 </button>
