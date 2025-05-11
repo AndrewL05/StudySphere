@@ -21,11 +21,9 @@ const AvailableGroups = ({
             setLoading(true);
             setError(null);
             try {
-                // Get current user
                 const { data: { user } } = await supabase.auth.getUser();
                 setCurrentUser(user);
 
-                // Fetch groups
                 const { data: groupData, error: fetchError } = await supabase
                     .from('study_groups')
                     .select('id, name')

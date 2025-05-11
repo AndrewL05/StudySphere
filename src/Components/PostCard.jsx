@@ -96,7 +96,6 @@ const PostCard = ({
 
           if (!isMounted) return;
 
-          // Handle vote status
           if (voteResult.error) {
             console.error(`PostCard (id: ${id}): Error checking vote status:`, voteResult.error);
             // setUpvoted(false); 
@@ -104,7 +103,6 @@ const PostCard = ({
             setUpvoted(voteResult.count > 0);
           }
 
-          // Handle bookmark status
           if (bookmarkResult.error) {
             console.error(`PostCard (id: ${id}): Error checking bookmark status:`, bookmarkResult.error);
             // setIsBookmarked(false); 
@@ -112,7 +110,7 @@ const PostCard = ({
             setIsBookmarked(bookmarkResult.count > 0);
           }
         } else {
-          // No user logged in, states remain false
+          
         }
 
       } catch (err) {

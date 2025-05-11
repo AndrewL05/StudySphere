@@ -10,6 +10,7 @@ import Edit from './Pages/posts/Edit';
 import Group from './Pages/groups/Group.jsx';
 import CreateGroup from './Pages/groups/CreateGroup.jsx';
 import AllGroups from './Pages/groups/AllGroups.jsx';
+import GroupSettings from './Pages/groups/GroupSettings';
 import Post from './Pages/posts/Post';
 import Profile from './Pages/profile/Profile';
 import ResetPassword from './Pages/auth/ResetPassword';
@@ -31,6 +32,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="group/:id" element={<Group />} />
           <Route path="create-group" element={<CreateGroup/>} />
           <Route path="groups" element={<AllGroups/>} />
+          <Route path="group/:id/settings" element={<GroupSettings />} />
           <Route path="post/:id" element={<Post />} />
           <Route path="search" element={<Search />} />
           <Route path="profile" element={<Profile />} />

@@ -24,7 +24,6 @@ const Edit = () => {
         if (userError) throw userError;
         setCurrentUser(user);
 
-        // Fetch post data
         const { data: post, error: postError } = await supabase
           .from('posts')
           .select('*')
@@ -33,7 +32,6 @@ const Edit = () => {
 
         if (postError) throw postError;
 
-        // Check if user is the author
         if (user.id !== post.user_id) {
           setError("You don't have permission to edit this post");
           return;

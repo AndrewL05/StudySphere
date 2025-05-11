@@ -26,7 +26,6 @@ const ResetPasswordConfirm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Validate passwords
         if (password !== confirmPassword) {
             setError('Passwords do not match');
             return;

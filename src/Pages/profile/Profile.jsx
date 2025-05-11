@@ -106,16 +106,14 @@ const Profile = () => {
        await supabase.from('post_votes').delete().eq('user_id', user.id);
        await supabase.from('posts').delete().eq('user_id', user.id);
        await supabase.from('profiles').delete().eq('id', user.id);
-       // Check admin rights configured in Supabase for this:
-       // const { error } = await supabase.auth.admin.deleteUser(user.id);
-       // if (error) throw error;
-       // alert("Account deletion requires admin privileges. Cannot complete action."); // Placeholder if admin delete isn't set up
+       // implement supabase edge function for delete account
+
        await supabase.auth.signOut();
        alert("Your account data (posts, comments, votes, profile) has been deleted. Sign out complete."); 
        navigate('/');
      } catch (err) { 
       console.error("Error deleting account:", err); 
-      setError("Failed to delete account. Please try again or contact support."); 
+      setError("Failed to delete account. Please try again later."); 
     }
   };
 
@@ -196,8 +194,18 @@ const Profile = () => {
           <div className="posts-list">
             {posts.map(post => (
               <div key={post.id} className="profile-post-item">
-                <div className="post-info"><h4>{post.title}</h4><p className="post-date">Posted on {formatDate(post.created_at)}</p><p className="post-stats">Upvotes: {post.upvotes || 0}</p></div>
-                <div className="post-management"><Link to={`/post/${post.id}`} className="view-post-btn">View</Link><Link to={`/edit/${post.id}`} className="edit-post-btn">Edit</Link><button onClick={() => handleDeletePost(post.id)} className="delete-post-btn">Delete</button></div>
+                <div className="post-info">
+                  <h4>{post.title}</h4>
+                  <p className="post-date">Posted on {formatDate(post.created_at)}</p>
+                  <p className="post-stats">Upvotes: {post.upvotes || 0}</p>
+                </div>
+
+                <div className="post-management">
+                  <Link to={`/post/${post.id}`} className="view-post-btn">View</Link>
+                  <Link to={`/edit/${post.id}`} className="edit-post-btn">Edit</Link>
+                  <button onClick={() => handleDeletePost(post.id)} className="delete-post-btn">Delete</button>
+                </div>
+                
               </div> ))}
           </div> )}
       </div>
@@ -205,8 +213,19 @@ const Profile = () => {
       {deleteModalOpen && (
         <div className="delete-account-modal">
           <div className="modal-content">
-             <h3>Delete Account</h3><p>Are you sure you want to delete your account? This action cannot be undone and will:</p><ul><li>Delete all your posts and comments</li><li>Remove all your upvotes</li><li>Delete your profile information</li><li>Permanently delete your account</li></ul>
-             <div className="modal-actions"><button onClick={() => setDeleteModalOpen(false)} className="cancel-btn">Cancel</button><button onClick={handleDeleteAccount} className="confirm-delete-btn">Yes, Delete My Account</button></div>
+             <h3>Delete Account</h3>
+             <p>Are you sure you want to delete your account? This action cannot be undone and will:</p>
+             <ul>
+              <li>Delete all your posts and comments</li>
+              <li>Remove all your upvotes</li>
+              <li>Delete your profile information</li>
+              <li>Permanently delete your account</li>
+             </ul>
+
+             <div className="modal-actions">
+              <button onClick={() => setDeleteModalOpen(false)} className="cancel-btn">Cancel</button>
+              <button onClick={handleDeleteAccount} className="confirm-delete-btn">Yes, Delete My Account</button>
+             </div>
           </div>
         </div>
       )}
