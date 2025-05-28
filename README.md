@@ -2,8 +2,6 @@
 
 **StudySphere** is a full-stack learning hub designed to help students and educators create, explore, and share summarized study notes and quizzes by topic. It includes interactive features like real-time group chats, AI-powered assistance, and content organization through topic-based spaces.
 
-🔗 **Live Site:** [andrewl-studysphere.netlify.app](https://andrewl-studysphere.netlify.app/)
-
 ---
 
 ## 🚀 Features
