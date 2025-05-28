@@ -36,7 +36,7 @@ const Home = () => {
   const fetchPosts = useCallback(async (filter) => {
     setLoadingPosts(true);
     setFetchError(null);
-    console.log(`Fetching posts with filter: ${filter}, User ID: ${userId}`);
+    console.log(`Fetching posts with filter: ${filter}`);
 
     try {
       let query; 
