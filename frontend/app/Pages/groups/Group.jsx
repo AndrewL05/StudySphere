@@ -1,27 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate, Link } from 'react-router'; 
+import { useParams, useNavigate, Link } from 'react-router';
 import supabase from '../../Services/supabaseClient';
-import UserName from '../../Components/Username';
-import PostCard from '../../Components/PostCard';
+import GroupHeaderDisplay from '../../Components/GroupHeaderDisplay';
+import MemberList from '../../Components/MemberList';
+import GroupPostsList from '../../Components/GroupPostsList';
+import GroupChat from '../../Components/GroupChat';
 import './Groups.css';
 
-const MemberItem = ({ member }) => {
-    const displayName = member?.profiles?.display_name || member?.profiles?.full_name || `User-${member.user_id.substring(0, 6)}`;
-    const avatarUrl = member?.profiles?.avatar_url;
-
-    return (
-        <li key={member.user_id} className="member-item">
-            {avatarUrl ? (
-                <img src={avatarUrl} alt={displayName} className="member-avatar" />
-            ) : (
-                <span className="member-avatar-placeholder">{displayName.charAt(0).toUpperCase()}</span>
-            )}
-            <span className="member-name">{displayName}</span>
-            {member.role === 'creator' && <span className="member-role">(Creator)</span>}
-            {member.role === 'admin' && member.role !== 'creator' && <span className="member-role">(Admin)</span>}
-        </li>
-    );
-};
+const ChatBubbleIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+);
 
 const Group = () => {
     const { id: groupId } = useParams();
@@ -33,21 +23,22 @@ const Group = () => {
     const [currentUser, setCurrentUser] = useState(null);
     const [isMember, setIsMember] = useState(false);
     const [isCreator, setIsCreator] = useState(false);
-    const [currentUserRole, setCurrentUserRole] = useState(null); 
+    const [currentUserRole, setCurrentUserRole] = useState(null);
     const [actionLoading, setActionLoading] = useState(false);
     const navigate = useNavigate();
+
+    const [isChatVisible, setIsChatVisible] = useState(false);
 
     const fetchGroupData = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
-            const { data: { user }, error: userError } = await supabase.auth.getUser();
-            if (userError) console.error("Error fetching user:", userError);
+            const { data: { user } } = await supabase.auth.getUser();
             setCurrentUser(user);
 
             const { data: groupData, error: groupError } = await supabase
                 .from('study_groups')
-                .select('*')
+                .select('*, group_members(count)')
                 .eq('id', groupId)
                 .single();
 
@@ -55,19 +46,19 @@ const Group = () => {
                 if (groupError.code === 'PGRST116') throw new Error("Group not found");
                 throw groupError;
             }
-            setGroup(groupData);
-            setIsCreator(user && groupData && user.id === groupData.creator_id);
+            const actualGroupData = {
+                ...groupData,
+                member_count: groupData.group_members?.[0]?.count ?? 0
+            };
+            setGroup(actualGroupData);
+            setIsCreator(user && actualGroupData && user.id === actualGroupData.creator_id);
 
             const { data: memberData, error: membersError } = await supabase
                 .from('group_members')
                 .select(`
                     user_id,
                     role,
-                    profiles (
-                        display_name,
-                        full_name,
-                        avatar_url
-                    )
+                    profiles ( display_name, full_name, avatar_url )
                 `)
                 .eq('group_id', groupId);
 
@@ -83,25 +74,17 @@ const Group = () => {
                 setCurrentUserRole(null);
             }
 
-            const { data: postTags, error: tagsError } = await supabase
-                .from('post_group_tags')
-                .select('post_id')
-                .eq('group_id', groupId);
+            const { data: postsData, error: postsError } = await supabase
+                .from('posts')
+                .select('*, comments(count)')
+                .eq('source_group_id', groupId)
+                .order('created_at', { ascending: false });
 
-            if (tagsError) {
-                console.warn("Could not fetch post tags for group:", tagsError.message); 
-                setPosts([]); 
-            } else if (postTags && postTags.length > 0) {
-                const postIds = postTags.map(tag => tag.post_id);
-                const { data: postsData, error: postsError } = await supabase
-                    .from('posts')
-                    .select('*, comments(count)') 
-                    .in('id', postIds)
-                    .order('created_at', { ascending: false });
-                if (postsError) throw postsError;
-                setPosts(postsData || []);
+            if (postsError) {
+                 console.error("Error fetching posts for group:", postsError);
+                 setPosts([]);
             } else {
-                setPosts([]);
+                setPosts(postsData || []);
             }
 
         } catch (err) {
@@ -113,11 +96,11 @@ const Group = () => {
         } finally {
             setLoading(false);
         }
-    }, [groupId]); 
+    }, [groupId, navigate]);
 
     useEffect(() => {
         fetchGroupData();
-    }, [fetchGroupData]); 
+    }, [fetchGroupData]);
 
     const handleJoinGroup = async () => {
         if (!currentUser) {
@@ -136,13 +119,13 @@ const Group = () => {
                     role: 'member'
                 });
             if (insertError) {
-                if (insertError.code === '23505') { 
+                if (insertError.code === '23505') {
                     console.warn("User already a member (insert failed). Refreshing data.");
                 } else {
                     throw insertError;
                 }
             }
-            await fetchGroupData(); 
+            await fetchGroupData();
         } catch (err) {
             console.error("Error joining group:", err);
             setError("Failed to join group. Please try again.");
@@ -170,13 +153,21 @@ const Group = () => {
                 .eq('user_id', currentUser.id);
 
             if (deleteError) throw deleteError;
-            await fetchGroupData(); 
+            await fetchGroupData();
         } catch (err) {
             console.error("Error leaving group:", err);
             setError("Failed to leave group. Please try again.");
         } finally {
             setActionLoading(false);
         }
+    };
+
+    const handleNavigateToCreatePost = () => {
+        navigate('/create', { state: { groupId: groupId, groupName: group?.name } });
+    };
+
+    const handleNavigateToSettings = () => {
+        navigate(`/group/${groupId}/settings`);
     };
 
     const formatTimeAgo = (dateString) => {
@@ -198,114 +189,71 @@ const Group = () => {
         return `${Math.floor(days / 365)} years ago`;
     };
 
-    if (loading) return <div className="Group-page loading">Loading group...</div>;
-    if (error && !group) return <div className="Group-page error">{error} <Link to="/groups">Back to All Groups</Link></div>; 
-    if (!group) return <div className="Group-page not-found">Group not found. <Link to="/groups">Back to All Groups</Link></div>;
+    const toggleChatVisibility = () => {
+        setIsChatVisible(prev => !prev);
+    };
 
+    if (loading) return <div className="Group-page-container loading">Loading group...</div>; 
+    if (error && !group) return <div className="Group-page-container error">{error} <Link to="/groups">Back to All Groups</Link></div>;
+    if (!group) return <div className="Group-page-container not-found">Group not found. <Link to="/groups">Back to All Groups</Link></div>;
 
     return (
-        <div className="Group-page">
-            {error && <div className="error-message action-error" style={{marginBottom: '1rem'}}>{error}</div>} 
-
-            <div className="group-header">
-                <div className="group-info">
-                    <h2 className="group-title">{group.name}</h2>
-                    <p className="group-description">{group.description || "No description provided."}</p>
-                    <div className="group-meta">
-                        <span>Created by: <UserName userId={group.creator_id} /></span>
-                        <span>Members: {members.length}</span>
-                        <span>Created: {new Date(group.created_at).toLocaleDateString()}</span>
-                         {group.topics && group.topics.length > 0 && (
-                            <span>Topics: {group.topics.join(', ')}</span>
-                         )}
+        <div className="Group-page-container">
+            <div className="Group-page-content">
+                {error && !actionLoading && <div className="error-message action-error" style={{ marginBottom: '1rem' }}>{error}</div>}
+                <GroupHeaderDisplay
+                    group={group}
+                    currentUser={currentUser}
+                    isMember={isMember}
+                    isCreator={isCreator}
+                    currentUserRole={currentUserRole}
+                    actionLoading={actionLoading}
+                    onJoinGroup={handleJoinGroup}
+                    onLeaveGroup={handleLeaveGroup}
+                    onNavigateToSettings={handleNavigateToSettings}
+                    onNavigateToCreatePost={handleNavigateToCreatePost}
+                />
+                <div className="group-content">
+                    <div className="group-main">
+                        <GroupPostsList
+                            posts={posts}
+                            currentUser={currentUser}
+                            isMember={isMember}
+                            formatTimeAgo={formatTimeAgo}
+                        />
                     </div>
-                </div>
-                <div className="group-actions">
-                    {currentUser && (
-                        isMember ? (
-                            <button
-                                onClick={handleLeaveGroup}
-                                className="leave-group-btn"
-                                disabled={actionLoading || isCreator}
-                                title={isCreator ? "Creators must manage group via settings" : "Leave this group"}
-                            >
-                                {actionLoading ? 'Leaving...' : 'Leave Group'}
-                            </button>
-                        ) : (
-                            <button
-                                onClick={handleJoinGroup}
-                                className="join-group-btn"
-                                disabled={actionLoading}
-                            >
-                                {actionLoading ? 'Joining...' : 'Join Group'}
-                            </button>
-                        )
-                    )}
-                    {!currentUser && (
-                        <button onClick={() => navigate('/signin')} className="join-group-btn">
-                            Sign in to Join
-                        </button>
-                    )}
-                    {(isCreator || currentUserRole === 'admin') && (
-                        <Link to={`/group/${groupId}/settings`} className="settings-group-btn">
-                            Settings
-                        </Link>
-                    )}
-                </div>
-            </div>
-
-            <div className="group-content">
-                <div className="group-main">
-                    <h3>Posts in this Group</h3>
-                    {posts.length === 0 ? (
-                        <p className="no-posts-in-group">
-                            No posts have been tagged to this group yet.
-                            {isMember && " Why not create one?"}
-                        </p>
-                    ) : (
-                        <div className="posts-list" style={{display: 'flex', flexDirection: 'column', gap: '1.5rem'}}>
-                            {posts.map((post) => (
-                                <PostCard
-                                    key={post.id}
-                                    id={post.id}
-                                    title={post.title}
-                                    content={post.content || ''}
-                                    image={post.image_url}
-                                    authorId={post.user_id}
-                                    time={formatTimeAgo(post.created_at)}
-                                    upvotesNum={post.upvotes || 0}
-                                    commentCount={post.comments?.[0]?.count ?? 0}
-                                    userId={currentUser?.id}
-                                />
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                <div className="group-sidebar">
-                    <div className="group-members">
-                        <h3>Members ({members.length})</h3>
-                        {members.length > 0 ? (
-                            <ul className="member-list">
-                                {members.map(member => (
-                                    <MemberItem key={member.user_id} member={member} />
-                                ))}
-                            </ul>
-                        ) : (
-                            <p>No members yet.</p>
+                    <div className="group-sidebar">
+                        <MemberList members={members} />
+                        {group.rules && group.rules.length > 0 && (
+                            <div className="group-rules">
+                                <h3>Group Rules</h3>
+                                <ul className="rules-list">
+                                    {group.rules.map((rule, index) => <li key={index}>{rule}</li>)}
+                                </ul>
+                            </div>
                         )}
                     </div>
-                    {/* add more sections to the sidebar later */}
-                    {group.rules && group.rules.length > 0 && (
-                        <div className="group-rules">
-                            <h3>Group Rules</h3>
-                            <ul className="rules-list">
-                                {group.rules.map((rule, index) => <li key={index}>{rule}</li>)}
-                            </ul>
-                        </div>
-                    )}
                 </div>
             </div>
+
+            {isMember && isChatVisible && (
+                <GroupChat
+                    groupId={groupId}
+                    currentUser={currentUser}
+                    groupName={group?.name || "Group Chat"}
+                    onClose={toggleChatVisibility} 
+                />
+            )}
+
+            {isMember && !isChatVisible && (
+                <button
+                    onClick={toggleChatVisibility}
+                    className="chat-toggle-fab"
+                    title="Open Chat"
+                >
+                    <ChatBubbleIcon />
+                </button>
+            )}
         </div>
     );
 };

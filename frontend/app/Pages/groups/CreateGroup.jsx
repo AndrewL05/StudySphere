@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import supabase from '../../Services/supabaseClient';
-import './Groups.css'; 
-import '../auth/Auth.css'; 
+import './Groups.css';
+import '../auth/Auth.css';
+
+const availableTopicsList = [
+    'Math', 'Science', 'History', 'Programming', 'Physics', 'Calculus',
+    'Biology', 'Chemistry', 'Literature', 'Art', 'Music', 'Economics',
+    'Philosophy', 'Languages', 'Engineering', 'Business', 'Medicine', 'Law'
+];
 
 const CreateGroup = () => {
   const [groupName, setGroupName] = useState('');
   const [description, setDescription] = useState('');
-  const [topicsInput, setTopicsInput] = useState(''); 
+  const [selectedTopics, setSelectedTopics] = useState([]); 
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -33,13 +39,12 @@ const CreateGroup = () => {
     fetchUser();
   }, [navigate]);
 
-  const processTopics = (inputString) => {
-    if (!inputString || !inputString.trim()) {
-      return [];
-    }
-    return inputString.split(',')
-                      .map(topic => topic.trim())
-                      .filter(topic => topic.length > 0);
+  const handleTopicChange = (topic) => {
+    setSelectedTopics(prevTopics =>
+      prevTopics.includes(topic)
+        ? prevTopics.filter(t => t !== topic)
+        : [...prevTopics, topic]
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -51,7 +56,6 @@ const CreateGroup = () => {
     if (!currentUser) { setError("You must be logged in to create a group."); return; }
 
     setIsLoading(true);
-    const topicsArray = processTopics(topicsInput); 
 
     try {
       const { data: groupData, error: groupError } = await supabase
@@ -61,7 +65,7 @@ const CreateGroup = () => {
             name: groupName.trim(),
             description: description.trim() || null,
             creator_id: currentUser.id,
-            topics: topicsArray, 
+            topics: selectedTopics, 
           },
         ])
         .select()
@@ -71,7 +75,7 @@ const CreateGroup = () => {
       if (!groupData || !groupData.id) throw new Error("Failed to create group or retrieve its ID.");
 
       const newGroupId = groupData.id;
-      console.log('Group created successfully with ID:', newGroupId, 'Topics:', topicsArray);
+      console.log('Group created successfully with ID:', newGroupId, 'Topics:', selectedTopics);
 
        const { error: memberError } = await supabase
             .from('group_members')
@@ -88,7 +92,7 @@ const CreateGroup = () => {
       setSuccess(true);
       setGroupName('');
       setDescription('');
-      setTopicsInput(''); // Clear topics input
+      setSelectedTopics([]); 
 
       setTimeout(() => { navigate(`/group/${newGroupId}`); }, 1500);
 
@@ -135,17 +139,23 @@ const CreateGroup = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="topics">Topics (Optional, comma-separated)</label>
-          <input
-            type="text"
-            id="topics"
-            value={topicsInput}
-            onChange={(e) => setTopicsInput(e.target.value)}
-            placeholder="e.g., Math, Calculus, Physics"
-            disabled={isLoading}
-            className="topics-input"
-          />
-           <small className="topics-input-hint">Separate topics with a comma (,)</small>
+          <label>Topics (Optional)</label>
+          <div className="topics-checkbox-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', maxHeight: '150px', overflowY: 'auto', border: '1px solid var(--border-color-light)', padding: '10px', borderRadius: 'var(--radius-md)' }}>
+            {availableTopicsList.map(topic => (
+              <label key={topic} className="topic-checkbox-label" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
+                <input
+                  type="checkbox"
+                  value={topic}
+                  checked={selectedTopics.includes(topic)}
+                  onChange={() => handleTopicChange(topic)}
+                  disabled={isLoading}
+                  style={{ marginRight: '5px' }}
+                />
+                {topic}
+              </label>
+            ))}
+          </div>
+          <small className="topics-input-hint">Select one or more relevant topics for your group.</small>
         </div>
 
         <button type="submit" className="auth-button" disabled={isLoading}>

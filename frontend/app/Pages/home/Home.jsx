@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router'; 
 import supabase from '../../Services/supabaseClient';
 import PostCard from '../../Components/PostCard';
 import Filter from '../../Components/Filter';
@@ -15,8 +15,14 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const session = supabase.auth.getSession();
-    setUserId(session?.user?.id ?? null);
+    const getInitialUser = async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        setUserId(session?.user?.id ?? null);
+        if (!session?.user && currentFilter === 'bookmarked') {
+            setCurrentFilter('recent');
+        }
+    };
+    getInitialUser();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
@@ -31,15 +37,15 @@ const Home = () => {
     return () => {
       authListener?.subscription?.unsubscribe();
     };
-  }, []);
+  }, [currentFilter]); 
 
   const fetchPosts = useCallback(async (filter) => {
     setLoadingPosts(true);
     setFetchError(null);
-    console.log(`Fetching posts with filter: ${filter}`);
+    // console.log(`Fetching posts with filter: ${filter}`);
 
     try {
-      let query; 
+      let query;
 
       if (filter === 'bookmarked') {
         if (!userId) {
@@ -57,19 +63,20 @@ const Home = () => {
         if (bookmarkError) throw bookmarkError;
 
         if (!bookmarks || bookmarks.length === 0) {
-          setPosts([]); 
+          setPosts([]);
         } else {
           const postIds = bookmarks.map(b => b.post_id);
           query = supabase
             .from('posts')
-            .select('*, comments(count)') 
+            .select('*, comments(count)')
             .in('id', postIds)
-            .order('created_at', { ascending: false }); 
+            .order('created_at', { ascending: false });
         }
       } else {
         query = supabase
           .from('posts')
-          .select('*, comments(count)'); 
+          .select('*, comments(count)')
+          .is('source_group_id', null); 
 
         switch(filter) {
           case 'recent':
@@ -91,7 +98,7 @@ const Home = () => {
           const { data, error } = await query;
           if (error) throw error;
           setPosts(data || []);
-      } else if (filter === 'bookmarked' && userId) {
+      } else if (filter === 'bookmarked' && userId && posts.length === 0) { 
           setPosts([]);
       }
 
@@ -103,7 +110,7 @@ const Home = () => {
     } finally {
       setLoadingPosts(false);
     }
-  }, [userId]); 
+  }, [userId, posts.length]); 
 
   useEffect(() => {
     fetchPosts(currentFilter);
@@ -154,7 +161,9 @@ const Home = () => {
                     <p className="error-message">{fetchError}</p>
                  ) : posts.length === 0 ? (
                    <p className="no-posts">
-                     {currentFilter === 'bookmarked'
+                     {currentFilter === 'bookmarked' && !userId
+                       ? "Please log in to view your bookmarked posts."
+                       : currentFilter === 'bookmarked'
                        ? "You haven't bookmarked any posts yet."
                        : "No posts found for this filter."}
                    </p>
@@ -170,7 +179,7 @@ const Home = () => {
                        time={formatTimeAgo(post.created_at)}
                        upvotesNum={post.upvotes || 0}
                        commentCount={post.comments?.[0]?.count ?? 0}
-                       userId={userId} 
+                       userId={userId}
                      />
                    ))
                  )}
