@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import supabase from '../Services/supabaseClient';
-import UserName from './UserName';
+import UserName from './Username';
 
 const DefaultAvatar = ({ name = 'U', size = 32 }) => (
     <div style={{

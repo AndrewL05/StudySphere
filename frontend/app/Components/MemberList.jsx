@@ -1,5 +1,5 @@
 import React from 'react';
-import UserName from './UserName'; 
+import UserName from './Username'; 
 import '../Pages/groups/Groups.css'
 
 const MemberItem = ({ member }) => {

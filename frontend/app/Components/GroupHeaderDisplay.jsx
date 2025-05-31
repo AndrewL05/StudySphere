@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router'; 
-import UserName from './UserName'; 
+import UserName from './Username'; 
 
 const GroupHeaderDisplay = ({
     group,
