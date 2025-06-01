@@ -1331,6 +1331,7 @@ body.dark .empty-study p {
 
 .create-quiz-btn:hover {
   background-color: #db2777;
+  color: white;
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
   text-decoration: none;

@@ -4,6 +4,7 @@ import supabase from '../../Services/supabaseClient';
 import PostCard from '../../Components/PostCard';
 import Filter from '../../Components/Filter';
 import AvailableGroups from '../../Components/AvailableGroups';
+import PublicFlashcardSets from '../../Components/PublicFlashcardSets';
 import './Home.css';
 
 const Home = () => {
@@ -187,6 +188,7 @@ const Home = () => {
 
              <div className="sidebar-column">
                   <AvailableGroups title="Popular Groups" showCreateButton={true} showViewAllButton={true} />
+                  <PublicFlashcardSets title="Public Flashcard Sets" showViewAllButton={true} />
              </div>
         </div>
     </div>

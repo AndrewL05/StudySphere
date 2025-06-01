@@ -22,7 +22,7 @@ const CreateFlashcardSet = () => {
       const { data: { user }, error: userError } = await supabase.auth.getUser();
       if (userError) throw userError;
       if (!user) {
-        setError('Please sign in to create a flashcard set');
+        setError('You need to log in to create a flashcard set');
         setLoading(false);
         return;
       }

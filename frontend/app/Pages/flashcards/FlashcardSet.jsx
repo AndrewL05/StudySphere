@@ -15,6 +15,8 @@ const FlashcardSet = () => {
   const [editingCard, setEditingCard] = useState(null);
   const [newCard, setNewCard] = useState({ term: '', definition: '' });
   const [generatingQuiz, setGeneratingQuiz] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
     fetchSetAndCards();
@@ -22,6 +24,10 @@ const FlashcardSet = () => {
 
   const fetchSetAndCards = async () => {
     try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUser(user);
+
       const { data: setData, error: setError } = await supabase
         .from('flashcard_sets')
         .select('*')
@@ -30,6 +36,9 @@ const FlashcardSet = () => {
 
       if (setError) throw setError;
       setSet(setData);
+      
+      // Check if current user is the owner
+      setIsOwner(user && setData.user_id === user.id);
 
       const { data: cardsData, error: cardsError } = await supabase
         .from('flashcards')
@@ -52,6 +61,20 @@ const FlashcardSet = () => {
     if (!newCard.term.trim() || !newCard.definition.trim()) return;
 
     try {
+      // Check if user is authenticated
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError) throw authError;
+      if (!user) {
+        setError('You need to log in to create flashcards');
+        return;
+      }
+
+      // Check if user is the owner of this set
+      if (!isOwner) {
+        setError('You can only add cards to your own flashcard sets');
+        return;
+      }
+
       const { data, error } = await supabase
         .from('flashcards')
         .insert([
@@ -80,6 +103,12 @@ const FlashcardSet = () => {
     if (!editingCard.term.trim() || !editingCard.definition.trim()) return;
 
     try {
+      // Check if user is the owner of this set
+      if (!isOwner) {
+        setError('You can only edit cards in your own flashcard sets');
+        return;
+      }
+
       const { data, error } = await supabase
         .from('flashcards')
         .update({
@@ -106,6 +135,12 @@ const FlashcardSet = () => {
     if (!window.confirm('Are you sure you want to delete this flashcard?')) return;
 
     try {
+      // Check if user is the owner of this set
+      if (!isOwner) {
+        setError('You can only delete cards from your own flashcard sets');
+        return;
+      }
+
       const { error } = await supabase
         .from('flashcards')
         .delete()
@@ -183,38 +218,53 @@ const FlashcardSet = () => {
         </div>
         
         <div className="set-actions">
-          <button 
-            className="add-card-btn"
-            onClick={() => setShowCreateModal(true)}
-          >
-            + Add Card
-          </button>
-          {flashcards.length >= 3 && (
-            <>
-              <button 
-                className="generate-ai-quiz-btn"
-                onClick={handleGenerateAIQuiz}
-                disabled={generatingQuiz}
-              >
-                {generatingQuiz ? (
-                  <span className="generating-text">
-                    <span className="spinner"></span>
-                    Generating...
-                  </span>
-                ) : (
-                  <>
-                    🤖 Generate AI Quiz
-                  </>
-                )}
-              </button>
-              <Link 
-                to={`/flashcards/${id}/create-quiz`}
-                className="create-quiz-btn"
-              >
-                📝 Create Quiz
-              </Link>
-            </>
+          {isOwner && (
+            <button 
+              className="add-card-btn"
+              onClick={() => setShowCreateModal(true)}
+            >
+              + Add Card
+            </button>
           )}
+          <button 
+            className="generate-ai-quiz-btn"
+            onClick={() => {
+              if (flashcards.length < 3) {
+                setError('You need at least 3 flashcards to generate a quiz. This set has ' + flashcards.length + ' card(s).');
+                // Clear error after 5 seconds
+                setTimeout(() => setError(null), 5000);
+                return;
+              }
+              handleGenerateAIQuiz();
+            }}
+            disabled={generatingQuiz}
+          >
+            {generatingQuiz ? (
+              <span className="generating-text">
+                <span className="spinner"></span>
+                Generating...
+              </span>
+            ) : (
+              <>
+                🤖 Generate AI Quiz
+              </>
+            )}
+          </button>
+          <Link 
+            to={`/flashcards/${id}/create-quiz`}
+            className="create-quiz-btn"
+            onClick={(e) => {
+              if (flashcards.length < 3) {
+                e.preventDefault();
+                setError('You need at least 3 flashcards to create a quiz. This set has ' + flashcards.length + ' card(s).');
+                // Clear error after 5 seconds
+                setTimeout(() => setError(null), 5000);
+                return;
+              }
+            }}
+          >
+            📝 Create Quiz
+          </Link>
           <Link 
             to={`/flashcards/${id}/study`}
             className="study-btn"
@@ -230,13 +280,19 @@ const FlashcardSet = () => {
         {flashcards.length === 0 ? (
           <div className="empty-state">
             <h3>No flashcards yet</h3>
-            <p>Add some flashcards to get started studying!</p>
-            <button 
-              className="add-card-btn"
-              onClick={() => setShowCreateModal(true)}
-            >
-              Add Your First Card
-            </button>
+            {isOwner ? (
+              <>
+                <p>Add some flashcards to get started studying!</p>
+                <button 
+                  className="add-card-btn"
+                  onClick={() => setShowCreateModal(true)}
+                >
+                  Add Your First Card
+                </button>
+              </>
+            ) : (
+              <p>This flashcard set doesn't have any cards yet.</p>
+            )}
           </div>
         ) : (
           flashcards.map(card => (
@@ -249,27 +305,29 @@ const FlashcardSet = () => {
                   <strong>Definition:</strong> {card.definition}
                 </div>
               </div>
-              <div className="card-actions">
-                <button 
-                  className="edit-btn"
-                  onClick={() => setEditingCard(card)}
-                >
-                  Edit
-                </button>
-                <button 
-                  className="delete-btn"
-                  onClick={() => handleDeleteCard(card.id)}
-                >
-                  Delete
-                </button>
-              </div>
+              {isOwner && (
+                <div className="card-actions">
+                  <button 
+                    className="edit-btn"
+                    onClick={() => setEditingCard(card)}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    className="delete-btn"
+                    onClick={() => handleDeleteCard(card.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           ))
         )}
       </div>
 
       {/* Create Card Modal */}
-      {showCreateModal && (
+      {showCreateModal && isOwner && (
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
@@ -325,7 +383,7 @@ const FlashcardSet = () => {
       )}
 
       {/* Edit Card Modal */}
-      {editingCard && (
+      {editingCard && isOwner && (
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
