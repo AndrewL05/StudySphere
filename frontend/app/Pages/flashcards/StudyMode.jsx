@@ -200,17 +200,19 @@ const StudyMode = () => {
 
       <div className="flashcard-study">
         <div className={`study-card ${showDefinition ? 'flipped' : ''}`} onClick={flipCard}>
-          <div className="card-front">
-            <div className="card-content">
-              <div className="card-label">Term</div>
-              <div className="card-text">{currentCard.term}</div>
+          <div className="card-inner">
+            <div className="card-front">
+              <div className="card-content">
+                <div className="card-label">Term</div>
+                <div className="card-text">{currentCard.term}</div>
+              </div>
+              <div className="flip-hint">Click to reveal definition</div>
             </div>
-            <div className="flip-hint">Click to reveal definition</div>
-          </div>
-          <div className="card-back">
-            <div className="card-content">
-              <div className="card-label">Definition</div>
-              <div className="card-text">{currentCard.definition}</div>
+            <div className="card-back">
+              <div className="card-content">
+                <div className="card-label">Definition</div>
+                <div className="card-text">{currentCard.definition}</div>
+              </div>
             </div>
           </div>
         </div>

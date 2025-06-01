@@ -326,6 +326,10 @@ body.dark .search-button:hover {
 body.dark .dropdown h3 {
     color: var(--text-light);
 }
+body.dark .dropdown-menu{
+  background-color: var(--gray-800);
+  border-color: var(--border-color-dark);
+}
 body.dark .dropdown h3:hover {
     background-color: var(--gray-700);
     color: var(--primary-light);
