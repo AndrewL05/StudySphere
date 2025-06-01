@@ -125,6 +125,7 @@ const Navbar = () => {
             <div className="dropdown-menu">
               <Link to="/create" onClick={() => setShowCreateMenu(false)}>New Post</Link>
               <Link to="/create-group" onClick={() => setShowCreateMenu(false)}>New Group</Link>
+              <Link to="/flashcards/create" onClick={() => setShowCreateMenu(false)}>New Flashcard Set</Link>
             </div>
           )}
         </div>
@@ -137,6 +138,7 @@ const Navbar = () => {
             {showProfileMenu && (
               <div className="dropdown-menu">
                 <Link to="/bookmarks">Bookmarks</Link>
+                <Link to="/flashcards">Flashcard Sets</Link>
                 <Link to="/profile" onClick={() => setShowProfileMenu(false)}>Settings</Link>
                 <button onClick={async () => {
                   setShowProfileMenu(false);

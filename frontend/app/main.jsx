@@ -19,6 +19,10 @@ import SignIn from './Pages/auth/SignIn.jsx';
 import SignUp from './Pages/auth/SignUp';
 import Search from './Pages/search/Search.jsx';
 import Bookmarks from './Pages/bookmarks/Bookmarks.jsx';
+import FlashcardSets from './Pages/flashcards/FlashcardSets';
+import CreateFlashcardSet from './Pages/flashcards/CreateFlashcardSet';
+import FlashcardSet from './Pages/flashcards/FlashcardSet';
+import StudyMode from './Pages/flashcards/StudyMode';
 import Error from './Pages/NotFound.jsx';
 
 createRoot(document.getElementById('root')).render(
@@ -41,6 +45,10 @@ createRoot(document.getElementById('root')).render(
           <Route path="signin" element={<SignIn />} />
           <Route path="signup" element={<SignUp />} />
           <Route path="bookmarks" element={<Bookmarks />} />
+          <Route path="flashcards" element={<FlashcardSets />} />
+          <Route path="flashcards/create" element={<CreateFlashcardSet />} />
+          <Route path="flashcards/:id" element={<FlashcardSet />} />
+          <Route path="flashcards/:id/study" element={<StudyMode />} />
           <Route path="*" element={<Error/>} />
         </Route>
       </Routes>
