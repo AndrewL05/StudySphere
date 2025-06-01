@@ -5,14 +5,17 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import mainApiRouter from './routes/index.js';
-//import { testApiKey } from './services/openRouterService.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 const allowedOrigins = [
   process.env.FRONTEND_ORIGIN_DEV,
-  process.env.FRONTEND_ORIGIN_PROD
+  process.env.FRONTEND_ORIGIN_PROD,
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:5173'
 ].filter(Boolean); 
 
 const corsOptions = {
@@ -29,7 +32,6 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// --- Routes ---
 app.use('/api', mainApiRouter);
 
 app.get('/', (req, res) => {
@@ -49,6 +51,4 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Backend server is running on http://localhost:${PORT}`);
   console.log('Allowed CORS origins:', allowedOrigins);
-
-  //testApiKey();
 });

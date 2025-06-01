@@ -12,26 +12,7 @@ const getApiKey = () => {
   return apiKey;
 };
 
-/*
-export const testApiKey = () => {
-  console.log("=== API Key Test ===");
-  console.log("OPENROUTER_API_KEY:", process.env.OPENROUTER_API_KEY ? 'FOUND' : 'NOT FOUND');
-  console.log("Key length:", process.env.OPENROUTER_API_KEY ? process.env.OPENROUTER_API_KEY.length : 0);
-  console.log("All env vars:", Object.keys(process.env).filter(key => key.includes('OPENROUTER')));
-  console.log("==================");
-  
-  try {
-    const key = getApiKey();
-    console.log("✅ API key validation passed");
-    return true;
-  } catch (error) {
-    console.log("❌ API key validation failed:", error.message);
-    return false;
-  }
-};
-*/
-
-export const getOpenRouterChatResponse = async (prompt, history = [], model = "mistralai/mistral-7b-instruct") => {
+export const getOpenRouterChatResponse = async (prompt, history = [], model = "deepseek/deepseek-r1:free") => {
   const OPENROUTER_API_KEY = getApiKey();
 
   try {
@@ -78,7 +59,7 @@ export const generateContentFromOpenRouter = async (content, type, numItems = 5,
     const response = await axios.post(
       `${OPENROUTER_API_URL}/chat/completions`,
       {
-        model: "mistralai/mistral-7b-instruct", 
+        model: "deepseek/deepseek-r1",
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },

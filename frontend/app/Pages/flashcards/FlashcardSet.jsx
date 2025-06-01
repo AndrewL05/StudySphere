@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
 import supabase from '../../Services/supabaseClient';
+import { apiCall } from '../../config/api';
 import './Flashcards.css';
 
 const FlashcardSet = () => {
@@ -13,6 +14,7 @@ const FlashcardSet = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingCard, setEditingCard] = useState(null);
   const [newCard, setNewCard] = useState({ term: '', definition: '' });
+  const [generatingQuiz, setGeneratingQuiz] = useState(false);
 
   useEffect(() => {
     fetchSetAndCards();
@@ -118,6 +120,39 @@ const FlashcardSet = () => {
     }
   };
 
+  const handleGenerateAIQuiz = async () => {
+    setGeneratingQuiz(true);
+    setError(null);
+
+    try {
+      // Call backend API to create AI quiz using apiCall helper
+      const result = await apiCall('/api/quizzes', {
+        method: 'POST',
+        body: JSON.stringify({
+          title: `${set.title} - AI Generated Quiz`,
+          description: `Intelligent quiz generated from ${set.title} flashcard set`,
+          flashcard_set_id: id,
+          quiz_type: 'multiple_choice',
+          question_count: Math.min(10, flashcards.length),
+          time_limit: null,
+          is_public: false,
+          use_ai_generation: true
+        })
+      });
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to generate AI quiz');
+      }
+
+      navigate(`/quizzes/${result.data.id}`);
+    } catch (err) {
+      console.error('Error generating AI quiz:', err);
+      setError(err.message || 'Failed to generate AI quiz');
+    } finally {
+      setGeneratingQuiz(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flashcard-set-container">
@@ -154,6 +189,32 @@ const FlashcardSet = () => {
           >
             + Add Card
           </button>
+          {flashcards.length >= 3 && (
+            <>
+              <button 
+                className="generate-ai-quiz-btn"
+                onClick={handleGenerateAIQuiz}
+                disabled={generatingQuiz}
+              >
+                {generatingQuiz ? (
+                  <span className="generating-text">
+                    <span className="spinner"></span>
+                    Generating...
+                  </span>
+                ) : (
+                  <>
+                    🤖 Generate AI Quiz
+                  </>
+                )}
+              </button>
+              <Link 
+                to={`/flashcards/${id}/create-quiz`}
+                className="create-quiz-btn"
+              >
+                📝 Create Quiz
+              </Link>
+            </>
+          )}
           <Link 
             to={`/flashcards/${id}/study`}
             className="study-btn"

@@ -23,6 +23,9 @@ import FlashcardSets from './Pages/flashcards/FlashcardSets';
 import CreateFlashcardSet from './Pages/flashcards/CreateFlashcardSet';
 import FlashcardSet from './Pages/flashcards/FlashcardSet';
 import StudyMode from './Pages/flashcards/StudyMode';
+import CreateQuiz from './Pages/flashcards/CreateQuiz';
+import TakeQuiz from './Pages/quizzes/TakeQuiz';
+import QuizResults from './Pages/quizzes/QuizResults';
 import Error from './Pages/NotFound.jsx';
 
 createRoot(document.getElementById('root')).render(
@@ -49,6 +52,9 @@ createRoot(document.getElementById('root')).render(
           <Route path="flashcards/create" element={<CreateFlashcardSet />} />
           <Route path="flashcards/:id" element={<FlashcardSet />} />
           <Route path="flashcards/:id/study" element={<StudyMode />} />
+          <Route path="flashcards/:id/create-quiz" element={<CreateQuiz />} />
+          <Route path="quizzes/:id" element={<TakeQuiz />} />
+          <Route path="quizzes/:quizId/results/:attemptId" element={<QuizResults />} />
           <Route path="*" element={<Error/>} />
         </Route>
       </Routes>
