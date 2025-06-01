@@ -6,9 +6,56 @@
 .feed-header {
   margin-bottom: 1.5rem;
   border-bottom: 1px solid var(--border-color-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
 }
 body.dark .feed-header {
   border-bottom-color: var(--border-color-dark);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.view-flashcards-btn {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: var(--transition-std);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+}
+
+.view-flashcards-btn:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+body.dark .view-flashcards-btn {
+  background-color: var(--primary-light);
+  color: var(--background-dark);
+}
+
+body.dark .view-flashcards-btn:hover {
+  background-color: #93c5fd;
+}
+
+.flashcard-sets-section {
+  margin-bottom: 2rem;
 }
 
 .home-content-grid {
@@ -128,6 +175,18 @@ body.dark .loading {
   }
   .feed-column {
     gap: 1.5rem;
+  }
+  .feed-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .header-actions {
+    justify-content: center;
+  }
+  .view-flashcards-btn {
+    font-size: 0.85rem;
+    padding: 0.7rem 1rem;
   }
   .filter {
      overflow-x: auto;

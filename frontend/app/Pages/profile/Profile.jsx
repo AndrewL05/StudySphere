@@ -254,15 +254,18 @@ const Profile = () => {
           <h3>Appearance</h3>
           <div className="dark-mode-toggle">
             <label htmlFor="dark-mode-switch">Dark Mode</label>
-            <label className="switch">
+            <div className="toggle-switch">
               <input
                 id="dark-mode-switch"
                 type="checkbox"
                 checked={isDarkMode}
                 onChange={toggleDarkMode}
+                className="toggle-input"
               />
-              <span className="slider round"></span> 
-            </label>
+              <label htmlFor="dark-mode-switch" className="toggle-label">
+                <span className="toggle-slider"></span>
+              </label>
+            </div>
           </div>
         </div>
 
