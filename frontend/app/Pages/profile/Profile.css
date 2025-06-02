@@ -96,7 +96,7 @@
     display: block;
     width: 60px;
     height: 30px;
-    background-color: var(--gray-300);
+    background-color: grey;
     border-radius: 30px;
     position: relative;
     cursor: pointer;
@@ -144,11 +144,11 @@
   }
   
   body.dark .toggle-slider {
-    background-color: var(--gray-200);
+    background-color: white !important;
   }
   
   body.dark .toggle-input:checked + .toggle-label {
-    background-color: var(--primary-light);
+    background-color: grey;
   }
   
   body.dark .toggle-input:checked + .toggle-label .toggle-slider {
@@ -304,6 +304,10 @@
   body.dark .profile-posts {
     background-color: #1e293b;
     color: var(--text-light);
+  }
+
+  .profile-page h2 {
+    margin-bottom: 10px;
   }
   
   body.dark .profile-page h2,

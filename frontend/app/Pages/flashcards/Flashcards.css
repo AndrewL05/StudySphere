@@ -83,6 +83,8 @@ body.dark .set-card {
 }
 
 .set-card-content {
+  background: var(--bg-elevated-dark) !important;
+  border-color: var(--border-dark);
   padding: 1.5rem;
 }
 
@@ -490,8 +492,8 @@ body.dark .set-header h1 {
 }
 
 body.dark .flashcard-item {
-  background: var(--bg-subtle-dark);
-  border-color: var(--border-color-dark);
+  background: var(--bg-elevated-dark) !important;
+  border-color: var(--border-dark);
 }
 
 .flashcard-item .card-content {

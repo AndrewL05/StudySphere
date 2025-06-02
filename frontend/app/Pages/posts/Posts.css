@@ -346,7 +346,7 @@ body.dark .comments-section h3 {
 }
 
 .comment {
-  background-color: var(--bg-subtle-light);
+  background-color: var(--bg-elevated-light);
   padding: 1.25rem;
   border-radius: var(--radius-lg);
   margin-bottom: 1.25rem;
@@ -354,8 +354,8 @@ body.dark .comments-section h3 {
   box-shadow: var(--shadow-sm);
 }
 body.dark .comment {
-  background-color: var(--gray-800);
-  border-color: var(--border-color-dark);
+  background-color: var(--bg-elevated-dark);
+  border-color: var(--border-dark);
 }
 
 .comment-header {
