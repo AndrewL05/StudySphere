@@ -114,9 +114,31 @@ body.dark .auth-container label {
 .auth-container input[type="text"],
 .auth-container input[type="password"],
 .auth-container input[type="email"] {
+  background-color: white !important;
   padding: 0.85rem 1rem;
   font-size: 1rem;
   width: 100%;
+}
+
+.auth-container input[id="name"] {
+  background-color: white !important;
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  width: 100%;
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  transition: var(--transition-smooth);
+}
+
+body.dark .auth-container input[type="text"],
+body.dark .auth-container input[type="password"],
+body.dark .auth-container input[type="email"] {
+  background-color: var(--bg-subtle-dark) !important;
+}
+
+body.dark .auth-container input[id="name"] {
+  background-color: var(--bg-subtle-dark) !important;
+  border-color: white !important;
 }
 
 .auth-button {
@@ -135,7 +157,7 @@ body.dark .auth-container label {
   height: auto;
   padding: 0.75rem 1rem;
   background-color: var(--background-light);
-  color: #3c4043;
+  color: white;
   border: 1px solid var(--gray-300);
   border-radius: var(--radius-md);
   font-family: 'Roboto', var(--font-sans);

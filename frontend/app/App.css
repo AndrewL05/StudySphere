@@ -530,6 +530,8 @@ body.dark .search-form {
 .search-form input[type="text"] {
   flex: 1;
   border: none;
+  overflow: hidden;
+  border-radius: var(--radius-full);
   background: transparent;
   padding: var(--space-3) var(--space-4);
   font-size: var(--text-sm);
