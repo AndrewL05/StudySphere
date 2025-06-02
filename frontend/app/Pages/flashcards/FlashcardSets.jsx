@@ -60,7 +60,27 @@ const FlashcardSets = () => {
   if (error) {
     return (
       <div className="flashcard-sets-container">
-        <div className="error-message">{error}</div>
+        <div className="auth-required-container">
+          <div className="auth-required-content">
+            <div className="auth-required-icon">🔒</div>
+            <h2>Sign in to view your flashcard sets</h2>
+            <p>Create and manage your personal flashcard collections to enhance your learning experience.</p>
+            <div className="auth-required-actions">
+              <button 
+                className="primary-btn"
+                onClick={() => navigate('/signin')}
+              >
+                Sign In
+              </button>
+              <button 
+                className="secondary-btn"
+                onClick={() => navigate('/signup')}
+              >
+                Create Account
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

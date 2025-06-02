@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
 import supabase from '../../Services/supabaseClient';
 import { apiCall } from '../../config/api';
+import { shareFlashcardSet } from '../../Services/shareService';
 import './Flashcards.css';
 
 const FlashcardSet = () => {
@@ -188,6 +189,17 @@ const FlashcardSet = () => {
     }
   };
 
+  const handleShare = async () => {
+    await shareFlashcardSet({
+      id: set.id,
+      title: set.title,
+      description: set.description,
+      flashcards: flashcards,
+      card_count: flashcards.length,
+      type: 'flashcard-set'
+    });
+  };
+
   if (loading) {
     return (
       <div className="flashcard-set-container">
@@ -271,6 +283,13 @@ const FlashcardSet = () => {
           >
             Study
           </Link>
+          <button 
+            className="share-btn"
+            onClick={handleShare}
+            title="Share flashcard set"
+          >
+            📤 Share
+          </button>
         </div>
       </div>
 

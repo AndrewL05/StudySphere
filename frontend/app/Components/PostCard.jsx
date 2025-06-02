@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import supabase from '../Services/supabaseClient';
 import UserName from './Username';
+import { sharePost } from '../Services/shareService';
 import '../Pages/posts/Posts.css';
 
 const BookmarkIcon = ({ filled }) => (
@@ -195,6 +196,16 @@ const PostCard = ({
       navigate(`/post/${id}`);
   };
 
+  const handleShare = async (e) => {
+    e.stopPropagation();
+    await sharePost({
+      id,
+      title,
+      content,
+      type: 'post'
+    });
+  };
+
   return (
     <div className="post-cards" onClick={handleCardClick}>
       <div className="post-header">
@@ -228,7 +239,7 @@ const PostCard = ({
         <button className="comment-btn" onClick={handleCommentClick} title="View comments">
           💬 {commentCount} Comments
         </button>
-        <button className="share-btn" onClick={(e) => { e.stopPropagation(); alert('Share functionality not implemented.'); }} title="Share post">
+        <button className="share-btn" onClick={handleShare} title="Share post">
           Share
         </button>
         {userId && (

@@ -83,7 +83,6 @@ body.dark .set-card {
 }
 
 .set-card-content {
-  background: var(--bg-elevated-dark) !important;
   border-color: var(--border-dark);
   padding: 1.5rem;
 }
@@ -2405,4 +2404,232 @@ body.dark .generate-ai-quiz-btn {
 
 body.dark .generate-ai-quiz-btn:hover:not(:disabled) {
   background: linear-gradient(135deg, #8b5cf6 0%, #c084fc 100%);
+}
+
+/* Auth Required Container */
+.auth-required-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  padding: 2rem;
+}
+
+.auth-required-content {
+  text-align: center;
+  max-width: 400px;
+  background: var(--background-light);
+  border: 1px solid var(--border-color-light);
+  border-radius: var(--radius-xl);
+  padding: 3rem 2rem;
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+body.dark .auth-required-content {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: var(--border-color-dark);
+}
+
+.auth-required-icon {
+  font-size: 3rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+}
+
+.auth-required-content h2 {
+  color: var(--text-dark);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+body.dark .auth-required-content h2 {
+  color: var(--text-light);
+}
+
+.auth-required-content p {
+  color: var(--text-muted-dark);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+body.dark .auth-required-content p {
+  color: var(--text-muted-light);
+}
+
+.auth-required-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.auth-required-actions .primary-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-std);
+  box-shadow: var(--shadow-sm);
+}
+
+.auth-required-actions .primary-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+body.dark .auth-required-actions .primary-btn {
+  background: var(--primary-light);
+  color: var(--background-dark);
+}
+
+body.dark .auth-required-actions .primary-btn:hover {
+  background: #93c5fd;
+}
+
+.auth-required-actions .secondary-btn {
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-std);
+}
+
+.auth-required-actions .secondary-btn:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-1px);
+}
+
+body.dark .auth-required-actions .secondary-btn {
+  color: var(--primary-light);
+  border-color: var(--primary-light);
+}
+
+body.dark .auth-required-actions .secondary-btn:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* Share Button */
+.share-btn {
+  background: var(--secondary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition-std);
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.share-btn:hover {
+  background-color: var(--secondary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+body.dark .share-btn {
+  background-color: var(--secondary);
+  color: white;
+}
+
+body.dark .share-btn:hover {
+  background-color: #059669;
+}
+
+/* Share Button in Post Actions */
+.post-actions .share-btn {
+  background: transparent;
+  color: var(--text-muted-dark);
+  border: 1px solid var(--border-color-light);
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+}
+
+.post-actions .share-btn:hover {
+  background: var(--secondary);
+  color: white;
+  border-color: var(--secondary);
+  transform: none;
+}
+
+body.dark .post-actions .share-btn {
+  color: var(--text-muted-light);
+  border-color: var(--border-color-dark);
+}
+
+body.dark .post-actions .share-btn:hover {
+  background: var(--secondary);
+  color: white;
+  border-color: var(--secondary);
+}
+
+@media (max-width: 768px) {
+  .auth-required-actions {
+    flex-direction: column;
+  }
+  
+  .auth-required-actions .primary-btn,
+  .auth-required-actions .secondary-btn {
+    width: 100%;
+  }
+}
+
+/* Small Share Button for Cards */
+.share-btn-small {
+  background: transparent;
+  color: var(--text-muted-dark);
+  border: 1px solid var(--border-color-light);
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-std);
+  font-size: 0.875rem;
+  min-width: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.share-btn-small:hover {
+  background: var(--secondary);
+  color: white;
+  border-color: var(--secondary);
+}
+
+body.dark .share-btn-small {
+  color: var(--text-muted-light);
+  border-color: var(--border-color-dark);
+}
+
+body.dark .share-btn-small:hover {
+  background: var(--secondary);
+  color: white;
+  border-color: var(--secondary);
+}
+
+@media (max-width: 768px) {
+  .auth-required-actions {
+    flex-direction: column;
+  }
+  
+  .auth-required-actions .primary-btn,
+  .auth-required-actions .secondary-btn {
+    width: 100%;
+  }
 }
