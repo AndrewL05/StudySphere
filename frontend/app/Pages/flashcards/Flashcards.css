@@ -78,8 +78,8 @@ body.dark .add-card-btn:hover {
 }
 
 body.dark .set-card {
-  background: var(--bg-subtle-dark);
-  border-color: var(--border-color-dark);
+  background: var(--bg-elevated-dark) ;
+  border-color: var(--border-dark);
 }
 
 .set-card-content {
