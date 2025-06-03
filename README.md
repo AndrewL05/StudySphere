@@ -1,6 +1,6 @@
 # 🌟 StudySphere
 
-> **A Modern Learning Hub for Students and Educators**
+> **A Learning Hub for Students and Educators**
 
 StudySphere is a cutting-edge, full-stack learning platform that revolutionizes how students and educators create, explore, and share study content. Built with modern web technologies and featuring a sleek, glassmorphism-inspired design, StudySphere combines social learning with AI-powered tools to create the ultimate study experience.
 
