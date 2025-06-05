@@ -39,6 +39,16 @@ const PublicFlashcardSets = ({ title = "Public Flashcard Sets", showViewAllButto
     setError(null);
 
     try {
+      // Check if user is authenticated first
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session || !session.user) {
+        setError('Please sign in to generate AI quizzes');
+        setGeneratingQuiz(null);
+        // Clear error after 5 seconds
+        setTimeout(() => setError(null), 5000);
+        return;
+      }
+
       const cardCount = set.flashcards?.[0]?.count || 0;
       if (cardCount < 3) {
         setError(`You need at least 3 flashcards to generate a quiz. This set has ${cardCount} card(s).`);

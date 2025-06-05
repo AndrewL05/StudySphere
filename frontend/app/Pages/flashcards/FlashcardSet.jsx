@@ -25,7 +25,6 @@ const FlashcardSet = () => {
 
   const fetchSetAndCards = async () => {
     try {
-      // Get current user
       const { data: { user } } = await supabase.auth.getUser();
       setCurrentUser(user);
 
@@ -38,7 +37,6 @@ const FlashcardSet = () => {
       if (setError) throw setError;
       setSet(setData);
       
-      // Check if current user is the owner
       setIsOwner(user && setData.user_id === user.id);
 
       const { data: cardsData, error: cardsError } = await supabase
@@ -62,7 +60,6 @@ const FlashcardSet = () => {
     if (!newCard.term.trim() || !newCard.definition.trim()) return;
 
     try {
-      // Check if user is authenticated
       const { data: { user }, error: authError } = await supabase.auth.getUser();
       if (authError) throw authError;
       if (!user) {
@@ -70,7 +67,6 @@ const FlashcardSet = () => {
         return;
       }
 
-      // Check if user is the owner of this set
       if (!isOwner) {
         setError('You can only add cards to your own flashcard sets');
         return;
@@ -104,7 +100,6 @@ const FlashcardSet = () => {
     if (!editingCard.term.trim() || !editingCard.definition.trim()) return;
 
     try {
-      // Check if user is the owner of this set
       if (!isOwner) {
         setError('You can only edit cards in your own flashcard sets');
         return;
@@ -136,7 +131,6 @@ const FlashcardSet = () => {
     if (!window.confirm('Are you sure you want to delete this flashcard?')) return;
 
     try {
-      // Check if user is the owner of this set
       if (!isOwner) {
         setError('You can only delete cards from your own flashcard sets');
         return;
@@ -161,6 +155,14 @@ const FlashcardSet = () => {
     setError(null);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session || !session.user) {
+        setError('Please sign in to generate AI quizzes');
+        setGeneratingQuiz(false);
+        setTimeout(() => setError(null), 5000);
+        return;
+      }
+
       // Call backend API to create AI quiz using apiCall helper
       const result = await apiCall('/api/quizzes', {
         method: 'POST',
@@ -269,7 +271,6 @@ const FlashcardSet = () => {
               if (flashcards.length < 3) {
                 e.preventDefault();
                 setError('You need at least 3 flashcards to create a quiz. This set has ' + flashcards.length + ' card(s).');
-                // Clear error after 5 seconds
                 setTimeout(() => setError(null), 5000);
                 return;
               }

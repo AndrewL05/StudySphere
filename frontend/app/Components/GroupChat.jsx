@@ -250,7 +250,7 @@ const GroupChat = ({ groupId, currentUser, groupName = "Group Chat", onClose }) 
             
             {!currentUser && (
                 <div className="chat-signin-prompt">
-                    <p>👁️ You're viewing this group's chat. <Link to="/signin">Sign in</Link> to join the conversation!</p>
+                    <p>👁️ You're viewing this group's chat. <Link to="/signin">Sign in</Link> to join the group and conversation!</p>
                 </div>
             )}
         </div>

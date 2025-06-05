@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import '../App.css';
 import supabase from '../Services/supabaseClient';
@@ -59,6 +59,7 @@ const Navbar = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const mobileMenuRef = useRef(null);
 
   const { isDarkMode, toggleDarkMode } = useTheme();
  
@@ -93,18 +94,6 @@ const Navbar = () => {
 
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = () => {
-      setShowProfileMenu(false);
-      setShowCreateMenu(false);
-    };
-
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, []);
-
   const handleMenuClick = (e, menuSetter) => {
     e.stopPropagation();
     if (menuSetter === setShowProfileMenu) setShowCreateMenu(false);
@@ -132,22 +121,74 @@ const Navbar = () => {
     setShowMobileMenu(false);
   };
 
+  // Disable/enable body scrolling when mobile menu is open
+  useEffect(() => {
+    if (showMobileMenu) {
+      // Disable body scrolling
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${window.scrollY}px`;
+      document.body.style.width = '100%';
+    } else {
+      // Re-enable body scrolling and restore scroll position
+      const scrollY = document.body.style.top;
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+    }
+
+    // Cleanup function to ensure we always restore scrolling
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+    };
+  }, [showMobileMenu]);
+
+  // Handle clicking outside mobile menu to close it
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showMobileMenu && mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+        setShowMobileMenu(false);
+      }
+      // Existing code for closing dropdown menus
+      setShowProfileMenu(false);
+      setShowCreateMenu(false);
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [showMobileMenu]);
+
   return (
     <>
       <div className="navbar navbar-container">
         <div className="navbar-left">
           <button 
             className="mobile-menu-toggle"
-            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowMobileMenu(!showMobileMenu);
+            }}
             aria-label="Toggle mobile menu"
           >
             {showMobileMenu ? <CloseIcon /> : <MenuIcon />}
           </button>
-          <Link to="/"><h2>StudySphere</h2></Link>
+          <Link to="/" className="desktop-only"><h2>StudySphere</h2></Link>
         </div>
 
         <div className="navbar-center">
-          <form onSubmit={handleSearch} className="search-form">
+          <Link to="/" className="mobile-logo">
+            <h2>StudySphere</h2>
+          </Link>
+          <form onSubmit={handleSearch} className="search-form desktop-only">
             <input
               type="text"
               placeholder="Search posts..."
@@ -212,8 +253,8 @@ const Navbar = () => {
 
       {/* Mobile Menu Overlay */}
       {showMobileMenu && (
-        <div className="mobile-menu-overlay">
-          <div className="mobile-menu">
+        <div className="mobile-menu-overlay" onClick={closeMobileMenu}>
+          <div className="mobile-menu" ref={mobileMenuRef} onClick={(e) => e.stopPropagation()}>
             <div className="mobile-menu-header">
               <h3>Menu</h3>
               <button onClick={closeMobileMenu} className="mobile-menu-close">
