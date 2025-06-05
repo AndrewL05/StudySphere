@@ -133,12 +133,31 @@ body.dark .auth-container label {
 body.dark .auth-container input[type="text"],
 body.dark .auth-container input[type="password"],
 body.dark .auth-container input[type="email"] {
-  background-color: var(--bg-subtle-dark) !important;
+  background-color: var(--neutral-700) !important;
+  border-color: var(--neutral-500) !important;
+  color: var(--text-inverse) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+}
+
+body.dark .auth-container input[type="text"]:focus,
+body.dark .auth-container input[type="password"]:focus,
+body.dark .auth-container input[type="email"]:focus {
+  background-color: var(--neutral-600) !important;
+  border-color: var(--primary-light) !important;
+  box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.3) !important;
 }
 
 body.dark .auth-container input[id="name"] {
-  background-color: var(--bg-subtle-dark) !important;
-  border-color: white !important;
+  background-color: var(--neutral-700) !important;
+  border-color: var(--neutral-500) !important;
+  color: var(--text-inverse) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+}
+
+body.dark .auth-container input[id="name"]:focus {
+  background-color: var(--neutral-600) !important;
+  border-color: var(--primary-light) !important;
+  box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.3) !important;
 }
 
 .auth-button {

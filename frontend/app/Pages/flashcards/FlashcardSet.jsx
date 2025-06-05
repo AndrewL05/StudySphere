@@ -288,7 +288,7 @@ const FlashcardSet = () => {
             onClick={handleShare}
             title="Share flashcard set"
           >
-            📤 Share
+            📤
           </button>
         </div>
       </div>

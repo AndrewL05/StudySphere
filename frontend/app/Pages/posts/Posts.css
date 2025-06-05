@@ -295,13 +295,228 @@ body.dark .post-page .post-content {
 
 .post-interactions {
   margin: 2rem 0;
-  display: flex;
-  gap: 1rem;
-  padding-bottom: 1.5rem;
+  border-top: 1px solid var(--border-color-light);
   border-bottom: 1px solid var(--border-color-light);
+  padding: 1.5rem 0;
 }
 body.dark .post-interactions {
+  border-top-color: var(--border-color-dark);
   border-bottom-color: var(--border-color-dark);
+}
+
+.interaction-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.upvote-btn,
+.bookmark-btn,
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-std);
+  text-decoration: none;
+  border: 1px solid var(--border-color-light);
+  background: var(--background-light);
+  color: var(--text-dark);
+}
+
+.upvote-btn:hover,
+.bookmark-btn:hover,
+.share-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+body.dark .upvote-btn,
+body.dark .bookmark-btn,
+body.dark .share-btn {
+  border-color: var(--border-color-dark);
+  background: var(--bg-subtle-dark);
+  color: var(--text-light);
+}
+
+/* Upvote Button */
+.upvote-btn {
+  border: none;
+  background: var(--gray-100);
+  color: var(--text-dark);
+}
+
+.upvote-btn:hover:not(:disabled) {
+  background: var(--primary);
+  color: white;
+}
+
+.upvote-btn.upvoted {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.upvote-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+body.dark .upvote-btn {
+  background: var(--gray-700);
+  color: var(--text-light);
+}
+
+body.dark .upvote-btn:hover:not(:disabled) {
+  background: var(--primary-light);
+  color: var(--background-dark);
+}
+
+body.dark .upvote-btn.upvoted {
+  background: var(--primary-light);
+  color: var(--background-dark);
+}
+
+/* Bookmark Button */
+.bookmark-btn {
+  color: var(--text-muted-dark);
+}
+
+.bookmark-btn:hover:not(:disabled) {
+  background: #fef3c7;
+  color: #d97706;
+  border-color: #fbbf24;
+}
+
+.bookmark-btn.bookmarked {
+  background: #fef3c7;
+  color: #d97706;
+  border-color: #fbbf24;
+}
+
+.bookmark-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+body.dark .bookmark-btn {
+  color: var(--text-muted-light);
+}
+
+body.dark .bookmark-btn:hover:not(:disabled) {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+body.dark .bookmark-btn.bookmarked {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+/* Share Button */
+.share-btn {
+  color: var(--text-muted-dark);
+}
+
+.share-btn:hover {
+  background: #e0f2fe;
+  color: white;
+  border-color: #67e8f9;
+}
+
+body.dark .share-btn {
+  color: var(--text-muted-light);
+}
+
+body.dark .share-btn:hover {
+  background: rgba(103, 232, 249, 0.2);
+  color: #67e8f9;
+  border-color: rgba(103, 232, 249, 0.3);
+}
+
+/* Chat signin prompt styling */
+.chat-signin-prompt {
+  padding: 1rem;
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  text-align: center;
+  margin-top: 0.5rem;
+  border: 1px solid var(--border-color-light);
+}
+
+.chat-signin-prompt p {
+  margin: 0;
+  color: var(--text-muted-dark);
+  font-size: 0.9rem;
+}
+
+.chat-signin-prompt a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.chat-signin-prompt a:hover {
+  text-decoration: underline;
+}
+
+body.dark .chat-signin-prompt {
+  background: var(--gray-800);
+  border-color: var(--border-color-dark);
+}
+
+body.dark .chat-signin-prompt p {
+  color: var(--text-muted-light);
+}
+
+body.dark .chat-signin-prompt a {
+  color: var(--primary-light);
+}
+
+/* Responsive Design for Post Interactions */
+@media (max-width: 768px) {
+  .interaction-buttons {
+    justify-content: center;
+    gap: 0.75rem;
+  }
+  
+  .upvote-btn,
+  .bookmark-btn,
+  .share-btn {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+    flex: 1;
+    justify-content: center;
+    min-width: 0;
+  }
+  
+  .interaction-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .interaction-buttons {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .upvote-btn,
+  .bookmark-btn,
+  .share-btn {
+    width: 100%;
+  }
 }
 
 .comments-section {

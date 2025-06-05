@@ -13,7 +13,13 @@ const Home = () => {
   const [currentFilter, setCurrentFilter] = useState('recent');
   const [userId, setUserId] = useState(null);
   const [fetchError, setFetchError] = useState(null);
-  const [showFlashcardSets, setShowFlashcardSets] = useState(true);
+  // Hide flashcard sets by default on mobile
+  const [showFlashcardSets, setShowFlashcardSets] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 768;
+    }
+    return true;
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -142,6 +148,21 @@ const Home = () => {
 
   return (
     <div className="home-page">
+        <div className="header-actions">
+          <button 
+            className="view-flashcards-btn"
+            onClick={() => setShowFlashcardSets(!showFlashcardSets)}
+          >
+            {showFlashcardSets ? '📚 Hide Flashcard Sets' : '📚 View Flashcard Sets'}
+          </button>
+        </div>
+
+        {showFlashcardSets && (
+          <div className="flashcard-sets-section">
+            <PublicFlashcardSets title="Public Flashcard Sets" showViewAllButton={true} />
+          </div>
+        )}
+
         <div className="feed-header">
              <Filter
                  filters={[
@@ -153,21 +174,7 @@ const Home = () => {
                  activeFilter={currentFilter}
                  onFilterChange={handleFilterChange}
              />
-             <div className="header-actions">
-                <button 
-                  className="view-flashcards-btn"
-                  onClick={() => setShowFlashcardSets(!showFlashcardSets)}
-                >
-                  {showFlashcardSets ? '📚 Hide Flashcard Sets' : '📚 View Flashcard Sets'}
-                </button>
-             </div>
         </div>
-
-        {showFlashcardSets && (
-          <div className="flashcard-sets-section">
-            <PublicFlashcardSets title="Public Flashcard Sets" showViewAllButton={true} />
-          </div>
-        )}
 
         <div className="home-content-grid">
              <div className="feed-column">

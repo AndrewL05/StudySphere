@@ -118,8 +118,10 @@ const GroupChat = ({ groupId, currentUser, groupName = "Group Chat", onClose }) 
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
-        if (!newMessage.trim() || !currentUser || !groupId) {
-            if (!currentUser) setChatError("You must be signed in to send messages.");
+        if (!newMessage.trim() || !groupId) return;
+        
+        if (!currentUser) {
+            setChatError("Please sign in to send messages to this group.");
             return;
         }
 
@@ -185,7 +187,9 @@ const GroupChat = ({ groupId, currentUser, groupName = "Group Chat", onClose }) 
                 ) : chatError && messages.length === 0 ? (
                     <p className="chat-system-message error">{chatError}</p>
                 ) : messages.length === 0 ? (
-                    <p className="chat-system-message">No messages yet. Start the conversation!</p>
+                    <p className="chat-system-message">
+                        {currentUser ? "No messages yet. Start the conversation!" : "No messages yet. This group hasn't started chatting!"}
+                    </p>
                 ) : (
                     messages.map(msg => {
                         const profile = msg.profiles;
@@ -230,21 +234,24 @@ const GroupChat = ({ groupId, currentUser, groupName = "Group Chat", onClose }) 
                 <div ref={messagesEndRef} />
             </div>
             {chatError && messages.length > 0 && <p className="chat-error-inline">{chatError}</p>}
-            {currentUser ? (
-                <form onSubmit={handleSendMessage} className="chat-input-form">
-                    <input
-                        type="text"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                        placeholder="Type your message..."
-                        disabled={sending || !groupId}
-                    />
-                    <button type="submit" disabled={sending || !newMessage.trim() || !groupId}>
-                        {sending ? '...' : 'Send'}
-                    </button>
-                </form>
-            ) : (
-                <p className="chat-signin-prompt">Please <Link to="/signin">sign in</Link> to chat.</p>
+            
+            <form onSubmit={handleSendMessage} className="chat-input-form">
+                <input
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder={currentUser ? "Type your message..." : "Sign in to send messages"}
+                    disabled={sending || !groupId || !currentUser}
+                />
+                <button type="submit" disabled={sending || !newMessage.trim() || !groupId || !currentUser}>
+                    {sending ? '...' : 'Send'}
+                </button>
+            </form>
+            
+            {!currentUser && (
+                <div className="chat-signin-prompt">
+                    <p>👁️ You're viewing this group's chat. <Link to="/signin">Sign in</Link> to join the conversation!</p>
+                </div>
             )}
         </div>
     );
