@@ -79,10 +79,11 @@ body.dark .group-meta .user-name {
 
 
 .group-actions {
-display: flex;
-gap: 0.75rem;
-align-items: center;
-flex-shrink: 0;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-shrink: 0;
+  color: white;
 }
 
 .join-group-btn,

@@ -236,7 +236,7 @@ const Group = () => {
                 </div>
             </div>
 
-            {isMember && isChatVisible && (
+            {isChatVisible && (
                 <GroupChat
                     groupId={groupId}
                     currentUser={currentUser}
@@ -245,7 +245,7 @@ const Group = () => {
                 />
             )}
 
-            {isMember && !isChatVisible && (
+            {!isChatVisible && (
                 <button
                     onClick={toggleChatVisibility}
                     className="chat-toggle-fab"

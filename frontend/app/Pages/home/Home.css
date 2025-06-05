@@ -4,10 +4,10 @@
 }
 
 .feed-header {
-  margin-bottom: 0;
+  margin-bottom: var(--space-6);
   border-bottom: 1px solid var(--border-light);
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   gap: var(--space-4);
   padding-bottom: var(--space-3);
@@ -19,7 +19,9 @@ body.dark .feed-header {
 .header-actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-4);
+  margin-bottom: var(--space-6);
 }
 
 .view-flashcards-btn {
@@ -91,7 +93,7 @@ body.dark .view-flashcards-btn {
 
 .filter {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   padding: 0;
   margin-bottom: 0;
   gap: var(--space-2);
@@ -100,64 +102,70 @@ body.dark .view-flashcards-btn {
 }
 
 .filter button {
-  background-color: transparent;
-  border: none;
-  border-bottom: 3px solid transparent;
-  border-radius: 0;
-  padding: var(--space-3) var(--space-4);
+  background-color: var(--neutral-100);
+  border: 2px solid var(--border-blue);
+  border-radius: var(--radius-full);
+  padding: var(--space-3) var(--space-5);
   font-size: var(--text-sm);
   font-weight: 600;
   transition: var(--transition-smooth);
   cursor: pointer;
   white-space: nowrap;
-  margin-bottom: -1px;
+  color: rgb(184, 169, 169);
   position: relative;
+  overflow: hidden;
 }
 
-.filter button::after {
+.filter button::before {
   content: '';
   position: absolute;
-  bottom: -3px;
-  left: 0;
-  right: 0;
-  height: 3px;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
   background: var(--gradient-primary);
-  transform: scaleX(0);
-  transition: transform var(--transition-smooth);
-  border-radius: var(--radius-full);
+  transition: left 0.3s ease;
+  z-index: -1;
 }
 
 .filter button:hover {
-  color: var(--primary);
-  background: var(--neutral-100);
-  border-radius: var(--radius-lg);
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-.filter button:hover::after {
-  transform: scaleX(1);
+.filter button:hover::before {
+  left: 0;
 }
 
 .filter button.active {
-  color: rgb(164, 161, 155);
-  background-color: transparent;
+  background: var(--gradient-primary);
+  color: white;
+  border-color: var(--primary);
   font-weight: 700;
-}
-
-.filter button.active::after {
-  transform: scaleX(1);
+  box-shadow: var(--shadow-sm);
 }
 
 body.dark .filter button {
+  background-color: var(--neutral-800);
+  border-color: var(--border-dark);
   color: var(--text-inverse-secondary);
 }
 
+body.dark .filter button::before {
+  background: var(--gradient-ocean);
+}
+
 body.dark .filter button:hover {
-  color: var(--primary-light);
-  background: var(--neutral-800);
+  color: var(--bg-primary-dark);
+  border-color: var(--primary-light);
 }
 
 body.dark .filter button.active {
-  color: var(--primary-light);
+  background: var(--gradient-ocean);
+  color: var(--bg-primary-dark);
+  border-color: var(--primary-light);
 }
 
 .no-posts {
@@ -221,17 +229,16 @@ body.dark .loading {
   .feed-column {
     gap: var(--space-5);
   }
-  .feed-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: var(--space-4);
-  }
   .header-actions {
-    justify-content: center;
+    margin-bottom: var(--space-4);
   }
   .view-flashcards-btn {
     font-size: var(--text-sm);
     padding: var(--space-3) var(--space-4);
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    justify-content: center;
   }
   .filter {
     overflow-x: auto;
@@ -253,5 +260,23 @@ body.dark .loading {
   .no-posts {
     padding: var(--space-8);
     font-size: var(--text-sm);
+  }
+  .flashcard-sets-section {
+    margin-bottom: var(--space-4);
+  }
+}
+
+@media (max-width: 480px) {
+  .view-flashcards-btn {
+    font-size: var(--text-xs);
+    padding: var(--space-2) var(--space-3);
+    width: 100%;
+    max-width: 280px;
+  }
+  .header-actions {
+    margin-bottom: var(--space-3);
+  }
+  .flashcard-sets-section {
+    margin-bottom: var(--space-3);
   }
 }

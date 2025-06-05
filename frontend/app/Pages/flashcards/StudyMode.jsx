@@ -96,6 +96,15 @@ const StudyMode = () => {
     setShowDefinition(!showDefinition);
   };
 
+  // Helper function to determine content length class
+  const getContentLengthClass = (text) => {
+    if (!text) return '';
+    const length = text.length;
+    if (length > 200) return 'very-long-content';
+    if (length > 100) return 'long-content';
+    return '';
+  };
+
   if (loading) {
     return (
       <div className="study-container">
@@ -204,14 +213,18 @@ const StudyMode = () => {
             <div className="card-front">
               <div className="card-content">
                 <div className="card-label">Term</div>
-                <div className="card-text">{currentCard.term}</div>
+                <div className={`card-text ${getContentLengthClass(currentCard.term)}`}>
+                  {currentCard.term}
+                </div>
               </div>
               <div className="flip-hint">Click to reveal definition</div>
             </div>
             <div className="card-back">
               <div className="card-content">
                 <div className="card-label">Definition</div>
-                <div className="card-text">{currentCard.definition}</div>
+                <div className={`card-text ${getContentLengthClass(currentCard.definition)}`}>
+                  {currentCard.definition}
+                </div>
               </div>
             </div>
           </div>
