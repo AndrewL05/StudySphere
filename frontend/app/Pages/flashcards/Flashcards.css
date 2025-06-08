@@ -353,7 +353,7 @@ body.dark .help-text {
 
 .cancel-btn {
   background-color: var(--gray-100);
-  color: var(--text-dark);
+  color: white !important;
   border: 1px solid var(--border-color-light);
   padding: 0.75rem 1.5rem;
   border-radius: var(--radius-md);
@@ -364,7 +364,7 @@ body.dark .help-text {
 
 .cancel-btn:hover {
   background-color: var(--gray-200);
-  transform: translateY(-1px);
+  transform: translateY(-1px); 
 }
 
 body.dark .cancel-btn {
@@ -664,7 +664,7 @@ body.dark .modal-overlay {
 }
 
 .modal-content {
-  background: var(--background-light);
+  background: #fffffff2;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-xl);
   width: 100%;
@@ -675,7 +675,7 @@ body.dark .modal-overlay {
 }
 
 body.dark .modal-content {
-  background: var(--bg-subtle-dark);
+  background: var(--bg-primary-dark);
   border-color: var(--border-color-dark);
 }
 

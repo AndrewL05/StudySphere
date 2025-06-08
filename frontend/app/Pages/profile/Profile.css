@@ -292,6 +292,10 @@
     background-color: var(--primary);
     color: white;
   }
+
+  body.dark .edit-post-btn {
+    color: white;
+  }
   
   .delete-post-btn {
     background-color: #f44336;
