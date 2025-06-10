@@ -1287,7 +1287,8 @@ body.dark .accuracy {
 
 .study-again-btn:hover,
 .shuffle-study-btn:hover {
-  background-color: var(--primary-dark);
+  background-color: var(--primary-light);
+  color: white;
   transform: translateY(-1px);
 }
 
@@ -1449,6 +1450,7 @@ body.dark .empty-study p {
   }
 
   .study-actions {
+  
     flex-direction: column;
     align-items: center;
   }
