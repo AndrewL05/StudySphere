@@ -73,11 +73,7 @@ StudySphere is a cutting-edge, full-stack learning platform that revolutionizes 
 - **Filter** your feed by popularity, recency, or bookmarks
 - **Search** for specific topics or content across the platform
 
----
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 
 
