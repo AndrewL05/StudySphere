@@ -60,74 +60,71 @@ const CreateFlashcardSet = () => {
   };
 
   return (
-    <div className="create-set-container">
-      <div className="create-set-header">
-        <h1>Create New Flashcard Set</h1>
-      </div>
+    <div className="fc-page">
+      <div className="fc-form-container">
+        <h2 className="fc-page-title">Create New Flashcard Set</h2>
 
-      {error && <div className="error-message">{error}</div>}
-
-      <form onSubmit={handleSubmit} className="create-set-form">
-        <div className="form-group">
-          <label htmlFor="title">Title *</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            placeholder="Enter set title"
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Enter set description (optional)"
-            rows="4"
-          />
-        </div>
-
-        <div className="form-group checkbox">
-          <label>
+        <form onSubmit={handleSubmit} className="fc-form">
+          <div className="form-field">
+            <label htmlFor="title">Title *</label>
             <input
-              type="checkbox"
-              name="is_public"
-              checked={formData.is_public}
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title}
               onChange={handleChange}
+              placeholder="Enter set title"
+              required
             />
-            Make this set public
-          </label>
-          <p className="help-text">
+          </div>
+
+          <div className="form-field">
+            <label htmlFor="description">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Enter set description (optional)"
+              rows="4"
+            />
+          </div>
+
+          <div className="fc-toggle">
+            <button
+              type="button"
+              className={`fc-toggle-switch ${formData.is_public ? 'active' : ''}`}
+              onClick={() => setFormData(prev => ({ ...prev, is_public: !prev.is_public }))}
+            />
+            <span className="fc-toggle-label">Make this set public</span>
+          </div>
+          <p style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)', margin: 0 }}>
             Public sets can be viewed and studied by other users
           </p>
-        </div>
 
-        <div className="form-actions">
-          <button
-            type="button"
-            className="cancel-btn"
-            onClick={() => navigate('/flashcards')}
-            disabled={loading}
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="create-btn"
-            disabled={loading}
-          >
-            {loading ? 'Creating...' : 'Create Set'}
-          </button>
-        </div>
-      </form>
+          {error && <div className="form-error">{error}</div>}
+
+          <div className="form-actions">
+            <button
+              type="button"
+              className="form-cancel-btn"
+              onClick={() => navigate('/flashcards')}
+              disabled={loading}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="form-submit-btn"
+              disabled={loading}
+            >
+              {loading ? 'Creating...' : 'Create Set'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default CreateFlashcardSet; 
+export default CreateFlashcardSet;

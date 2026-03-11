@@ -87,7 +87,7 @@ const CreateQuiz = () => {
           use_ai_generation: quizData.use_ai_generation
         })
       });
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Failed to create quiz');
       }
@@ -103,48 +103,52 @@ const CreateQuiz = () => {
 
   if (loading) {
     return (
-      <div className="create-set-container">
-        <div className="loading-spinner">Loading flashcard set...</div>
+      <div className="fc-page">
+        <div className="fc-form-container">
+          <div className="feed-loading">Loading flashcard set...</div>
+        </div>
       </div>
     );
   }
 
   if (!set) {
     return (
-      <div className="create-set-container">
-        <div className="error-message">Flashcard set not found</div>
-        <Link to="/flashcards" className="back-link">← Back to Flashcard Sets</Link>
+      <div className="fc-page">
+        <div className="fc-form-container">
+          <div className="form-error">Flashcard set not found</div>
+          <Link to="/flashcards" className="fc-back-link">Back to Flashcard Sets</Link>
+        </div>
       </div>
     );
   }
 
   if (flashcards.length < 3) {
     return (
-      <div className="create-set-container">
-        <div className="empty-state">
-          <h3>Not enough flashcards</h3>
-          <p>You need at least 3 flashcards to create a quiz. This set has {flashcards.length} flashcard(s).</p>
-          <Link to={`/flashcards/${id}`} className="back-link">← Back to Flashcard Set</Link>
+      <div className="fc-page">
+        <div className="fc-form-container">
+          <div className="feed-empty">
+            <h3>Not enough flashcards</h3>
+            <p>You need at least 3 flashcards to create a quiz. This set has {flashcards.length} flashcard(s).</p>
+            <Link to={`/flashcards/${id}`} className="fc-back-link">Back to Flashcard Set</Link>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="create-set-container">
-      <div className="create-set-header">
-        <Link to={`/flashcards/${id}`} className="back-link">← Back to {set.title}</Link>
-        <h1>Create Quiz</h1>
-        <p className="quiz-subtitle">Generate an interactive quiz from your flashcard set</p>
-      </div>
+    <div className="fc-page">
+      <div className="fc-form-container">
+        <Link to={`/flashcards/${id}`} className="fc-back-link">Back to {set.title}</Link>
+        <h2 className="fc-page-title">Create Quiz</h2>
+        <p style={{ color: 'var(--text-secondary)', fontSize: 'var(--text-sm)', marginBottom: 'var(--space-5)' }}>
+          Generate an interactive quiz from your flashcard set
+        </p>
 
-      <form onSubmit={handleSubmit} className="create-set-form">
-        {error && <div className="error-message">{error}</div>}
+        <form onSubmit={handleSubmit} className="fc-form">
+          {error && <div className="form-error">{error}</div>}
 
-        <div className="form-section">
-          <h3 className="section-title">📝 Basic Information</h3>
-          
-          <div className="form-group">
+          <div className="form-field">
             <label htmlFor="title">Quiz Title</label>
             <input
               type="text"
@@ -157,7 +161,7 @@ const CreateQuiz = () => {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-field">
             <label htmlFor="description">Description (Optional)</label>
             <textarea
               id="description"
@@ -168,12 +172,8 @@ const CreateQuiz = () => {
               rows="3"
             />
           </div>
-        </div>
 
-        <div className="form-section">
-          <h3 className="section-title">⚙️ Quiz Settings</h3>
-
-          <div className="form-group">
+          <div className="form-field">
             <label htmlFor="quiz_type">Quiz Type</label>
             <select
               id="quiz_type"
@@ -185,15 +185,13 @@ const CreateQuiz = () => {
               <option value="true_false">True/False</option>
               <option value="fill_blank">Fill in the Blank</option>
             </select>
-            <div className="help-text">
-              <strong>Multiple Choice:</strong> Choose the correct definition from 4 options<br/>
-              <strong>True/False:</strong> Determine if term-definition pairs are correct<br/>
-              <strong>Fill in the Blank:</strong> Type the missing definition
-            </div>
+            <span style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)', marginTop: 'var(--space-1)' }}>
+              Multiple Choice: Choose from 4 options | True/False: Verify pairs | Fill in the Blank: Type the answer
+            </span>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+            <div className="form-field">
               <label htmlFor="question_count">Number of Questions</label>
               <input
                 type="number"
@@ -205,12 +203,12 @@ const CreateQuiz = () => {
                 max={flashcards.length}
                 required
               />
-              <div className="help-text">
-                Available flashcards: {flashcards.length}
-              </div>
+              <span style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
+                Available: {flashcards.length}
+              </span>
             </div>
 
-            <div className="form-group">
+            <div className="form-field">
               <label htmlFor="time_limit">Time Limit (minutes)</label>
               <input
                 type="number"
@@ -222,104 +220,54 @@ const CreateQuiz = () => {
                 max="120"
                 placeholder="No limit"
               />
-              <div className="help-text">
+              <span style={{ color: 'var(--text-muted)', fontSize: 'var(--text-xs)' }}>
                 Leave empty for no time limit
-              </div>
+              </span>
             </div>
           </div>
-        </div>
 
-        <div className="form-section">
-          <h3 className="section-title">🤖 AI Enhancement</h3>
-          
-          <div className="ai-toggle-card">
-            <div className="toggle-header">
-              <div className="toggle-info">
-                <h4>🧠 AI-Powered Question Generation</h4>
-                <p>Let AI create more sophisticated and challenging questions from your flashcards</p>
-              </div>
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  name="use_ai_generation"
-                  checked={quizData.use_ai_generation}
-                  onChange={handleInputChange}
-                />
-                <span className="slider"></span>
-              </label>
+          <div className="form-field">
+            <label>AI Enhancement</label>
+            <div className="fc-toggle">
+              <button
+                type="button"
+                className={`fc-toggle-switch ${quizData.use_ai_generation ? 'active' : ''}`}
+                onClick={() => setQuizData(prev => ({ ...prev, use_ai_generation: !prev.use_ai_generation }))}
+              />
+              <span className="fc-toggle-label">AI-Powered Question Generation</span>
             </div>
-            
             {quizData.use_ai_generation && (
-              <div className="ai-features">
-                <div className="feature-list">
-                  <div className="feature-item">
-                    <span className="feature-icon">✨</span>
-                    <span>Intelligent distractor generation</span>
-                  </div>
-                  <div className="feature-item">
-                    <span className="feature-icon">🎯</span>
-                    <span>Context-aware question variations</span>
-                  </div>
-                  <div className="feature-item">
-                    <span className="feature-icon">🧪</span>
-                    <span>Advanced difficulty balancing</span>
-                  </div>
-                </div>
-                <div className="ai-note">
-                  <strong>Note:</strong> AI generation may take a bit longer but produces higher quality questions.
-                </div>
+              <div style={{ marginTop: 'var(--space-3)', padding: 'var(--space-3)', background: 'var(--bg-input)', borderRadius: 'var(--radius-md)', fontSize: 'var(--text-xs)', color: 'var(--text-secondary)' }}>
+                AI generation creates more sophisticated questions with intelligent distractors. May take a bit longer.
               </div>
             )}
           </div>
-        </div>
 
-        <div className="form-section">
-          <h3 className="section-title">🌐 Sharing Settings</h3>
-          
-          <div className="form-group checkbox">
-            <input
-              type="checkbox"
-              id="is_public"
-              name="is_public"
-              checked={quizData.is_public}
-              onChange={handleInputChange}
+          <div className="fc-toggle">
+            <button
+              type="button"
+              className={`fc-toggle-switch ${quizData.is_public ? 'active' : ''}`}
+              onClick={() => setQuizData(prev => ({ ...prev, is_public: !prev.is_public }))}
             />
-            <label htmlFor="is_public">
-              <span className="checkbox-text">
-                <strong>Make this quiz public</strong>
-                <div className="help-text">
-                  Public quizzes can be discovered and taken by other users
-                </div>
-              </span>
-            </label>
+            <span className="fc-toggle-label">Make this quiz public</span>
           </div>
-        </div>
 
-        <div className="form-actions">
-          <Link to={`/flashcards/${id}`} className="cancel-btn">
-            Cancel
-          </Link>
-          <button 
-            type="submit" 
-            className="create-btn"
-            disabled={creating}
-          >
-            {creating ? (
-              <span className="creating-text">
-                <span className="spinner"></span>
-                {quizData.use_ai_generation ? 'Generating with AI...' : 'Creating Quiz...'}
-              </span>
-            ) : (
-              <>
-                <span className="btn-icon">🚀</span>
-                Create Quiz
-              </>
-            )}
-          </button>
-        </div>
-      </form>
+          <div className="form-actions">
+            <Link to={`/flashcards/${id}`} className="form-cancel-btn">
+              Cancel
+            </Link>
+            <button
+              type="submit"
+              className="form-submit-btn"
+              disabled={creating}
+            >
+              {creating ? (quizData.use_ai_generation ? 'Generating with AI...' : 'Creating Quiz...') : 'Create Quiz'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default CreateQuiz; 
+export default CreateQuiz;

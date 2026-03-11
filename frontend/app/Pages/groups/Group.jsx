@@ -193,14 +193,14 @@ const Group = () => {
         setIsChatVisible(prev => !prev);
     };
 
-    if (loading) return <div className="Group-page-container loading">Loading group...</div>; 
-    if (error && !group) return <div className="Group-page-container error">{error} <Link to="/groups">Back to All Groups</Link></div>;
-    if (!group) return <div className="Group-page-container not-found">Group not found. <Link to="/groups">Back to All Groups</Link></div>;
+    if (loading) return <div className="groups-page"><div className="groups-container"><div className="feed-loading"><div className="loading-spinner"></div><p>Loading group...</p></div></div></div>;
+    if (error && !group) return <div className="groups-page"><div className="groups-container"><div className="feed-empty"><p>{error}</p><Link to="/groups">Back to All Groups</Link></div></div></div>;
+    if (!group) return <div className="groups-page"><div className="groups-container"><div className="feed-empty"><p>Group not found.</p><Link to="/groups">Back to All Groups</Link></div></div></div>;
 
     return (
-        <div className="Group-page-container">
-            <div className="Group-page-content">
-                {error && !actionLoading && <div className="error-message action-error" style={{ marginBottom: '1rem' }}>{error}</div>}
+        <div className="group-detail-page">
+            <div className="group-detail-container">
+                {error && !actionLoading && <div className="action-error">{error}</div>}
                 <GroupHeaderDisplay
                     group={group}
                     currentUser={currentUser}
@@ -213,8 +213,8 @@ const Group = () => {
                     onNavigateToSettings={handleNavigateToSettings}
                     onNavigateToCreatePost={handleNavigateToCreatePost}
                 />
-                <div className="group-content">
-                    <div className="group-main">
+                <div className="group-content-layout">
+                    <div className="group-posts-section">
                         <GroupPostsList
                             posts={posts}
                             currentUser={currentUser}
@@ -222,14 +222,14 @@ const Group = () => {
                             formatTimeAgo={formatTimeAgo}
                         />
                     </div>
-                    <div className="group-sidebar">
+                    <div className="group-sidebar-area">
                         <MemberList members={members} />
                         {group.rules && group.rules.length > 0 && (
-                            <div className="group-rules">
-                                <h3>Group Rules</h3>
-                                <ul className="rules-list">
+                            <div className="group-rules-section">
+                                <h3 className="group-rules-title">Group Rules</h3>
+                                <ol className="group-rules-list">
                                     {group.rules.map((rule, index) => <li key={index}>{rule}</li>)}
-                                </ul>
+                                </ol>
                             </div>
                         )}
                     </div>
@@ -241,14 +241,14 @@ const Group = () => {
                     groupId={groupId}
                     currentUser={currentUser}
                     groupName={group?.name || "Group Chat"}
-                    onClose={toggleChatVisibility} 
+                    onClose={toggleChatVisibility}
                 />
             )}
 
             {!isChatVisible && (
                 <button
                     onClick={toggleChatVisibility}
-                    className="chat-toggle-fab"
+                    className="chat-fab"
                     title="Open Chat"
                 >
                     <ChatBubbleIcon />

@@ -36,7 +36,7 @@ const FlashcardSet = () => {
 
       if (setError) throw setError;
       setSet(setData);
-      
+
       setIsOwner(user && setData.user_id === user.id);
 
       const { data: cardsData, error: cardsError } = await supabase
@@ -117,7 +117,7 @@ const FlashcardSet = () => {
 
       if (error) throw error;
 
-      setFlashcards(flashcards.map(card => 
+      setFlashcards(flashcards.map(card =>
         card.id === editingCard.id ? data : card
       ));
       setEditingCard(null);
@@ -177,7 +177,7 @@ const FlashcardSet = () => {
           use_ai_generation: true
         })
       });
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Failed to generate AI quiz');
       }
@@ -204,107 +204,99 @@ const FlashcardSet = () => {
 
   if (loading) {
     return (
-      <div className="flashcard-set-container">
-        <div className="loading-spinner">Loading flashcard set...</div>
+      <div className="fc-page">
+        <div className="fc-container">
+          <div className="feed-loading">Loading flashcard set...</div>
+        </div>
       </div>
     );
   }
 
   if (!set) {
     return (
-      <div className="flashcard-set-container">
-        <div className="error-message">Flashcard set not found</div>
+      <div className="fc-page">
+        <div className="fc-container">
+          <div className="form-error">Flashcard set not found</div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flashcard-set-container">
-      <div className="set-header">
-        <div className="set-info">
-          <Link to="/flashcards" className="back-link">← Back to Sets</Link>
-          <h1>{set.title}</h1>
-          {set.description && <p className="set-description">{set.description}</p>}
-          <div className="set-meta">
+    <div className="fc-page">
+      <div className="fc-container">
+        <div className="fc-detail-header">
+          <Link to="/flashcards" className="fc-back-link">Back to Sets</Link>
+          <h1 className="fc-detail-title">{set.title}</h1>
+          {set.description && <p className="fc-detail-desc">{set.description}</p>}
+          <div className="fc-set-meta" style={{ marginBottom: 'var(--space-4)' }}>
             <span>{flashcards.length} cards</span>
-            {set.is_public && <span className="public-badge">Public</span>}
+            {set.is_public && <span className="fc-set-badge">Public</span>}
+          </div>
+
+          <div className="fc-detail-actions">
+            <Link
+              to={`/flashcards/${id}/study`}
+              className="fc-action-btn primary"
+            >
+              Study
+            </Link>
+            {isOwner && (
+              <button
+                className="fc-action-btn"
+                onClick={() => setShowCreateModal(true)}
+              >
+                + Add Card
+              </button>
+            )}
+            <button
+              className="fc-action-btn"
+              onClick={() => {
+                if (flashcards.length < 3) {
+                  setError('You need at least 3 flashcards to generate a quiz. This set has ' + flashcards.length + ' card(s).');
+                  setTimeout(() => setError(null), 5000);
+                  return;
+                }
+                handleGenerateAIQuiz();
+              }}
+              disabled={generatingQuiz}
+            >
+              {generatingQuiz ? 'Generating...' : 'AI Quiz'}
+            </button>
+            <Link
+              to={`/flashcards/${id}/create-quiz`}
+              className="fc-action-btn"
+              onClick={(e) => {
+                if (flashcards.length < 3) {
+                  e.preventDefault();
+                  setError('You need at least 3 flashcards to create a quiz. This set has ' + flashcards.length + ' card(s).');
+                  setTimeout(() => setError(null), 5000);
+                  return;
+                }
+              }}
+            >
+              Create Quiz
+            </Link>
+            <button
+              className="fc-action-btn"
+              onClick={handleShare}
+              title="Share flashcard set"
+            >
+              Share
+            </button>
           </div>
         </div>
-        
-        <div className="set-actions">
-          {isOwner && (
-            <button 
-              className="add-card-btn"
-              onClick={() => setShowCreateModal(true)}
-            >
-              + Add Card
-            </button>
-          )}
-          <button 
-            className="generate-ai-quiz-btn"
-            onClick={() => {
-              if (flashcards.length < 3) {
-                setError('You need at least 3 flashcards to generate a quiz. This set has ' + flashcards.length + ' card(s).');
-                // Clear error after 5 seconds
-                setTimeout(() => setError(null), 5000);
-                return;
-              }
-              handleGenerateAIQuiz();
-            }}
-            disabled={generatingQuiz}
-          >
-            {generatingQuiz ? (
-              <span className="generating-text">
-                <span className="spinner"></span>
-                Generating...
-              </span>
-            ) : (
-              <>
-                🤖 Generate AI Quiz
-              </>
-            )}
-          </button>
-          <Link 
-            to={`/flashcards/${id}/create-quiz`}
-            className="create-quiz-btn"
-            onClick={(e) => {
-              if (flashcards.length < 3) {
-                e.preventDefault();
-                setError('You need at least 3 flashcards to create a quiz. This set has ' + flashcards.length + ' card(s).');
-                setTimeout(() => setError(null), 5000);
-                return;
-              }
-            }}
-          >
-            📝 Create Quiz
-          </Link>
-          <Link 
-            to={`/flashcards/${id}/study`}
-            className="study-btn"
-          >
-            Study
-          </Link>
-          <button 
-            className="share-btn"
-            onClick={handleShare}
-            title="Share flashcard set"
-          >
-            📤
-          </button>
-        </div>
-      </div>
 
-      {error && <div className="error-message">{error}</div>}
+        {error && <div className="form-error">{error}</div>}
 
-      <div className="flashcards-list">
         {flashcards.length === 0 ? (
-          <div className="empty-state">
+          <div className="feed-empty">
             <h3>No flashcards yet</h3>
             {isOwner ? (
               <>
                 <p>Add some flashcards to get started studying!</p>
-                <button 
-                  className="add-card-btn"
+                <button
+                  className="form-submit-btn"
                   onClick={() => setShowCreateModal(true)}
                 >
                   Add Your First Card
@@ -315,148 +307,128 @@ const FlashcardSet = () => {
             )}
           </div>
         ) : (
-          flashcards.map(card => (
-            <div key={card.id} className="flashcard-item">
-              <div className="card-content">
-                <div className="card-term">
-                  <strong>Term:</strong> {card.term}
-                </div>
-                <div className="card-definition">
-                  <strong>Definition:</strong> {card.definition}
-                </div>
+          <div className="fc-cards-grid">
+            {flashcards.map(card => (
+              <div key={card.id} className="fc-card-item">
+                <div className="fc-card-front">{card.term}</div>
+                <div className="fc-card-back">{card.definition}</div>
+                {isOwner && (
+                  <div className="fc-card-actions">
+                    <button
+                      className="fc-card-edit-btn"
+                      onClick={() => setEditingCard(card)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="fc-card-delete-btn"
+                      onClick={() => handleDeleteCard(card.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
-              {isOwner && (
-                <div className="card-actions">
-                  <button 
-                    className="edit-btn"
-                    onClick={() => setEditingCard(card)}
+            ))}
+          </div>
+        )}
+
+        {/* Create Card Modal */}
+        {showCreateModal && isOwner && (
+          <div className="fc-modal-overlay" onClick={() => setShowCreateModal(false)}>
+            <div className="fc-modal" onClick={(e) => e.stopPropagation()}>
+              <h2 className="fc-modal-title">Add New Flashcard</h2>
+
+              <form onSubmit={handleCreateCard}>
+                <div className="form-field">
+                  <label htmlFor="term">Term *</label>
+                  <input
+                    type="text"
+                    id="term"
+                    value={newCard.term}
+                    onChange={(e) => setNewCard({...newCard, term: e.target.value})}
+                    placeholder="Enter the term"
+                    required
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label htmlFor="definition">Definition *</label>
+                  <textarea
+                    id="definition"
+                    value={newCard.definition}
+                    onChange={(e) => setNewCard({...newCard, definition: e.target.value})}
+                    placeholder="Enter the definition"
+                    rows="4"
+                    required
+                  />
+                </div>
+
+                <div className="form-actions">
+                  <button
+                    type="button"
+                    className="form-cancel-btn"
+                    onClick={() => setShowCreateModal(false)}
                   >
-                    Edit
+                    Cancel
                   </button>
-                  <button 
-                    className="delete-btn"
-                    onClick={() => handleDeleteCard(card.id)}
-                  >
-                    Delete
+                  <button type="submit" className="form-submit-btn">
+                    Add Card
                   </button>
                 </div>
-              )}
+              </form>
             </div>
-          ))
+          </div>
+        )}
+
+        {/* Edit Card Modal */}
+        {editingCard && isOwner && (
+          <div className="fc-modal-overlay" onClick={() => setEditingCard(null)}>
+            <div className="fc-modal" onClick={(e) => e.stopPropagation()}>
+              <h2 className="fc-modal-title">Edit Flashcard</h2>
+
+              <form onSubmit={handleUpdateCard}>
+                <div className="form-field">
+                  <label htmlFor="edit-term">Term *</label>
+                  <input
+                    type="text"
+                    id="edit-term"
+                    value={editingCard.term}
+                    onChange={(e) => setEditingCard({...editingCard, term: e.target.value})}
+                    placeholder="Enter the term"
+                    required
+                  />
+                </div>
+
+                <div className="form-field">
+                  <label htmlFor="edit-definition">Definition *</label>
+                  <textarea
+                    id="edit-definition"
+                    value={editingCard.definition}
+                    onChange={(e) => setEditingCard({...editingCard, definition: e.target.value})}
+                    placeholder="Enter the definition"
+                    rows="4"
+                    required
+                  />
+                </div>
+
+                <div className="form-actions">
+                  <button
+                    type="button"
+                    className="form-cancel-btn"
+                    onClick={() => setEditingCard(null)}
+                  >
+                    Cancel
+                  </button>
+                  <button type="submit" className="form-submit-btn">
+                    Update Card
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         )}
       </div>
-
-      {/* Create Card Modal */}
-      {showCreateModal && isOwner && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2>Add New Flashcard</h2>
-              <button 
-                className="close-btn"
-                onClick={() => setShowCreateModal(false)}
-              >
-                ×
-              </button>
-            </div>
-            
-            <form onSubmit={handleCreateCard}>
-              <div className="form-group">
-                <label htmlFor="term">Term *</label>
-                <input
-                  type="text"
-                  id="term"
-                  value={newCard.term}
-                  onChange={(e) => setNewCard({...newCard, term: e.target.value})}
-                  placeholder="Enter the term"
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="definition">Definition *</label>
-                <textarea
-                  id="definition"
-                  value={newCard.definition}
-                  onChange={(e) => setNewCard({...newCard, definition: e.target.value})}
-                  placeholder="Enter the definition"
-                  rows="4"
-                  required
-                />
-              </div>
-              
-              <div className="modal-actions">
-                <button 
-                  type="button" 
-                  className="cancel-btn"
-                  onClick={() => setShowCreateModal(false)}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="create-btn">
-                  Add Card
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Card Modal */}
-      {editingCard && isOwner && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2>Edit Flashcard</h2>
-              <button 
-                className="close-btn"
-                onClick={() => setEditingCard(null)}
-              >
-                ×
-              </button>
-            </div>
-            
-            <form onSubmit={handleUpdateCard}>
-              <div className="form-group">
-                <label htmlFor="edit-term">Term *</label>
-                <input
-                  type="text"
-                  id="edit-term"
-                  value={editingCard.term}
-                  onChange={(e) => setEditingCard({...editingCard, term: e.target.value})}
-                  placeholder="Enter the term"
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="edit-definition">Definition *</label>
-                <textarea
-                  id="edit-definition"
-                  value={editingCard.definition}
-                  onChange={(e) => setEditingCard({...editingCard, definition: e.target.value})}
-                  placeholder="Enter the definition"
-                  rows="4"
-                  required
-                />
-              </div>
-              
-              <div className="modal-actions">
-                <button 
-                  type="button" 
-                  className="cancel-btn"
-                  onClick={() => setEditingCard(null)}
-                >
-                  Cancel
-                </button>
-                <button type="submit" className="create-btn">
-                  Update Card
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

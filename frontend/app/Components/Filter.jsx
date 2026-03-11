@@ -25,11 +25,11 @@ const Filter = ({ filters = [], activeFilter, onFilterChange }) => {
     */
 
     return (
-        <div className="filter">
+        <div className="filter-pills">
             {displayFilters.map(filter => (
                 <button
                     key={filter.id}
-                    className={activeFilter === filter.id ? 'active' : ''}
+                    className={`filter-pill ${activeFilter === filter.id ? 'active' : ''}`}
                     onClick={() => handleFilterChange(filter.id)}
                     aria-pressed={activeFilter === filter.id}
                 >

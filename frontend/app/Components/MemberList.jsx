@@ -1,5 +1,5 @@
 import React from 'react';
-import UserName from './Username'; 
+import UserName from './Username';
 import '../Pages/groups/Groups.css'
 
 const MemberItem = ({ member }) => {
@@ -14,24 +14,24 @@ const MemberItem = ({ member }) => {
                 <span className="member-avatar-placeholder">{displayName.charAt(0).toUpperCase()}</span>
             )}
             <span className="member-name">{displayName}</span>
-            {member.role === 'creator' && <span className="member-role">(Creator)</span>}
-            {member.role === 'admin' && member.role !== 'creator' && <span className="member-role">(Admin)</span>}
+            {member.role === 'creator' && <span className="member-role">Creator</span>}
+            {member.role === 'admin' && member.role !== 'creator' && <span className="member-role">Admin</span>}
         </li>
     );
 };
 
 const MemberList = ({ members }) => {
     return (
-        <div className="group-members">
-            <h3>Members ({members.length})</h3>
+        <div className="members-section">
+            <h3 className="members-title">Members ({members.length})</h3>
             {members.length > 0 ? (
-                <ul className="member-list">
+                <ul className="members-list">
                     {members.map(member => (
                         <MemberItem key={member.user_id} member={member} />
                     ))}
                 </ul>
             ) : (
-                <p>No members yet.</p>
+                <p className="chat-system-message">No members yet.</p>
             )}
         </div>
     );

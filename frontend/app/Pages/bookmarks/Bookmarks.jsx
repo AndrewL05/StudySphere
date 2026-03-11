@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import supabase from '../../Services/supabaseClient';
 import PostCard from '../../Components/PostCard';
-import './Bookmarks.css'; 
+import './Bookmarks.css';
 
 const Bookmarks = () => {
   const [bookmarkedPosts, setBookmarkedPosts] = useState([]);
@@ -34,18 +34,18 @@ const Bookmarks = () => {
           .from('bookmarked_posts')
           .select('post_id')
           .eq('user_id', user.id)
-          .order('created_at', { ascending: false }); 
+          .order('created_at', { ascending: false });
 
         if (!isMounted) return;
         if (bookmarkError) throw bookmarkError;
 
         if (!bookmarks || bookmarks.length === 0) {
-          setBookmarkedPosts([]); 
+          setBookmarkedPosts([]);
         } else {
           const postIds = bookmarks.map(b => b.post_id);
           const { data: postsData, error: postsError } = await supabase
             .from('posts')
-            .select('*, comments(count)') 
+            .select('*, comments(count)')
             .in('id', postIds);
 
           if (!isMounted) return;
@@ -53,7 +53,6 @@ const Bookmarks = () => {
 
           const orderedPosts = postIds.map(pId => postsData.find(p => p.id === pId)).filter(Boolean);
           setBookmarkedPosts(orderedPosts || []);
-
         }
       } catch (err) {
         if (isMounted) {
@@ -71,7 +70,7 @@ const Bookmarks = () => {
     fetchUserDataAndBookmarks();
 
     return () => { isMounted = false; };
-  }, [navigate]); 
+  }, [navigate]);
 
   const formatTimeAgo = (dateString) => {
     if (!dateString) return 'unknown time';
@@ -81,22 +80,27 @@ const Bookmarks = () => {
     if (diffInSeconds < 60) return 'just now';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-    return new Date(dateString).toLocaleDateString(); 
+    return new Date(dateString).toLocaleDateString();
   };
-
 
   return (
     <div className="bookmarks-page">
-      <h2>My Bookmarks</h2>
+      <h1 className="bookmarks-heading">Bookmarks</h1>
 
       {loading ? (
-        <div className="loading">Loading bookmarks...</div>
+        <div className="bookmarks-loading">Loading bookmarks...</div>
       ) : error ? (
-        <div className="error-message">{error}</div>
+        <div className="bookmarks-error">{error}</div>
       ) : bookmarkedPosts.length === 0 ? (
-        <p className="no-bookmarks">You haven't bookmarked any posts yet.</p>
+        <div className="bookmarks-empty">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <p>No bookmarks yet</p>
+          <Link to="/">Browse posts</Link>
+        </div>
       ) : (
-        <div className="bookmarked-posts-list">
+        <div className="bookmarks-list">
           {bookmarkedPosts.map((post) => (
             <PostCard
               key={post.id}
@@ -108,7 +112,7 @@ const Bookmarks = () => {
               time={formatTimeAgo(post.created_at)}
               upvotesNum={post.upvotes || 0}
               commentCount={post.comments?.[0]?.count ?? 0}
-              userId={userId} 
+              userId={userId}
             />
           ))}
         </div>

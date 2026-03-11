@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import supabase from '../../Services/supabaseClient';
 import './Groups.css';
-import '../auth/Auth.css';
 
 const availableTopicsList = [
     'Math', 'Science', 'History', 'Programming', 'Physics', 'Calculus',
@@ -13,7 +12,7 @@ const availableTopicsList = [
 const CreateGroup = () => {
   const [groupName, setGroupName] = useState('');
   const [description, setDescription] = useState('');
-  const [selectedTopics, setSelectedTopics] = useState([]); 
+  const [selectedTopics, setSelectedTopics] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -65,7 +64,7 @@ const CreateGroup = () => {
             name: groupName.trim(),
             description: description.trim() || null,
             creator_id: currentUser.id,
-            topics: selectedTopics, 
+            topics: selectedTopics,
           },
         ])
         .select()
@@ -92,7 +91,7 @@ const CreateGroup = () => {
       setSuccess(true);
       setGroupName('');
       setDescription('');
-      setSelectedTopics([]); 
+      setSelectedTopics([]);
 
       setTimeout(() => { navigate(`/group/${newGroupId}`); }, 1500);
 
@@ -105,66 +104,65 @@ const CreateGroup = () => {
   };
 
   if (isLoading && !currentUser) {
-     return <div className="create-group-page loading">Verifying user...</div>;
+     return <div className="groups-page"><div className="groups-form-container"><div className="feed-loading"><div className="loading-spinner"></div><p>Verifying user...</p></div></div></div>;
   }
 
   return (
-    <div className="create-group-page">
-      <h2>Create a New Group</h2>
-
-      <form onSubmit={handleSubmit} className="create-group-form">
-        <div className="form-group">
-          <label htmlFor="groupName">Group Name</label>
-          <input
-            type="text"
-            id="groupName"
-            value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
-            placeholder="e.g., CS 101 Study Buddies"
-            required
-            disabled={isLoading}
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="description">Description (Optional)</label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="What is this group about?"
-            rows="4"
-            disabled={isLoading}
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Topics (Optional)</label>
-          <div className="topics-checkbox-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', maxHeight: '150px', overflowY: 'auto', border: '1px solid var(--border-color-light)', padding: '10px', borderRadius: 'var(--radius-md)' }}>
-            {availableTopicsList.map(topic => (
-              <label key={topic} className="topic-checkbox-label" style={{ display: 'flex', alignItems: 'center', cursor: 'pointer'}}>
-                <input
-                  type="checkbox"
-                  value={topic}
-                  checked={selectedTopics.includes(topic)}
-                  onChange={() => handleTopicChange(topic)}
-                  disabled={isLoading}
-                  style={{ marginRight: '5px' }}
-                />
-                {topic}
-              </label>
-            ))}
+    <div className="groups-page">
+      <div className="groups-form-container">
+        <h2 className="groups-page-title">Create a New Group</h2>
+        <form onSubmit={handleSubmit} className="groups-form">
+          <div className="form-field">
+            <label htmlFor="groupName">Group Name</label>
+            <input
+              type="text"
+              id="groupName"
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
+              placeholder="e.g., CS 101 Study Buddies"
+              required
+              disabled={isLoading}
+            />
           </div>
-          <small className="topics-input-hint">Select one or more relevant topics for your group.</small>
-        </div>
 
-        <button type="submit" className="auth-button" disabled={isLoading}>
-          {isLoading ? 'Creating...' : 'Create Group'}
-        </button>
+          <div className="form-field">
+            <label htmlFor="description">Description (Optional)</label>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="What is this group about?"
+              rows="4"
+              disabled={isLoading}
+            />
+          </div>
 
-        {error && <div className="error-message">{error}</div>}
-        {success && <div className="success-message">Group created successfully! Redirecting...</div>}
-      </form>
+          <div className="form-field">
+            <label>Topics (Optional)</label>
+            <div className="topic-select-grid">
+              {availableTopicsList.map(topic => (
+                <button
+                  key={topic}
+                  type="button"
+                  className={`topic-select-btn ${selectedTopics.includes(topic) ? 'selected' : ''}`}
+                  onClick={() => handleTopicChange(topic)}
+                  disabled={isLoading}
+                >
+                  {topic}
+                </button>
+              ))}
+            </div>
+            <small>Select one or more relevant topics for your group.</small>
+          </div>
+
+          {error && <div className="form-error">{error}</div>}
+          {success && <div className="form-success">Group created successfully! Redirecting...</div>}
+
+          <button type="submit" className="form-submit-btn" disabled={isLoading}>
+            {isLoading ? 'Creating...' : 'Create Group'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

@@ -3,9 +3,24 @@ import { Link, useNavigate, useLocation } from 'react-router';
 import '../App.css';
 import supabase from '../Services/supabaseClient';
 import { useTheme } from '../Context/ThemeContext';
+import SearchOverlay from './SearchOverlay';
+
+const SearchIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8"></circle>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+);
+
+const PlusIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="12" y1="5" x2="12" y2="19"></line>
+    <line x1="5" y1="12" x2="19" y2="12"></line>
+  </svg>
+);
 
 const SunIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="theme-icon">
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
   </svg>
 );
@@ -51,12 +66,13 @@ const GroupIcon = () => (
   </svg>
 );
 
-const Navbar = () => {
+const Navbar = ({ openAuthModal }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showCreateMenu, setShowCreateMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showSearchOverlay, setShowSearchOverlay] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const mobileMenuRef = useRef(null);
@@ -169,10 +185,10 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="navbar navbar-container">
+      <nav className="navbar">
         <div className="navbar-left">
-          <button 
-            className="mobile-menu-toggle"
+          <button
+            className="mobile-menu-toggle nav-icon-btn"
             onClick={(e) => {
               e.stopPropagation();
               setShowMobileMenu(!showMobileMenu);
@@ -181,51 +197,47 @@ const Navbar = () => {
           >
             {showMobileMenu ? <CloseIcon /> : <MenuIcon />}
           </button>
-          <Link to="/" className="desktop-only"><h2>StudySphere</h2></Link>
-        </div>
-
-        <div className="navbar-center">
-          <Link to="/" className="mobile-logo">
-            <h2>StudySphere</h2>
+          <Link to="/" className="logo desktop-only">
+            <span className="logo-accent">S</span>tudySphere
           </Link>
-          <form onSubmit={handleSearch} className="search-form desktop-only">
-            <input
-              type="text"
-              placeholder="Search posts..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <button type="submit" className="search-button">
-               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            </button>
-          </form>
         </div>
 
-        <div className="navbar-right">
-          <div className="dropdown desktop-only">
-            <h3 onClick={(e) => handleMenuClick(e, setShowCreateMenu)} style={{ cursor: 'pointer' }}>
-              Create +
-            </h3>
+        <Link to="/" className="logo mobile-logo">
+          <span className="logo-accent">S</span>tudySphere
+        </Link>
+
+        <div className="nav-actions">
+          {/* Search icon */}
+          <button className="nav-icon-btn desktop-only" onClick={() => setShowSearchOverlay(true)} title="Search">
+            <SearchIcon />
+          </button>
+
+          {/* Create dropdown */}
+          <div className="nav-dropdown-wrapper desktop-only">
+            <button className="nav-icon-btn" onClick={(e) => handleMenuClick(e, setShowCreateMenu)} title="Create">
+              <PlusIcon />
+            </button>
             {showCreateMenu && (
-              <div className="dropdown-menu">
-                <Link to="/create" onClick={() => setShowCreateMenu(false)}>New Post</Link>
-                <Link to="/create-group" onClick={() => setShowCreateMenu(false)}>New Group</Link>
-                <Link to="/flashcards/create" onClick={() => setShowCreateMenu(false)}>New Flashcard Set</Link>
+              <div className="nav-dropdown">
+                <Link to="/create" className="nav-dropdown-item" onClick={() => setShowCreateMenu(false)}>New Post</Link>
+                <Link to="/create-group" className="nav-dropdown-item" onClick={() => setShowCreateMenu(false)}>New Group</Link>
+                <Link to="/flashcards/create" className="nav-dropdown-item" onClick={() => setShowCreateMenu(false)}>New Flashcard Set</Link>
               </div>
             )}
           </div>
 
+          {/* Profile / Sign In */}
           {isLoggedIn ? (
-            <div className="dropdown desktop-only">
-              <button onClick={handleProfileClick} className="profile-icon-btn" aria-label="Profile menu">
+            <div className="nav-dropdown-wrapper desktop-only">
+              <button className="nav-icon-btn" onClick={handleProfileClick} title="Profile">
                 <UserIcon />
               </button>
               {showProfileMenu && (
-                <div className="dropdown-menu">
-                  <Link to="/bookmarks">Bookmarks</Link>
-                  <Link to="/flashcards">Flashcard Sets</Link>
-                  <Link to="/profile" onClick={() => setShowProfileMenu(false)}>Settings</Link>
-                  <button onClick={async () => {
+                <div className="nav-dropdown">
+                  <Link to="/bookmarks" className="nav-dropdown-item" onClick={() => setShowProfileMenu(false)}>Bookmarks</Link>
+                  <Link to="/flashcards" className="nav-dropdown-item" onClick={() => setShowProfileMenu(false)}>Flashcard Sets</Link>
+                  <Link to="/profile" className="nav-dropdown-item" onClick={() => setShowProfileMenu(false)}>Settings</Link>
+                  <button className="nav-dropdown-item" onClick={async () => {
                     setShowProfileMenu(false);
                     try {
                       const { error } = await supabase.auth.signOut();
@@ -235,21 +247,22 @@ const Navbar = () => {
                       console.error('Error signing out:', error);
                       alert("Failed to log out. Please try again.");
                     }
-                  }}>Log out</button>
+                  }}>Log Out</button>
                 </div>
               )}
             </div>
           ) : (
-            <div className="sign-in desktop-only">
-              <Link to="/signin"><button className="signin-button">Sign In</button></Link>
-            </div>
+            <button className="nav-signin-btn desktop-only" onClick={() => openAuthModal('signin')}>Sign In</button>
           )}
 
-          <button onClick={toggleDarkMode} className="theme-toggle-btn desktop-theme-toggle" aria-label="Toggle dark mode">
+          {/* Theme toggle */}
+          <button className="nav-icon-btn" onClick={toggleDarkMode} title={isDarkMode ? 'Light mode' : 'Dark mode'}>
             {isDarkMode ? <SunIcon /> : <MoonIcon />}
           </button>
         </div>
-      </div>
+      </nav>
+
+      <SearchOverlay isOpen={showSearchOverlay} onClose={() => setShowSearchOverlay(false)} />
 
       {/* Mobile Menu Overlay */}
       {showMobileMenu && (
@@ -257,99 +270,97 @@ const Navbar = () => {
           <div className="mobile-menu" ref={mobileMenuRef} onClick={(e) => e.stopPropagation()}>
             <div className="mobile-menu-header">
               <h3>Menu</h3>
-              <button onClick={closeMobileMenu} className="mobile-menu-close">
+              <button onClick={closeMobileMenu} className="mobile-menu-close nav-icon-btn">
                 <CloseIcon />
               </button>
             </div>
-            
-            <div className="mobile-menu-content">
-              {/* Search Section */}
-              <div className="mobile-menu-section">
-                <form onSubmit={handleSearch} className="mobile-search-form">
-                  <input
-                    type="text"
-                    placeholder="Search posts..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <button type="submit">Search</button>
-                </form>
-              </div>
 
-              {/* Navigation Links */}
-              <div className="mobile-menu-section">
-                <h4>Navigation</h4>
-                <Link to="/" onClick={closeMobileMenu} className="mobile-menu-link">
-                  Home
-                </Link>
-                <Link to="/groups" onClick={closeMobileMenu} className="mobile-menu-link">
-                  <GroupIcon />
-                  All Groups
-                </Link>
-                <Link to="/flashcards" onClick={closeMobileMenu} className="mobile-menu-link">
-                  <FlashcardIcon />
-                  Flashcard Sets
-                </Link>
-              </div>
+            {/* Search Section */}
+            <div className="mobile-menu-section">
+              <form onSubmit={handleSearch} className="mobile-search-form">
+                <input
+                  type="text"
+                  placeholder="Search posts..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button type="submit">Search</button>
+              </form>
+            </div>
 
-              {/* Create Section */}
-              <div className="mobile-menu-section">
-                <h4>Create</h4>
-                <Link to="/create" onClick={closeMobileMenu} className="mobile-menu-link">
-                  New Post
-                </Link>
-                <Link to="/create-group" onClick={closeMobileMenu} className="mobile-menu-link">
-                  New Group
-                </Link>
-                <Link to="/flashcards/create" onClick={closeMobileMenu} className="mobile-menu-link">
-                  New Flashcard Set
-                </Link>
-              </div>
+            {/* Navigation Links */}
+            <div className="mobile-menu-section">
+              <h4>Navigation</h4>
+              <Link to="/" onClick={closeMobileMenu} className="mobile-menu-link">
+                Home
+              </Link>
+              <Link to="/groups" onClick={closeMobileMenu} className="mobile-menu-link">
+                <GroupIcon />
+                All Groups
+              </Link>
+              <Link to="/flashcards" onClick={closeMobileMenu} className="mobile-menu-link">
+                <FlashcardIcon />
+                Flashcard Sets
+              </Link>
+            </div>
 
-              {/* Account Section */}
-              <div className="mobile-menu-section">
-                <h4>Account</h4>
-                {isLoggedIn ? (
-                  <>
-                    <Link to="/bookmarks" onClick={closeMobileMenu} className="mobile-menu-link">
-                      Bookmarks
-                    </Link>
-                    <Link to="/profile" onClick={closeMobileMenu} className="mobile-menu-link">
-                      Settings
-                    </Link>
-                    <button 
-                      onClick={async () => {
-                        closeMobileMenu();
-                        try {
-                          const { error } = await supabase.auth.signOut();
-                          if (error) throw error;
-                          navigate('/');
-                        } catch (error) {
-                          console.error('Error signing out:', error);
-                          alert("Failed to log out. Please try again.");
-                        }
-                      }}
-                      className="mobile-menu-link logout-btn"
-                    >
-                      Log out
-                    </button>
-                  </>
-                ) : (
-                  <Link to="/signin" onClick={closeMobileMenu} className="mobile-menu-link signin-link">
-                    Sign In
+            {/* Create Section */}
+            <div className="mobile-menu-section">
+              <h4>Create</h4>
+              <Link to="/create" onClick={closeMobileMenu} className="mobile-menu-link">
+                New Post
+              </Link>
+              <Link to="/create-group" onClick={closeMobileMenu} className="mobile-menu-link">
+                New Group
+              </Link>
+              <Link to="/flashcards/create" onClick={closeMobileMenu} className="mobile-menu-link">
+                New Flashcard Set
+              </Link>
+            </div>
+
+            {/* Account Section */}
+            <div className="mobile-menu-section">
+              <h4>Account</h4>
+              {isLoggedIn ? (
+                <>
+                  <Link to="/bookmarks" onClick={closeMobileMenu} className="mobile-menu-link">
+                    Bookmarks
                   </Link>
-                )}
-              </div>
-
-              {/* Settings Section */}
-              <div className="mobile-menu-section">
-                <h4>Settings</h4>
-                <div className="mobile-theme-toggle">
-                  <span>Dark Mode</span>
-                  <button onClick={toggleDarkMode} className="mobile-theme-toggle-btn" aria-label="Toggle dark mode">
-                    {isDarkMode ? <SunIcon /> : <MoonIcon />}
+                  <Link to="/profile" onClick={closeMobileMenu} className="mobile-menu-link">
+                    Settings
+                  </Link>
+                  <button
+                    onClick={async () => {
+                      closeMobileMenu();
+                      try {
+                        const { error } = await supabase.auth.signOut();
+                        if (error) throw error;
+                        navigate('/');
+                      } catch (error) {
+                        console.error('Error signing out:', error);
+                        alert("Failed to log out. Please try again.");
+                      }
+                    }}
+                    className="mobile-menu-link logout-btn"
+                  >
+                    Log out
                   </button>
-                </div>
+                </>
+              ) : (
+                <Link to="/signin" onClick={closeMobileMenu} className="mobile-menu-link signin-link">
+                  Sign In
+                </Link>
+              )}
+            </div>
+
+            {/* Settings Section */}
+            <div className="mobile-menu-section">
+              <h4>Settings</h4>
+              <div className="mobile-theme-toggle">
+                <span>Dark Mode</span>
+                <button onClick={toggleDarkMode} className="mobile-theme-toggle-btn" aria-label="Toggle dark mode">
+                  {isDarkMode ? <SunIcon /> : <MoonIcon />}
+                </button>
               </div>
             </div>
           </div>

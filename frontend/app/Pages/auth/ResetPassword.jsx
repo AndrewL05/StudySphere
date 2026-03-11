@@ -34,21 +34,16 @@ const ResetPassword = () => {
 
     if (submitted) {
         return (
-            <div className="auth-page">
-                <div className="auth-container">
-                    <div className="auth-logo">
-                        <h2>StudySphere</h2>
-                        <p>Your academic community</p>
+            <div className="auth-standalone">
+                <div className="auth-card">
+                    <div className="auth-card-logo">
+                        <span className="logo-accent">S</span>tudySphere
                     </div>
-                    
-                    <div className="reset-confirmation">
-                        <h2>Check Your Email</h2>
-                        <p>We've sent password reset instructions to <strong>{email}</strong></p>
-                        <p>Didn't receive an email? Check your spam folder or <button onClick={() => setSubmitted(false)} className="text-button">try again</button></p>
-                        
-                        <div className="auth-links">
-                            <Link to="/signin" className="back-to-signin">Back to Sign In</Link>
-                        </div>
+                    <h2 className="auth-card-heading">Check Your Email</h2>
+                    <p className="auth-card-text">We've sent password reset instructions to <strong>{email}</strong></p>
+                    <p className="auth-card-text">Didn't receive an email? Check your spam folder or <button onClick={() => setSubmitted(false)} className="auth-link-accent" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}>try again</button></p>
+                    <div className="auth-card-links">
+                        <Link to="/signin" className="auth-link-accent">Back to Sign In</Link>
                     </div>
                 </div>
             </div>
@@ -56,39 +51,29 @@ const ResetPassword = () => {
     }
 
     return (
-        <div className="auth-page">
-            <div className="auth-container">
-                <div className="auth-logo">
-                    <h2>StudySphere</h2>
-                    <p>Your academic community</p>
+        <div className="auth-standalone">
+            <div className="auth-card">
+                <div className="auth-card-logo">
+                    <span className="logo-accent">S</span>tudySphere
                 </div>
-                
-                <h2>Reset Password</h2>
-                <p className="reset-instructions">Enter your email address and we'll send you instructions to reset your password.</p> 
-                
-                {error && <div className="error-message">{error}</div>}
-                
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                <h2 className="auth-card-heading">Reset Password</h2>
+                <p className="auth-card-text">Enter your email address and we'll send you instructions to reset your password.</p>
+
+                {error && <div className="auth-error">{error}</div>}
+
+                <form onSubmit={handleSubmit} className="auth-form">
+                    <div className="auth-field">
                         <label htmlFor="email">Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter your email"
-                            required
-                        />
+                        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" required />
                     </div>
-                    
-                    <button type="submit" className="auth-button" disabled={loading}>
+                    <button type="submit" className="auth-submit-btn" disabled={loading}>
                         {loading ? 'Sending...' : 'Send Reset Link'}
                     </button>
-                    
-                    <div className="auth-links">
-                        <Link to="/signin" className="back-to-signin">Back to Sign In</Link>
-                    </div>
                 </form>
+
+                <div className="auth-card-links">
+                    <Link to="/signin" className="auth-link-accent">Back to Sign In</Link>
+                </div>
             </div>
         </div>
     );

@@ -256,123 +256,114 @@ const TakeQuiz = () => {
   }
 
   return (
-    <div className="study-container">
-      <div className="study-header">
-        <h1>{quiz.title}</h1>
-        {timeLeft !== null && (
-          <div className={`timer ${timeLeft <= 300 ? 'warning' : ''}`}>
-            ⏱️ {formatTime(timeLeft)}
-          </div>
-        )}
+    <div className="quiz-immersive">
+      {/* Progress bar */}
+      <div className="study-progress-bar">
+        <div className="study-progress-fill" style={{ width: `${progress}%` }} />
       </div>
 
-      <div className="study-progress">
-        <div className="progress-bar">
-          <div 
-            className="progress-fill" 
-            style={{ width: `${progress}%` }}
-          ></div>
-        </div>
-        <div className="progress-text">
-          Question {currentQuestionIndex + 1} of {questions.length}
+      {/* Top bar */}
+      <div className="study-top-bar">
+        <button className="study-exit-btn" onClick={() => navigate(`/flashcards/${quiz.flashcard_set_id}`)}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+        <div className="quiz-top-info">
+          {timeLeft !== null && <span className="quiz-timer">{formatTime(timeLeft)}</span>}
+          <span className="study-counter">{currentQuestionIndex + 1} / {questions.length}</span>
         </div>
       </div>
 
       {error && <div className="error-message">{error}</div>}
 
-      <div className="quiz-question">
-        <div className="question-card">
-          <h3>{currentQuestion.question_text}</h3>
-          
-          <div className="answer-options">
-            {currentQuestion.question_type === 'multiple_choice' && (
-              <div className="multiple-choice">
-                {shuffledOptions[currentQuestion.id]?.map((option, index) => (
-                  <label key={index} className="option-label">
-                    <input
-                      type="radio"
-                      name={`question-${currentQuestion.id}`}
-                      value={option}
-                      checked={answers[currentQuestion.id] === option}
-                      onChange={() => handleAnswerChange(currentQuestion.id, option)}
-                    />
-                    <span className="option-text">{option}</span>
-                  </label>
-                ))}
-              </div>
-            )}
-
-            {currentQuestion.question_type === 'true_false' && (
-              <div className="true-false">
-                <label className="option-label">
-                  <input
-                    type="radio"
-                    name={`question-${currentQuestion.id}`}
-                    value="True"
-                    checked={answers[currentQuestion.id] === 'True'}
-                    onChange={() => handleAnswerChange(currentQuestion.id, 'True')}
-                  />
-                  <span className="option-text">True</span>
-                </label>
-                <label className="option-label">
-                  <input
-                    type="radio"
-                    name={`question-${currentQuestion.id}`}
-                    value="False"
-                    checked={answers[currentQuestion.id] === 'False'}
-                    onChange={() => handleAnswerChange(currentQuestion.id, 'False')}
-                  />
-                  <span className="option-text">False</span>
-                </label>
-              </div>
-            )}
-
-            {currentQuestion.question_type === 'fill_blank' && (
-              <div className="fill-blank">
-                <input
-                  type="text"
-                  placeholder="Enter your answer"
-                  value={answers[currentQuestion.id] || ''}
-                  onChange={(e) => handleAnswerChange(currentQuestion.id, e.target.value)}
-                  className="answer-input"
-                />
-              </div>
-            )}
-          </div>
+      {/* Question area */}
+      <div className="quiz-question-area">
+        <div className="quiz-question-card">
+          <p className="quiz-question-text">{currentQuestion.question_text}</p>
         </div>
+
+        {/* Answer options */}
+        {currentQuestion.question_type === 'multiple_choice' && (
+          <div className="quiz-options">
+            {shuffledOptions[currentQuestion.id]?.map((option, index) => (
+              <button
+                key={index}
+                className={`quiz-option ${answers[currentQuestion.id] === option ? 'selected' : ''}`}
+                onClick={() => handleAnswerChange(currentQuestion.id, option)}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {currentQuestion.question_type === 'true_false' && (
+          <div className="quiz-options">
+            <button
+              className={`quiz-option ${answers[currentQuestion.id] === 'True' ? 'selected' : ''}`}
+              onClick={() => handleAnswerChange(currentQuestion.id, 'True')}
+            >
+              True
+            </button>
+            <button
+              className={`quiz-option ${answers[currentQuestion.id] === 'False' ? 'selected' : ''}`}
+              onClick={() => handleAnswerChange(currentQuestion.id, 'False')}
+            >
+              False
+            </button>
+          </div>
+        )}
+
+        {currentQuestion.question_type === 'fill_blank' && (
+          <input
+            type="text"
+            placeholder="Enter your answer"
+            value={answers[currentQuestion.id] || ''}
+            onChange={(e) => handleAnswerChange(currentQuestion.id, e.target.value)}
+            className="quiz-fill-input"
+          />
+        )}
       </div>
 
-      <div className="quiz-navigation">
-        <button 
-          className="nav-btn prev-btn" 
+      {/* Bottom controls */}
+      <div className="quiz-bottom-controls">
+        <button
+          className="study-nav-btn"
           onClick={() => setCurrentQuestionIndex(prev => Math.max(0, prev - 1))}
           disabled={currentQuestionIndex === 0}
         >
-          ← Previous
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
         </button>
-        
-        <div className="nav-center">
-          {isLastQuestion ? (
-            <button 
-              className="submit-quiz-btn" 
-              onClick={handleSubmitQuiz}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? 'Submitting...' : 'Submit Quiz'}
-            </button>
-          ) : (
-            <button 
-              className="nav-btn next-btn" 
-              onClick={() => setCurrentQuestionIndex(prev => Math.min(questions.length - 1, prev + 1))}
-            >
-              Next →
-            </button>
-          )}
-        </div>
-        
-        <div className="answered-count">
-          {Object.keys(answers).length}/{questions.length} answered
-        </div>
+
+        {isLastQuestion ? (
+          <button
+            className="form-submit-btn"
+            onClick={handleSubmitQuiz}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit Quiz'}
+          </button>
+        ) : (
+          <button
+            className="form-submit-btn"
+            onClick={() => setCurrentQuestionIndex(prev => Math.min(questions.length - 1, prev + 1))}
+          >
+            Next Question
+          </button>
+        )}
+
+        <button
+          className="study-nav-btn"
+          onClick={() => setCurrentQuestionIndex(prev => Math.min(questions.length - 1, prev + 1))}
+          disabled={isLastQuestion}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
       </div>
     </div>
   );

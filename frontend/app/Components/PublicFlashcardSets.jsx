@@ -72,7 +72,7 @@ const PublicFlashcardSets = ({ title = "Public Flashcard Sets", showViewAllButto
           use_ai_generation: true
         })
       });
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Failed to generate AI quiz');
       }
@@ -90,68 +90,58 @@ const PublicFlashcardSets = ({ title = "Public Flashcard Sets", showViewAllButto
 
   if (loading) {
     return (
-      <div className="public-flashcard-sets">
-        <h3>{title}</h3>
-        <div className="loading">Loading...</div>
+      <div className="public-fc-section">
+        <h3 className="public-fc-title">{title}</h3>
+        <div className="feed-loading">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="public-flashcard-sets">
-      <div className="section-header">
-        <h3>{title}</h3>
+    <div className="public-fc-section">
+      <div className="public-fc-header">
+        <h3 className="public-fc-title">{title}</h3>
         {showViewAllButton && (
-          <Link to="/flashcards" className="view-all-link">
+          <Link to="/flashcards" className="fc-action-btn">
             View All
           </Link>
         )}
       </div>
 
-      {error && <div className="error-message">{error}</div>}
+      {error && <div className="form-error">{error}</div>}
 
       {sets.length === 0 ? (
-        <p className="no-sets">No public flashcard sets available.</p>
+        <div className="feed-empty">No public flashcard sets available.</div>
       ) : (
-        <div className="sets-list">
+        <div className="public-fc-grid">
           {sets.map((set) => (
-            <div key={set.id} className="set-item">
-              <div className="set-content">
-                <Link to={`/flashcards/${set.id}`} className="set-link">
-                  <h4 className="set-title">{set.title}</h4>
-                  {set.description && (
-                    <p className="set-description">{set.description}</p>
-                  )}
-                  <div className="set-meta">
-                    <span>{set.flashcards?.[0]?.count || 0} cards</span>
-                    <span className="public-badge">Public</span>
-                  </div>
-                </Link>
-                
-                <div className="set-actions">
-                  <button 
-                    className="generate-ai-quiz-btn"
-                    onClick={() => handleGenerateAIQuiz(set)}
-                    disabled={generatingQuiz === set.id}
-                    title="Generate AI Quiz"
-                  >
-                    {generatingQuiz === set.id ? (
-                      <span className="generating-text">
-                        <span className="spinner"></span>
-                        ...
-                      </span>
-                    ) : (
-                      '🤖'
-                    )}
-                  </button>
-                  <Link 
-                    to={`/flashcards/${set.id}/study`}
-                    className="study-btn"
-                    title="Study this set"
-                  >
-                    📚
-                  </Link>
+            <div key={set.id} className="public-fc-card">
+              <Link to={`/flashcards/${set.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <div className="public-fc-card-name">{set.title}</div>
+                {set.description && (
+                  <p className="fc-set-desc">{set.description}</p>
+                )}
+                <div className="public-fc-card-meta">
+                  {set.flashcards?.[0]?.count || 0} cards
                 </div>
+              </Link>
+
+              <div className="public-fc-card-actions">
+                <Link
+                  to={`/flashcards/${set.id}/study`}
+                  className="public-fc-card-btn public-fc-study-btn"
+                  title="Study this set"
+                >
+                  Study
+                </Link>
+                <button
+                  className="public-fc-card-btn public-fc-quiz-btn"
+                  onClick={() => handleGenerateAIQuiz(set)}
+                  disabled={generatingQuiz === set.id}
+                  title="Generate AI Quiz"
+                >
+                  {generatingQuiz === set.id ? '...' : 'AI Quiz'}
+                </button>
               </div>
             </div>
           ))}
@@ -161,4 +151,4 @@ const PublicFlashcardSets = ({ title = "Public Flashcard Sets", showViewAllButto
   );
 };
 
-export default PublicFlashcardSets; 
+export default PublicFlashcardSets;

@@ -9,21 +9,14 @@ const GroupCard = ({ group }) => {
 
     return (
         <div className="group-card" onClick={() => navigate(`/group/${group.id}`)}>
-            <h4>{group.name}</h4>
-
+            <h4 className="group-card-name">{group.name}</h4>
             {group.topics && group.topics.length > 0 && (
                 <div className="group-card-topics">
                     {group.topics.map(topic => <span key={topic} className="topic-tag">{topic}</span>)}
                 </div>
             )}
-            {group.description && <p className="group-card-description">{group.description}</p>}
-
-            <p className="group-card-members">Members: {memberCount}</p>
-
-            <div className="group-card-actions">
-                 <button onClick={(e) => { e.stopPropagation(); navigate(`/group/${group.id}`); }} className="view-button">View</button>
-                 {/* Add Join Button Here later */}
-            </div>
+            {group.description && <p className="group-card-desc">{group.description}</p>}
+            <p className="group-card-members">{memberCount} members</p>
         </div>
     );
 };
@@ -67,7 +60,7 @@ const AllGroups = () => {
 
             if (fetchError) throw fetchError;
 
-            console.log("Fetched groups data:", data); 
+            console.log("Fetched groups data:", data);
             setGroups(data || []);
 
         } catch (err) {
@@ -100,65 +93,49 @@ const AllGroups = () => {
     };
 
     return (
-        <div className="all-groups-page">
-            <div className="all-groups-header">
-                <h2>All Groups</h2>
-                <button onClick={() => navigate('/create-group')} className="create-group-link-button">
-                    Create New Group
-                </button>
-            </div>
-
-             <div className="groups-filter-container">
-                <div className="group-search-container">
-                     <input
-                         type="text"
-                         placeholder="Search groups by name or description..."
-                         value={searchTerm}
-                         onChange={(e) => setSearchTerm(e.target.value)}
-                         className="group-search-input"
-                     />
+        <div className="groups-page">
+            <div className="groups-container">
+                <div className="groups-page-header">
+                    <h2 className="groups-page-title">All Groups</h2>
+                    <button onClick={() => navigate('/create-group')} className="form-submit-btn">Create Group</button>
                 </div>
 
-                <div className="topic-filters">
-                    <h4>Filter by Topic:</h4>
-                    <div className="topic-checkboxes">
+                <div className="groups-filter-bar">
+                    <input
+                        type="text"
+                        placeholder="Search groups..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="groups-search-input"
+                    />
+                    <div className="groups-topic-filters">
                         {availableTopics.map(topic => (
-                            <label key={topic} className="topic-label">
-                                <input
-                                    type="checkbox"
-                                    checked={selectedTopics.includes(topic)}
-                                    onChange={() => handleTopicChange(topic)}
-                                /> {topic}
-                            </label>
+                            <button
+                                key={topic}
+                                className={`topic-filter-btn ${selectedTopics.includes(topic) ? 'active' : ''}`}
+                                onClick={() => handleTopicChange(topic)}
+                            >
+                                {topic}
+                            </button>
                         ))}
+                        {selectedTopics.length > 0 && (
+                            <button onClick={() => setSelectedTopics([])} className="topic-filter-clear">Clear</button>
+                        )}
                     </div>
-                     {selectedTopics.length > 0 && (
-                        <button
-                            onClick={() => setSelectedTopics([])}
-                            className="clear-topics-btn"
-                        >
-                            Clear Filters
-                        </button>
-                    )}
                 </div>
-             </div>
 
-
-            {loading ? (
-                <div className="loading">Loading groups...</div>
-            ) : error ? (
-                <div className="error-message">{error}</div>
-            ) : (
-                <div className="groups-grid">
-                    {groups.length > 0 ? (
-                        groups.map(group => (
-                            <GroupCard key={group.id} group={group} />
-                        ))
-                    ) : (
-                        <p className="no-groups-found">No groups found matching your criteria.</p>
-                    )}
-                </div>
-            )}
+                {loading ? (
+                    <div className="feed-loading"><div className="loading-spinner"></div><p>Loading groups...</p></div>
+                ) : error ? (
+                    <div className="feed-empty"><p>{error}</p></div>
+                ) : groups.length > 0 ? (
+                    <div className="groups-grid">
+                        {groups.map(group => <GroupCard key={group.id} group={group} />)}
+                    </div>
+                ) : (
+                    <div className="feed-empty"><p>No groups found.</p></div>
+                )}
+            </div>
         </div>
     );
 };

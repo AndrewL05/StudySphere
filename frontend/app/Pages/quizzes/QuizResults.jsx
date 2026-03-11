@@ -103,101 +103,52 @@ const QuizResults = () => {
   }
 
   const userAnswers = attempt.answers || {};
+  const correctCount = questions.filter(q => userAnswers[q.id] === q.correct_answer).length;
+  const incorrectCount = questions.length - correctCount;
 
   return (
-    <div className="study-container">
-      <div className="study-complete">
-        <h2>Quiz Results</h2>
-        <h3>{quiz.title}</h3>
-        
-        <div className="final-stats">
-          <div className="stat-item">
-            <span 
-              className="stat-number" 
-              style={{ color: getScoreColor(attempt.percentage) }}
-            >
-              {Math.round(attempt.percentage)}%
-            </span>
-            <span className="stat-label">Score</span>
+    <div className="fc-page">
+      <div className="fc-form-container">
+        <div className="quiz-results-card">
+          <h1 className="quiz-results-score" style={{ color: getScoreColor(attempt.percentage) }}>
+            {Math.round(attempt.percentage)}%
+          </h1>
+          <p className="quiz-results-grade">{getGradeMessage(attempt.percentage)}</p>
+
+          <div className="quiz-results-stats">
+            <div className="quiz-stat">
+              <span className="quiz-stat-value correct-stat">{correctCount}</span>
+              <span className="quiz-stat-label">Correct</span>
+            </div>
+            <div className="quiz-stat">
+              <span className="quiz-stat-value incorrect-stat">{incorrectCount}</span>
+              <span className="quiz-stat-label">Incorrect</span>
+            </div>
           </div>
-          <div className="stat-item">
-            <span className="stat-number">{attempt.score}</span>
-            <span className="stat-label">Points Earned</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-number">{attempt.total_questions}</span>
-            <span className="stat-label">Total Questions</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-number">{formatTime(attempt.time_taken)}</span>
-            <span className="stat-label">Time Taken</span>
+
+          <div className="quiz-results-actions">
+            <Link to={`/quizzes/${quizId}`}>Retake Quiz</Link>
+            <Link to={`/flashcards/${quiz.flashcard_set_id}`}>Back to Flashcards</Link>
           </div>
         </div>
 
-        <div className="grade-message">
-          {getGradeMessage(attempt.percentage)}
-        </div>
+        {/* Question review */}
+        <div className="quiz-review">
+          <h3 className="quiz-review-title">Question Review</h3>
+          {questions.map((question, index) => {
+            const userAnswer = userAnswers[question.id];
+            const isCorrect = userAnswer === question.correct_answer;
 
-        <div className="results-breakdown">
-          <h4>Question Breakdown</h4>
-          <div className="questions-review">
-            {questions.map((question, index) => {
-              const userAnswer = userAnswers[question.id];
-              const isCorrect = userAnswer === question.correct_answer;
-              
-              return (
-                <div key={question.id} className={`question-result ${isCorrect ? 'correct' : 'incorrect'}`}>
-                  <div className="question-header">
-                    <span className="question-number">Q{index + 1}</span>
-                    <span className={`result-indicator ${isCorrect ? 'correct' : 'incorrect'}`}>
-                      {isCorrect ? '✓' : '✗'}
-                    </span>
-                  </div>
-                  
-                  <div className="question-content">
-                    <p className="question-text">{question.question_text}</p>
-                    
-                    <div className="answer-review">
-                      <div className="user-answer">
-                        <strong>Your answer:</strong> 
-                        <span className={isCorrect ? 'correct-answer' : 'wrong-answer'}>
-                          {userAnswer || 'No answer'}
-                        </span>
-                      </div>
-                      
-                      {!isCorrect && (
-                        <div className="correct-answer-display">
-                          <strong>Correct answer:</strong> 
-                          <span className="correct-answer">{question.correct_answer}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="study-actions">
-          <Link 
-            to={`/quizzes/${quizId}`} 
-            className="study-again-btn"
-          >
-            Retake Quiz
-          </Link>
-          <Link 
-            to={`/flashcards/${quiz.flashcard_set_id}/study`} 
-            className="shuffle-study-btn"
-          >
-            Study Flashcards
-          </Link>
-          <Link 
-            to={`/flashcards/${quiz.flashcard_set_id}`} 
-            className="back-to-set-btn"
-          >
-            Back to Set
-          </Link>
+            return (
+              <div key={question.id} className={`quiz-review-item ${isCorrect ? 'correct' : 'incorrect'}`}>
+                <p className="quiz-review-question">Q{index + 1}. {question.question_text}</p>
+                <p className="quiz-review-answer">Your answer: {userAnswer || 'No answer'}</p>
+                {!isCorrect && (
+                  <p className="quiz-review-correct">Correct: {question.correct_answer}</p>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -62,47 +62,27 @@ const ResetPasswordConfirm = () => {
     };
 
     return (
-        <div className="auth-page">
-            <div className="auth-container">
-                <div className="auth-logo">
-                    <h2>StudySphere</h2>
-                    <p>Your academic community</p>
+        <div className="auth-standalone">
+            <div className="auth-card">
+                <div className="auth-card-logo">
+                    <span className="logo-accent">S</span>tudySphere
                 </div>
+                <h2 className="auth-card-heading">Reset Your Password</h2>
 
-                <h2>Reset Your Password</h2>
-                
-                {error && <div className="error-message">{error}</div>}
-                {success && <div className="success-message">
-                    Password successfully updated! Redirecting to login page...
-                </div>}
+                {error && <div className="auth-error">{error}</div>}
+                {success && <div className="auth-success">Password successfully updated! Redirecting to login...</div>}
 
                 {!success && (
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-group">
+                    <form onSubmit={handleSubmit} className="auth-form">
+                        <div className="auth-field">
                             <label htmlFor="password">New Password</label>
-                            <input
-                                type="password"
-                                id="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Enter your new password"
-                                required
-                            />
+                            <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your new password" required />
                         </div>
-
-                        <div className="form-group">
+                        <div className="auth-field">
                             <label htmlFor="confirmPassword">Confirm Password</label>
-                            <input
-                                type="password"
-                                id="confirmPassword"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                placeholder="Confirm your new password"
-                                required
-                            />
+                            <input type="password" id="confirmPassword" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} placeholder="Confirm your new password" required />
                         </div>
-
-                        <button type="submit" className="auth-button" disabled={loading}>
+                        <button type="submit" className="auth-submit-btn" disabled={loading}>
                             {loading ? 'Updating...' : 'Update Password'}
                         </button>
                     </form>

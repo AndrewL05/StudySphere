@@ -19,23 +19,21 @@ const Search = () => {
       if (user) {
         setUserId(user.id);
       } else {
-        setUserId(null); 
+        setUserId(null);
       }
     };
-    
+
     getCurrentUser();
-    
+
     const fetchSearchResults = async () => {
       setLoading(true);
       try {
-        // console.log('Searching for:', query);
-
         if (!query.trim()) {
           setPosts([]);
           setLoading(false);
           return;
         }
-        
+
         const { data, error } = await supabase
           .from('posts')
           .select('*')
@@ -64,11 +62,11 @@ const Search = () => {
 
   const formatTimeAgo = (dateString) => {
     if (!dateString) return 'unknown time';
-    
+
     const now = new Date();
     const postDate = new Date(dateString);
     const diffInSeconds = Math.floor((now - postDate) / 1000);
-    
+
     if (diffInSeconds < 60) return 'just now';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
@@ -79,33 +77,44 @@ const Search = () => {
   };
 
   if (loading) {
-    return <div className="search-page loading">Searching...</div>;
+    return <div className="search-page"><div className="search-loading">Searching...</div></div>;
   }
 
   return (
     <div className="search-page">
-      <div className="search-header">
-        <h2>Search Results for "{query}"</h2>
-        <p className="results-count">{posts.length} results found</p>
-      </div>
-      
+      <h1 className="search-heading">
+        Results for <span>"{query}"</span>
+      </h1>
+      <p className="search-results-count">
+        {posts.length} result{posts.length !== 1 ? 's' : ''} found
+      </p>
+
       {posts.length === 0 ? (
-        <p className="no-results">No posts match your search. Try different keywords or check your spelling.</p>
+        <div className="search-empty">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <p>No posts match your search.</p>
+          <p>Try different keywords or check your spelling.</p>
+        </div>
       ) : (
-        posts.map((post) => (
-          <div key={post.id} onClick={() => handlePostClick(post.id)} style={{ cursor: 'pointer' }}>
-            <PostCard
-              id={post.id}
-              title={post.title}
-              content={post.content || ''}
-              image={post.image_url}
-              authorId={post.user_id}  
-              time={formatTimeAgo(post.created_at)}
-              upvotesNum={post.upvotes || 0}
-              userId={userId}        
-            />
-          </div>
-        ))
+        <div className="search-results-list">
+          {posts.map((post) => (
+            <div key={post.id} className="search-result-link" onClick={() => handlePostClick(post.id)}>
+              <PostCard
+                id={post.id}
+                title={post.title}
+                content={post.content || ''}
+                image={post.image_url}
+                authorId={post.user_id}
+                time={formatTimeAgo(post.created_at)}
+                upvotesNum={post.upvotes || 0}
+                userId={userId}
+              />
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
