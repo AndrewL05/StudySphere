@@ -97,61 +97,34 @@ const Edit = () => {
     navigate(`/post/${id}`);
   };
 
-  if (isLoading) return <div className="edit-page loading">Loading...</div>;
-  if (error) return <div className="edit-page error">{error}</div>;
+  if (isLoading) return <div className="post-form-page"><div className="post-form-container"><div className="feed-loading"><div className="loading-spinner"></div><p>Loading...</p></div></div></div>;
+  if (error) return <div className="post-form-page"><div className="post-form-container"><div className="form-error">{error}</div></div></div>;
 
   return (
-    <div className="edit-page">
-      <h2>Edit Post</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="title">Title</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={postData.title}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="content">Content</label>
-          <textarea
-            id="content"
-            name="content"
-            value={postData.content}
-            onChange={handleChange}
-            rows="8"
-            placeholder="Write your post content here (optional)"
-          />
-        </div>
-        
-        <div className="form-group">
-          <label htmlFor="image_url">Image URL (Optional)</label>
-          <input
-            type="text"
-            id="image_url"
-            name="image_url"
-            value={postData.image_url}
-            onChange={handleChange}
-            placeholder="https://example.com/image.jpg"
-          />
-        </div>
-        
-        <div className="form-actions">
-          <button type="button" onClick={handleCancel} className="cancel-btn">
-            Cancel
-          </button>
-          <button type="submit" disabled={isLoading} className="submit-btn">
-            {isLoading ? 'Updating...' : 'Update Post'}
-          </button>
-        </div>
-        
-        {error && <div className="error-message">{error}</div>}
-        {success && <div className="success-message">Post updated successfully! Redirecting...</div>}
-      </form>
+    <div className="post-form-page">
+      <div className="post-form-container">
+        <h2 className="post-form-title">Edit Post</h2>
+        <form onSubmit={handleSubmit} className="post-form">
+          <div className="form-field">
+            <label htmlFor="title">Title</label>
+            <input type="text" id="title" name="title" value={postData.title} onChange={handleChange} required />
+          </div>
+          <div className="form-field">
+            <label htmlFor="content">Content</label>
+            <textarea id="content" name="content" value={postData.content} onChange={handleChange} rows="8" placeholder="Write your post content here (optional)" />
+          </div>
+          <div className="form-field">
+            <label htmlFor="image_url">Image URL (Optional)</label>
+            <input type="text" id="image_url" name="image_url" value={postData.image_url} onChange={handleChange} placeholder="https://example.com/image.jpg" />
+          </div>
+          {error && <div className="form-error">{error}</div>}
+          {success && <div className="form-success">Post updated successfully! Redirecting...</div>}
+          <div className="form-actions">
+            <button type="button" onClick={handleCancel} className="form-cancel-btn">Cancel</button>
+            <button type="submit" disabled={isLoading} className="form-submit-btn">{isLoading ? 'Updating...' : 'Update Post'}</button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

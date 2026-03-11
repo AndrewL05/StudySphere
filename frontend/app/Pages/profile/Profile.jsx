@@ -204,119 +204,100 @@ const Profile = () => {
     return new Date(dateString).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
   };
 
+  const initial = profileData.display_name
+    ? profileData.display_name.charAt(0).toUpperCase()
+    : user?.email
+      ? user.email.charAt(0).toUpperCase()
+      : '?';
+
   if (loading) return <div className="profile-page">Loading profile...</div>;
-  if (error && !user) return <div className="profile-page error-message">{error}</div>;
+  if (error && !user) return <div className="profile-page profile-error">{error}</div>;
   if (!user) return <div className="profile-page">Please sign in to view your profile.</div>;
 
 
   return (
     <div className="profile-page">
       <div className="profile-container">
-        <h2>Profile Settings</h2>
 
-        {error && !actionLoading && <div className="error-message" style={{marginBottom: '1rem'}}>{error}</div>}
-        {success && !actionLoading && <div className="success-message" style={{marginBottom: '1rem'}}>{success}</div>}
+        {error && !actionLoading && <div className="profile-error">{error}</div>}
+        {success && !actionLoading && <div className="profile-success">{success}</div>}
 
-
-        {editMode ? (
-          <form onSubmit={handleUpdateProfile} className="profile-form">
-            <div className="form-group">
-              <label htmlFor="display_name">Display Name</label>
-              <input type="text" id="display_name" name="display_name" value={profileData.display_name} onChange={handleInputChange} placeholder="Your display name" disabled={actionLoading}/>
-            </div>
-            <div className="form-group">
-              <label htmlFor="full_name">Full Name</label>
-              <input type="text" id="full_name" name="full_name" value={profileData.full_name} onChange={handleInputChange} placeholder="Your full name" disabled={actionLoading}/>
-            </div>
-            <div className="form-group">
-              <label htmlFor="avatar_url">Profile Picture URL</label>
-              <input type="text" id="avatar_url" name="avatar_url" value={profileData.avatar_url} onChange={handleInputChange} placeholder="https://example.com/avatar.jpg" disabled={actionLoading}/>
-            </div>
-            <div className="profile-email"><strong>Email:</strong> {user?.email}<p className="email-note">Email cannot be changed here.</p></div>
-            <div className="form-actions">
-              <button type="button" onClick={() => { setEditMode(false); setError(null); setSuccess(null); }} className="cancel-btn" disabled={actionLoading}>Cancel</button>
-              <button type="submit" className="save-btn" disabled={actionLoading}>
-                {actionLoading ? 'Saving...' : 'Save Changes'}
-              </button>
-            </div>
-          </form>
-        ) : (
-          <div className="profile-info">
-            <div className="profile-detail"><strong>Display Name:</strong> {profileData.display_name || 'Not set'}</div>
-            <div className="profile-detail"><strong>Full Name:</strong> {profileData.full_name || 'Not set'}</div>
-            <div className="profile-detail"><strong>Email:</strong> {user?.email}</div>
-            {profileData.avatar_url && (<div className="profile-avatar"><img src={profileData.avatar_url} alt="Profile" onError={(e) => e.target.style.display='none'} /></div>)}
-            <button onClick={() => { setEditMode(true); setError(null); setSuccess(null); }} className="edit-profile-btn">Edit Profile</button>
+        {/* Profile header */}
+        <div className="profile-header-card">
+          <div className="profile-avatar">
+            {profileData.avatar_url ? (
+              <img src={profileData.avatar_url} alt="Avatar" onError={(e) => e.target.style.display='none'} />
+            ) : (
+              <span>{initial}</span>
+            )}
           </div>
-        )}
+          <h2 className="profile-name">{profileData.display_name || 'Not set'}</h2>
+          <p className="profile-email">{user?.email}</p>
+        </div>
 
-        <div className="appearance-section">
-          <h3>Appearance</h3>
-          <div className="dark-mode-toggle">
-            <label htmlFor="dark-mode-switch">Dark Mode</label>
-            <div className="toggle-switch">
-              <input
-                id="dark-mode-switch"
-                type="checkbox"
-                checked={isDarkMode}
-                onChange={toggleDarkMode}
-                className="toggle-input"
-              />
-              <label htmlFor="dark-mode-switch" className="toggle-label">
-                <span className="toggle-slider"></span>
-              </label>
+        {/* Profile settings */}
+        <div className="profile-section">
+          <h3 className="profile-section-title">Profile</h3>
+          <form onSubmit={handleUpdateProfile} className="profile-form">
+            <div className="form-field">
+              <label htmlFor="display_name">Display Name</label>
+              <input type="text" id="display_name" name="display_name" value={profileData.display_name} onChange={handleInputChange} placeholder="Your display name" disabled={actionLoading} />
             </div>
+            <div className="form-field">
+              <label htmlFor="full_name">Full Name</label>
+              <input type="text" id="full_name" name="full_name" value={profileData.full_name} onChange={handleInputChange} placeholder="Your full name" disabled={actionLoading} />
+            </div>
+            <div className="form-field">
+              <label htmlFor="avatar_url">Avatar URL</label>
+              <input type="text" id="avatar_url" name="avatar_url" value={profileData.avatar_url} onChange={handleInputChange} placeholder="https://example.com/avatar.jpg" disabled={actionLoading} />
+            </div>
+            <button type="submit" className="form-submit-btn" disabled={actionLoading}>
+              {actionLoading ? 'Saving...' : 'Save Changes'}
+            </button>
+          </form>
+        </div>
+
+        {/* Appearance */}
+        <div className="profile-section">
+          <h3 className="profile-section-title">Appearance</h3>
+          <div className="profile-theme-toggle">
+            <span>Dark Mode</span>
+            <button
+              type="button"
+              className={`fc-toggle-switch ${isDarkMode ? 'active' : ''}`}
+              onClick={toggleDarkMode}
+              aria-label="Toggle dark mode"
+            />
           </div>
         </div>
 
-        <div className="danger-zone">
-          <h3>Danger Zone</h3>
-          <p>Permanently delete your account and all of your content.</p>
-          <button onClick={() => setDeleteModalOpen(true)} className="delete-account-btn" disabled={actionLoading}>
-            Delete Account
+        {/* Your Posts */}
+        <div className="profile-section">
+          <h3 className="profile-section-title">Your Posts ({posts.length})</h3>
+          {posts.length === 0 ? (
+            <p className="profile-no-posts">You haven't created any posts yet. <Link to="/create">Create one now?</Link></p>
+          ) : (
+            posts.map(post => (
+              <div key={post.id} className="profile-post-item">
+                <Link to={`/post/${post.id}`} className="profile-post-title">{post.title}</Link>
+                <div className="profile-post-actions">
+                  <Link to={`/edit/${post.id}`} className="profile-post-edit-btn">Edit</Link>
+                  <button onClick={() => handleDeletePost(post.id)} className="profile-post-delete-btn" disabled={actionLoading}>Delete</button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Danger Zone */}
+        <div className="profile-section profile-danger-section">
+          <h3 className="profile-section-title">Danger Zone</h3>
+          <p>Permanently delete your account and all associated data.</p>
+          <button className="profile-delete-btn" onClick={handleDeleteAccount} disabled={actionLoading}>
+            {actionLoading ? 'Deleting...' : 'Delete Account'}
           </button>
         </div>
       </div>
-
-      <div className="profile-posts">
-        <h3>Your Posts ({posts.length})</h3>
-        {posts.length === 0 ? (<p className="no-posts">You haven't created any posts yet. <Link to="/create">Create one now?</Link></p>) : (
-          <div className="posts-list">
-            {posts.map(post => (
-              <div key={post.id} className="profile-post-item">
-                <div className="post-info"><h4>{post.title}</h4><p className="post-date">Posted on {formatDate(post.created_at)}</p><p className="post-stats">Upvotes: {post.upvotes || 0}</p></div>
-                <div className="post-management">
-                  <Link to={`/post/${post.id}`} className="view-post-btn">View</Link>
-                  <Link to={`/edit/${post.id}`} className="edit-post-btn">Edit</Link>
-                  <button onClick={() => handleDeletePost(post.id)} className="delete-post-btn" disabled={actionLoading}>Delete</button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {deleteModalOpen && (
-        <div className="delete-account-modal">
-          <div className="modal-content">
-            <h3>Delete Account Confirmation</h3>
-            <p>Are you absolutely sure you want to delete your account? This action is irreversible and will permanently remove all your posts, comments, votes, and profile information.</p>
-            <ul>
-                <li>All your posts will be deleted.</li>
-                <li>All your comments will be deleted.</li>
-                <li>All your upvotes/downvotes will be removed.</li>
-                <li>Your profile information will be deleted.</li>
-                <li>Your account login will be permanently removed.</li>
-            </ul>
-            <div className="modal-actions">
-              <button onClick={() => setDeleteModalOpen(false)} className="cancel-btn" disabled={actionLoading}>Cancel</button>
-              <button onClick={handleDeleteAccount} className="confirm-delete-btn" disabled={actionLoading}>
-                {actionLoading ? 'Deleting Account...' : 'Yes, Delete My Account'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

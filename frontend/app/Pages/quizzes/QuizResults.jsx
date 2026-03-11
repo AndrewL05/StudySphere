@@ -11,42 +11,22 @@ const QuizResults = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchResults();
-  }, [quizId, attemptId]);
+  useEffect(() => { fetchResults(); }, [quizId, attemptId]);
 
   const fetchResults = async () => {
     try {
-      // Fetch quiz attempt
       const { data: attemptData, error: attemptError } = await supabase
-        .from('quiz_attempts')
-        .select('*')
-        .eq('id', attemptId)
-        .single();
-
+        .from('quiz_attempts').select('*').eq('id', attemptId).single();
       if (attemptError) throw attemptError;
       setAttempt(attemptData);
 
-      // Fetch quiz details
       const { data: quizData, error: quizError } = await supabase
-        .from('quizzes')
-        .select(`
-          *,
-          flashcard_sets (title, description)
-        `)
-        .eq('id', quizId)
-        .single();
-
+        .from('quizzes').select(`*, flashcard_sets (title, description)`).eq('id', quizId).single();
       if (quizError) throw quizError;
       setQuiz(quizData);
 
-      // Fetch questions
       const { data: questionsData, error: questionsError } = await supabase
-        .from('quiz_questions')
-        .select('*')
-        .eq('quiz_id', quizId)
-        .order('order_index');
-
+        .from('quiz_questions').select('*').eq('quiz_id', quizId).order('order_index');
       if (questionsError) throw questionsError;
       setQuestions(questionsData || []);
     } catch (err) {
@@ -58,150 +38,117 @@ const QuizResults = () => {
   };
 
   const formatTime = (seconds) => {
-    if (!seconds) return 'N/A';
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    if (!seconds) return '--';
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  const getScoreColor = (percentage) => {
-    if (percentage >= 90) return '#10b981'; // green
-    if (percentage >= 80) return '#3b82f6'; // blue
-    if (percentage >= 70) return '#f59e0b'; // yellow
-    if (percentage >= 60) return '#f97316'; // orange
-    return '#ef4444'; // red
+  const getScoreColor = (pct) => {
+    if (pct >= 90) return 'var(--accent)';
+    if (pct >= 70) return 'var(--warning)';
+    return 'var(--danger)';
   };
 
-  const getGradeMessage = (percentage) => {
-    if (percentage >= 90) return 'Excellent! 🎉';
-    if (percentage >= 80) return 'Great job! 👏';
-    if (percentage >= 70) return 'Good work! 👍';
-    if (percentage >= 60) return 'Keep practicing! 📚';
-    return 'Study more and try again! 💪';
+  const getGradeMessage = (pct) => {
+    if (pct >= 90) return 'Excellent work!';
+    if (pct >= 80) return 'Great job!';
+    if (pct >= 70) return 'Good effort!';
+    if (pct >= 60) return 'Keep practicing!';
+    return 'Study more and try again!';
   };
 
   if (loading) {
     return (
-      <div className="study-container">
-        <div className="loading-spinner">Loading results...</div>
-      </div>
+      <div className="fc-page"><div className="fc-form-container">
+        <div className="feed-loading"><div className="loading-spinner" /><span>Loading results...</span></div>
+      </div></div>
     );
   }
 
   if (error || !attempt || !quiz) {
     return (
-      <div className="study-container">
-        <div className="empty-study">
-          <h2>Results not found</h2>
-          <p>Could not load quiz results.</p>
-          <Link to="/flashcards" className="back-to-set-btn">
-            Back to Flashcard Sets
-          </Link>
-        </div>
-      </div>
+      <div className="fc-page"><div className="fc-form-container">
+        <div className="feed-empty"><p>Could not load quiz results.</p>
+        <Link to="/flashcards" className="fc-back-link">Back to Flashcard Sets</Link></div>
+      </div></div>
     );
   }
 
   const userAnswers = attempt.answers || {};
+  const correctCount = questions.filter(q => userAnswers[q.id] === q.correct_answer).length;
+  const incorrectCount = questions.length - correctCount;
+  const pct = Math.round(attempt.percentage);
 
   return (
-    <div className="study-container">
-      <div className="study-complete">
-        <h2>Quiz Results</h2>
-        <h3>{quiz.title}</h3>
-        
-        <div className="final-stats">
-          <div className="stat-item">
-            <span 
-              className="stat-number" 
-              style={{ color: getScoreColor(attempt.percentage) }}
-            >
-              {Math.round(attempt.percentage)}%
-            </span>
-            <span className="stat-label">Score</span>
+    <div className="fc-page">
+      <div className="fc-form-container">
+        <Link to={`/flashcards/${quiz.flashcard_set_id}`} className="fc-back-link">← Back to Flashcard Set</Link>
+
+        {/* Score hero */}
+        <div className="quiz-results-card">
+          <div className="quiz-results-ring" style={{ '--pct': pct, '--ring-color': getScoreColor(pct) }}>
+            <svg viewBox="0 0 120 120" className="quiz-results-ring-svg">
+              <circle cx="60" cy="60" r="52" className="quiz-ring-bg" />
+              <circle cx="60" cy="60" r="52" className="quiz-ring-fill" />
+            </svg>
+            <span className="quiz-results-pct">{pct}%</span>
           </div>
-          <div className="stat-item">
-            <span className="stat-number">{attempt.score}</span>
-            <span className="stat-label">Points Earned</span>
+          <p className="quiz-results-grade">{getGradeMessage(pct)}</p>
+
+          <div className="quiz-results-stats">
+            <div className="quiz-stat">
+              <span className="quiz-stat-value correct-stat">{correctCount}</span>
+              <span className="quiz-stat-label">Correct</span>
+            </div>
+            <div className="quiz-stat-divider" />
+            <div className="quiz-stat">
+              <span className="quiz-stat-value incorrect-stat">{incorrectCount}</span>
+              <span className="quiz-stat-label">Incorrect</span>
+            </div>
+            <div className="quiz-stat-divider" />
+            <div className="quiz-stat">
+              <span className="quiz-stat-value">{formatTime(attempt.time_taken)}</span>
+              <span className="quiz-stat-label">Time</span>
+            </div>
           </div>
-          <div className="stat-item">
-            <span className="stat-number">{attempt.total_questions}</span>
-            <span className="stat-label">Total Questions</span>
-          </div>
-          <div className="stat-item">
-            <span className="stat-number">{formatTime(attempt.time_taken)}</span>
-            <span className="stat-label">Time Taken</span>
+
+          <div className="quiz-results-actions">
+            <Link to={`/quizzes/${quizId}`} className="form-submit-btn">Retake Quiz</Link>
+            <Link to={`/flashcards/${quiz.flashcard_set_id}`} className="form-cancel-btn">Back to Flashcards</Link>
           </div>
         </div>
 
-        <div className="grade-message">
-          {getGradeMessage(attempt.percentage)}
-        </div>
+        {/* Question review */}
+        <div className="quiz-review">
+          <h3 className="quiz-review-title">Question Review</h3>
+          {questions.map((question, index) => {
+            const userAnswer = userAnswers[question.id];
+            const isCorrect = userAnswer === question.correct_answer;
 
-        <div className="results-breakdown">
-          <h4>Question Breakdown</h4>
-          <div className="questions-review">
-            {questions.map((question, index) => {
-              const userAnswer = userAnswers[question.id];
-              const isCorrect = userAnswer === question.correct_answer;
-              
-              return (
-                <div key={question.id} className={`question-result ${isCorrect ? 'correct' : 'incorrect'}`}>
-                  <div className="question-header">
-                    <span className="question-number">Q{index + 1}</span>
-                    <span className={`result-indicator ${isCorrect ? 'correct' : 'incorrect'}`}>
-                      {isCorrect ? '✓' : '✗'}
-                    </span>
-                  </div>
-                  
-                  <div className="question-content">
-                    <p className="question-text">{question.question_text}</p>
-                    
-                    <div className="answer-review">
-                      <div className="user-answer">
-                        <strong>Your answer:</strong> 
-                        <span className={isCorrect ? 'correct-answer' : 'wrong-answer'}>
-                          {userAnswer || 'No answer'}
-                        </span>
-                      </div>
-                      
-                      {!isCorrect && (
-                        <div className="correct-answer-display">
-                          <strong>Correct answer:</strong> 
-                          <span className="correct-answer">{question.correct_answer}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+            return (
+              <div key={question.id} className={`quiz-review-item ${isCorrect ? 'correct' : 'incorrect'}`}>
+                <div className="quiz-review-header">
+                  <span className={`quiz-review-badge ${isCorrect ? 'correct' : 'incorrect'}`}>
+                    {isCorrect ? '✓' : '✗'}
+                  </span>
+                  <p className="quiz-review-question">Q{index + 1}. {question.question_text}</p>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="study-actions">
-          <Link 
-            to={`/quizzes/${quizId}`} 
-            className="study-again-btn"
-          >
-            Retake Quiz
-          </Link>
-          <Link 
-            to={`/flashcards/${quiz.flashcard_set_id}/study`} 
-            className="shuffle-study-btn"
-          >
-            Study Flashcards
-          </Link>
-          <Link 
-            to={`/flashcards/${quiz.flashcard_set_id}`} 
-            className="back-to-set-btn"
-          >
-            Back to Set
-          </Link>
+                <p className="quiz-review-answer">
+                  Your answer: <strong>{userAnswer || 'No answer'}</strong>
+                </p>
+                {!isCorrect && (
+                  <p className="quiz-review-correct">
+                    Correct answer: <strong>{question.correct_answer}</strong>
+                  </p>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
   );
 };
 
-export default QuizResults; 
+export default QuizResults;

@@ -305,107 +305,118 @@ const Post = () => {
     return new Date(dateString).toLocaleString(undefined, { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   };
 
-  if (loading) return <div className="post-page loading">Loading post...</div>;
-  if (error) return <div className="post-page error">{error}</div>;
-  if (!post) return <div className="post-page not-found">Post not found or could not be loaded.</div>;
+  if (loading) return <div className="post-page"><div className="post-page-container"><div className="feed-loading"><div className="loading-spinner"></div><p>Loading post...</p></div></div></div>;
+  if (error) return <div className="post-page"><div className="post-page-container"><div className="feed-empty"><p>{error}</p></div></div></div>;
+  if (!post) return <div className="post-page"><div className="post-page-container"><div className="feed-empty"><p>Post not found.</p></div></div></div>;
 
   return (
     <div className="post-page">
-      <div className="post-container">
-         <div className="post-header">
-          <div className="post-metadata">
-            <span className="post-author">
+      <div className="post-page-container">
+        <article className="post-detail">
+          <div className="post-detail-meta">
+            <span className="post-detail-author">
               <UserName userId={post.user_id} />
             </span>
-            <span className="post-time">• Posted on {formatDate(post.created_at)}</span>
+            <span className="post-detail-time">{formatDate(post.created_at)}</span>
           </div>
-          {currentUser && post.user_id === currentUser.id && (
-            <div className="post-actions-owner">
-              <button onClick={handleEditPost} className="edit-btn">Edit</button>
-              <button onClick={handleDeletePost} className="delete-btn">Delete</button>
+
+          <h1 className="post-detail-title">{post.title}</h1>
+
+          {post.content && (
+            <div className="post-detail-content" dangerouslySetInnerHTML={{ __html: post.content.replace(/\n/g, '<br />') }} />
+          )}
+
+          {post.image_url && (
+            <div className="post-detail-image">
+              <img src={post.image_url} alt={post.title || 'Post image'} />
             </div>
           )}
-        </div>
-        <h1 className="post-title">{post.title}</h1>
-        {post.content && <div className="post-content" dangerouslySetInnerHTML={{ __html: post.content.replace(/\n/g, '<br />') }}></div>}
-        {post.image_url && (
-          <div className="post-image">
-            <img src={post.image_url} alt={post.title || 'Post image'} />
-          </div>
-        )}
 
-        <div className="post-interactions">
-          <div className="interaction-buttons">
+          <div className="post-detail-actions">
             <button
-              className={`upvote-btn ${upvoted ? 'upvoted' : ''}`}
+              className={`post-action-btn ${upvoted ? 'active' : ''}`}
               onClick={handleUpvote}
               disabled={voteLoading || !currentUser}
-              title={upvoted ? "Remove upvote" : (!currentUser ? "Sign in to upvote" : "Upvote")}
+              title={upvoted ? 'Remove upvote' : 'Upvote'}
             >
-              ↑ {post.upvotes !== undefined ? post.upvotes : 0} upvotes
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={upvoted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 19V5M5 12l7-7 7 7"/>
+              </svg>
+              <span>{post.upvotes !== undefined ? post.upvotes : 0}</span>
             </button>
-            
+
             <button
-              className={`bookmark-btn ${bookmarked ? 'bookmarked' : ''}`}
+              className={`post-action-btn ${bookmarked ? 'active' : ''}`}
               onClick={handleBookmark}
               disabled={bookmarkLoading || !currentUser}
-              title={bookmarked ? "Remove bookmark" : (!currentUser ? "Sign in to bookmark" : "Bookmark")}
+              title={bookmarked ? 'Remove bookmark' : 'Bookmark'}
             >
               {bookmarked ? <BookmarkFilledIcon /> : <BookmarkIcon />}
-              {bookmarked ? 'Bookmarked' : 'Bookmark'}
+              <span>{bookmarked ? 'Bookmarked' : 'Bookmark'}</span>
             </button>
-            
-            <button
-              className="share-btn"
-              onClick={handleShare}
-              title="Share this post"
-            >
-              <ShareIcon />
-              Share
-            </button>
-          </div>
-        </div>
 
-        <div className="comments-section">
-          <h3>Comments ({comments.length})</h3>
+            <button className="post-action-btn" onClick={handleShare} title="Share">
+              <ShareIcon />
+              <span>Share</span>
+            </button>
+
+            {currentUser && post.user_id === currentUser.id && (
+              <>
+                <button className="post-action-btn" onClick={handleEditPost} title="Edit">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                  <span>Edit</span>
+                </button>
+                <button className="post-action-btn danger" onClick={handleDeletePost} title="Delete">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                  </svg>
+                  <span>Delete</span>
+                </button>
+              </>
+            )}
+          </div>
+        </article>
+
+        <section className="comments-section">
+          <h3 className="comments-title">Comments ({comments.length})</h3>
+
           {currentUser ? (
             <form className="comment-form" onSubmit={handleAddComment}>
               <textarea
-                placeholder="Add a comment..."
+                placeholder="Write a comment..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
                 disabled={commentLoading}
                 rows="3"
               />
-              <button
-                type="submit"
-                className="submit-comment-btn"
-                disabled={!newComment.trim() || commentLoading}
-              >
+              <button type="submit" className="comment-submit-btn" disabled={!newComment.trim() || commentLoading}>
                 {commentLoading ? 'Posting...' : 'Post Comment'}
               </button>
             </form>
           ) : (
-            <p className="login-to-comment">
-              <Link to="/signin">Sign in</Link> to post a comment.
+            <p className="comment-signin">
+              <Link to="/signin">Sign in</Link> to leave a comment.
             </p>
           )}
+
           <div className="comments-list">
             {comments.length === 0 ? (
-              <p className="no-comments">No comments yet. Be the first to comment!</p>
+              <p className="comments-empty">No comments yet. Be the first to share your thoughts!</p>
             ) : (
               comments.map((comment) => (
-                <div key={comment.id} className="comment">
-                  <div className="comment-header">
-                    <span className="comment-author"><UserName userId={comment.user_id} /></span>
-                    <span className="comment-time">• {formatDate(comment.created_at)}</span>
+                <div key={comment.id} className="comment-item">
+                  <div className="comment-item-meta">
+                    <span className="comment-item-author"><UserName userId={comment.user_id} /></span>
+                    <span className="comment-item-time">{formatDate(comment.created_at)}</span>
                   </div>
-                  <div className="comment-content" dangerouslySetInnerHTML={{ __html: comment.content.replace(/\n/g, '<br />') }}></div>
+                  <div className="comment-item-content" dangerouslySetInnerHTML={{ __html: comment.content.replace(/\n/g, '<br />') }} />
                 </div>
               ))
             )}
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );

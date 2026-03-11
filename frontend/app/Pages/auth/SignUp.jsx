@@ -63,85 +63,47 @@ const SignUp = () => {
     };
 
     return (
-        <div className="auth-page">
-            <div className="auth-container">
-                <Link to="/" className="back-to-home-link-corner">
-                    &larr; Home 
-                </Link>
-                <div className="auth-logo">
-                    <h2>StudySphere</h2>
-                    <p>Your academic community</p>
+        <div className="auth-standalone">
+            <div className="auth-card">
+                <div className="auth-card-logo">
+                    <span className="logo-accent">S</span>tudySphere
                 </div>
+                <h2 className="auth-card-heading">Create Account</h2>
 
-                <h2>Create Account</h2>
-
-                <button className="google-login-btn" onClick={handleGoogleLogin} disabled={loading}>
-                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" className='google-logo'/>
-                    Sign up with Google
+                <button className="auth-google-btn" onClick={handleGoogleLogin} type="button" disabled={loading}>
+                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" width="18" height="18" />
+                    Continue with Google
                 </button>
 
-                <div className="auth-divider">OR</div>
-
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label htmlFor="name">Name</label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="Enter your name"
-                            required
-                            disabled={loading}
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="email">Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter your email"
-                            required
-                            disabled={loading}
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Create a password (min. 6 characters)"
-                            required
-                            minLength={6} 
-                            disabled={loading}
-                        />
-                    </div>
+                <div className="auth-divider"><span>or</span></div>
 
                 {message && (
-                    <div className={`message ${message.toLowerCase().includes("error") || message.toLowerCase().includes("failed") ? 'error-message' : 'success-message'}`}>
+                    <div className={message.toLowerCase().includes('success') || message.toLowerCase().includes('created') ? 'auth-success' : 'auth-error'}>
                         {message}
                     </div>
                 )}
 
-                    <button type="submit" className="auth-button" disabled={loading}>
+                <form onSubmit={handleSubmit} className="auth-form">
+                    <div className="auth-field">
+                        <label htmlFor="name">Name</label>
+                        <input type="text" id="name" name="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter your name" required disabled={loading} />
+                    </div>
+                    <div className="auth-field">
+                        <label htmlFor="email">Email</label>
+                        <input type="email" id="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" required disabled={loading} />
+                    </div>
+                    <div className="auth-field">
+                        <label htmlFor="password">Password</label>
+                        <input type="password" id="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a password (min. 6 characters)" required minLength={6} disabled={loading} />
+                    </div>
+                    <button type="submit" className="auth-submit-btn" disabled={loading}>
                         {loading ? 'Creating Account...' : 'Sign Up'}
                     </button>
-
-                    <div className="auth-links">
-                        <div className="signin-prompt">
-                            Already have an account? <Link to="/signin">Sign In</Link>
-                        </div>
-                    </div>
                 </form>
+
+                <div className="auth-card-links">
+                    <p className="auth-link-prompt">Already have an account? <Link to="/signin" className="auth-link-accent">Sign In</Link></p>
+                </div>
             </div>
         </div>
     );

@@ -47,60 +47,40 @@ const SignIn = () => {
     };
 
     return (
-        <div className="auth-page">
-            <div className="auth-container">
-                <Link to="/" className="back-to-home-link-corner">
-                    &larr; Home 
-                </Link>
-                <div className="auth-logo">
-                    <h2>StudySphere</h2>
-                    <p>Your academic community</p>
+        <div className="auth-standalone">
+            <div className="auth-card">
+                <div className="auth-card-logo">
+                    <span className="logo-accent">S</span>tudySphere
                 </div>
-                
-                <h2>Sign In</h2>
-                
-                <button className="google-login-btn" onClick={handleGoogleLogin}>
-                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" className='google-logo'/>
-                    Log in with Google
-                </button> 
-                <br/>
-                {message && <div className="error-message">{message}</div>}
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
+                <h2 className="auth-card-heading">Sign In</h2>
+
+                <button className="auth-google-btn" onClick={handleGoogleLogin} type="button">
+                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" width="18" height="18" />
+                    Continue with Google
+                </button>
+
+                <div className="auth-divider"><span>or</span></div>
+
+                {message && <div className="auth-error">{message}</div>}
+
+                <form onSubmit={handleSubmit} className="auth-form">
+                    <div className="auth-field">
                         <label htmlFor="email">Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Enter your email"
-                            required
-                        />
+                        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" required />
                     </div>
-                    
-                    <div className="form-group">
+                    <div className="auth-field">
                         <label htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter your password"
-                            required
-                        />
+                        <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter your password" required />
                     </div>
-                    
-                    <button type="submit" className="auth-button" disabled={loading}>
+                    <button type="submit" className="auth-submit-btn" disabled={loading}>
                         {loading ? 'Signing in...' : 'Sign In'}
                     </button>
-                
-                    <div className="auth-links">
-                        <Link to="/reset-password" className="forgot-password">Forgot password?</Link>
-                        <div className="signup-prompt">
-                            Don't have an account? <Link to="/signup">Sign Up</Link>
-                        </div>
-                    </div>
                 </form>
+
+                <div className="auth-card-links">
+                    <Link to="/reset-password" className="auth-link-muted">Forgot password?</Link>
+                    <p className="auth-link-prompt">Don't have an account? <Link to="/signup" className="auth-link-accent">Sign Up</Link></p>
+                </div>
             </div>
         </div>
     );

@@ -51,29 +51,30 @@ const FlashcardSets = () => {
 
   if (loading) {
     return (
-      <div className="flashcard-sets-container">
-        <div className="loading-spinner">Loading flashcard sets...</div>
+      <div className="fc-page">
+        <div className="fc-container">
+          <div className="feed-loading">Loading flashcard sets...</div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flashcard-sets-container">
-        <div className="auth-required-container">
-          <div className="auth-required-content">
-            <div className="auth-required-icon">🔒</div>
-            <h2>Sign in to view your flashcard sets</h2>
+      <div className="fc-page">
+        <div className="fc-container">
+          <div className="feed-empty">
+            <h3>Sign in to view your flashcard sets</h3>
             <p>Create and manage your personal flashcard collections to enhance your learning experience.</p>
-            <div className="auth-required-actions">
-              <button 
-                className="primary-btn"
+            <div className="form-actions">
+              <button
+                className="form-submit-btn"
                 onClick={() => navigate('/signin')}
               >
                 Sign In
               </button>
-              <button 
-                className="secondary-btn"
+              <button
+                className="form-cancel-btn"
                 onClick={() => navigate('/signup')}
               >
                 Create Account
@@ -86,41 +87,38 @@ const FlashcardSets = () => {
   }
 
   return (
-    <div className="flashcard-sets-container">
-      <div className="sets-header">
-        <h1>My Flashcard Sets</h1>
-        <button className="create-set-btn" onClick={handleCreateSet}>
-          Create New Set
-        </button>
-      </div>
-
-      {sets.length === 0 ? (
-        <div className="empty-state">
-          <h3>No flashcard sets yet</h3>
-          <p>Create your first flashcard set to start studying!</p>
-          <button className="create-set-btn" onClick={handleCreateSet}>
-            Create Your First Set
+    <div className="fc-page">
+      <div className="fc-container">
+        <div className="fc-page-header">
+          <h2 className="fc-page-title">My Flashcard Sets</h2>
+          <button className="form-submit-btn" onClick={handleCreateSet}>
+            Create New Set
           </button>
         </div>
-      ) : (
-        <div className="sets-grid">
-          {sets.map(set => (
-            <Link to={`/flashcards/${set.id}`} key={set.id} className="set-card">
-              <div className="set-card-content">
-                <h3>{set.title}</h3>
-                {set.description && <p className="set-description">{set.description}</p>}
-                <div className="set-meta">
+
+        {sets.length === 0 ? (
+          <div className="feed-empty">
+            <h3>No flashcard sets yet</h3>
+            <p>Create your first flashcard set to start studying!</p>
+            <button className="form-submit-btn" onClick={handleCreateSet}>
+              Create Your First Set
+            </button>
+          </div>
+        ) : (
+          <div className="fc-sets-grid">
+            {sets.map(set => (
+              <div key={set.id} className="fc-set-card" onClick={() => navigate(`/flashcards/${set.id}`)}>
+                <h3 className="fc-set-name">{set.title}</h3>
+                {set.description && <p className="fc-set-desc">{set.description}</p>}
+                <div className="fc-set-meta">
                   <span>{set.flashcards?.[0]?.count || 0} cards</span>
-                  {set.is_public && <span className="public-badge">Public</span>}
-                </div>
-                <div className="set-actions">
-                  <button className="study-btn">Study</button>
+                  {set.is_public && <span className="fc-set-badge">Public</span>}
                 </div>
               </div>
-            </Link>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

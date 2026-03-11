@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams, Link, useNavigate } from 'react-router';
 import supabase from '../../Services/supabaseClient';
 import './Flashcards.css';
 
 const StudyMode = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [set, setSet] = useState(null);
   const [flashcards, setFlashcards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -59,21 +60,21 @@ const StudyMode = () => {
     setShuffled(true);
   };
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (currentIndex < flashcards.length - 1) {
       setCurrentIndex(currentIndex + 1);
       setShowDefinition(false);
     } else {
       setIsComplete(true);
     }
-  };
+  }, [currentIndex, flashcards.length]);
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
       setShowDefinition(false);
     }
-  };
+  }, [currentIndex]);
 
   const handleKnowCard = () => {
     setStudyStats(prev => ({ ...prev, correct: prev.correct + 1 }));
@@ -92,9 +93,13 @@ const StudyMode = () => {
     setStudyStats({ correct: 0, incorrect: 0, total: flashcards.length });
   };
 
-  const flipCard = () => {
-    setShowDefinition(!showDefinition);
-  };
+  const flipCard = useCallback(() => {
+    setShowDefinition(prev => !prev);
+  }, []);
+
+  const handleExit = useCallback(() => {
+    navigate(`/flashcards/${id}`);
+  }, [navigate, id]);
 
   // Helper function to determine content length class
   const getContentLengthClass = (text) => {
@@ -105,60 +110,89 @@ const StudyMode = () => {
     return '';
   };
 
+  // Keyboard controls
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowLeft') handlePrevious();
+      if (e.key === 'ArrowRight') handleNext();
+      if (e.key === ' ') { e.preventDefault(); flipCard(); }
+      if (e.key === 'Escape') handleExit();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handlePrevious, handleNext, flipCard, handleExit]);
+
   if (loading) {
     return (
-      <div className="study-container">
-        <div className="loading-spinner">Loading study session...</div>
+      <div className="study-immersive">
+        <div className="study-loading">
+          <div className="loading-spinner"></div>
+          <p>Loading flashcards...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="study-immersive">
+        <div className="study-loading">
+          <p>{error}</p>
+          <Link to={`/flashcards/${id}`} className="fc-action-btn">Back to Set</Link>
+        </div>
       </div>
     );
   }
 
   if (!set || flashcards.length === 0) {
     return (
-      <div className="study-container">
-        <div className="empty-study">
-          <h2>No flashcards to study</h2>
-          <p>This set doesn't have any flashcards yet.</p>
-          <Link to={`/flashcards/${id}`} className="back-to-set-btn">
-            Back to Set
-          </Link>
+      <div className="study-immersive">
+        <div className="study-loading">
+          <p>No flashcards to study. This set doesn't have any flashcards yet.</p>
+          <Link to={`/flashcards/${id}`} className="fc-action-btn">Back to Set</Link>
         </div>
       </div>
     );
   }
 
   if (isComplete) {
+    const accuracy = studyStats.total > 0 ? Math.round((studyStats.correct / studyStats.total) * 100) : 0;
     return (
-      <div className="study-container">
-        <div className="study-complete">
-          <h2>🎉 Study Session Complete!</h2>
-          <div className="final-stats">
-            <div className="stat-item">
-              <span className="stat-number">{studyStats.correct}</span>
-              <span className="stat-label">Correct</span>
+      <div className="study-immersive">
+        <div className="study-progress-bar">
+          <div className="study-progress-fill" style={{ width: '100%' }} />
+        </div>
+
+        <div className="study-top-bar">
+          <button className="study-exit-btn" onClick={handleExit} title="Exit">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          <span className="study-counter">{flashcards.length} / {flashcards.length}</span>
+        </div>
+
+        <div className="study-summary">
+          <h2 className="study-summary-title">Study Session Complete!</h2>
+          <div className="study-summary-stats">
+            <div className="study-stat">
+              <span className="study-stat-value correct-stat">{studyStats.correct}</span>
+              <span className="study-stat-label">Correct</span>
             </div>
-            <div className="stat-item">
-              <span className="stat-number">{studyStats.incorrect}</span>
-              <span className="stat-label">Incorrect</span>
+            <div className="study-stat">
+              <span className="study-stat-value incorrect-stat">{studyStats.incorrect}</span>
+              <span className="study-stat-label">Incorrect</span>
             </div>
-            <div className="stat-item">
-              <span className="stat-number">{studyStats.total}</span>
-              <span className="stat-label">Total</span>
+            <div className="study-stat">
+              <span className="study-stat-value">{accuracy}%</span>
+              <span className="study-stat-label">Accuracy</span>
             </div>
           </div>
-          <div className="accuracy">
-            Accuracy: {studyStats.total > 0 ? Math.round((studyStats.correct / studyStats.total) * 100) : 0}%
-          </div>
-          <div className="study-actions">
-            <button className="study-again-btn" onClick={resetStudy}>
-              Study Again
-            </button>
-            <button className="shuffle-study-btn" onClick={() => { shuffleCards(); resetStudy(); }}>
-              Shuffle & Study
-            </button>
-            <Link to={`/flashcards/${id}`} className="back-to-set-btn">
-              Back to Set
-            </Link>
+          <div className="study-summary-actions">
+            <button className="study-rating-btn correct" onClick={resetStudy}>Study Again</button>
+            <button className="study-rating-btn incorrect" onClick={() => { shuffleCards(); resetStudy(); }}>Shuffle &amp; Study</button>
+            <Link to={`/flashcards/${id}`} className="study-rating-btn incorrect">Back to Set</Link>
           </div>
         </div>
       </div>
@@ -169,98 +203,61 @@ const StudyMode = () => {
   const progress = ((currentIndex + 1) / flashcards.length) * 100;
 
   return (
-    <div className="study-container">
-      <div className="study-header">
-        <Link to={`/flashcards/${id}`} className="back-link">← Back to Set</Link>
-        <h1>Studying: {set.title}</h1>
-        <div className="study-controls">
-          <button 
-            className="shuffle-btn" 
-            onClick={shuffleCards}
-            disabled={shuffled}
-          >
-            🔀 Shuffle
-          </button>
-        </div>
+    <div className="study-immersive">
+      {/* Progress bar at very top */}
+      <div className="study-progress-bar">
+        <div className="study-progress-fill" style={{ width: `${progress}%` }} />
       </div>
 
-      <div className="study-progress">
-        <div className="progress-bar">
-          <div 
-            className="progress-fill" 
-            style={{ width: `${progress}%` }}
-          ></div>
-        </div>
-        <div className="progress-text">
-          {currentIndex + 1} of {flashcards.length}
-        </div>
+      {/* Top bar */}
+      <div className="study-top-bar">
+        <button className="study-exit-btn" onClick={handleExit} title="Exit">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <button className="study-shuffle-btn" onClick={shuffleCards} disabled={shuffled}>Shuffle</button>
+        <span className="study-counter">{currentIndex + 1} / {flashcards.length}</span>
       </div>
 
-      <div className="study-stats">
-        <div className="stat">
-          <span className="stat-value">{studyStats.correct}</span>
-          <span className="stat-label">Correct</span>
-        </div>
-        <div className="stat">
-          <span className="stat-value">{studyStats.incorrect}</span>
-          <span className="stat-label">Incorrect</span>
-        </div>
-      </div>
-
-      <div className="flashcard-study">
+      {/* Center: Flashcard */}
+      <div className="study-card-area">
         <div className={`study-card ${showDefinition ? 'flipped' : ''}`} onClick={flipCard}>
-          <div className="card-inner">
-            <div className="card-front">
-              <div className="card-content">
-                <div className="card-label">Term</div>
-                <div className={`card-text ${getContentLengthClass(currentCard.term)}`}>
-                  {currentCard.term}
-                </div>
-              </div>
-              <div className="flip-hint">Click to reveal definition</div>
+          <div className="study-card-inner">
+            <div className="study-card-front">
+              <p className="study-card-label">Term</p>
+              <p className={`study-card-text ${getContentLengthClass(currentCard.term)}`}>{currentCard.term}</p>
             </div>
-            <div className="card-back">
-              <div className="card-content">
-                <div className="card-label">Definition</div>
-                <div className={`card-text ${getContentLengthClass(currentCard.definition)}`}>
-                  {currentCard.definition}
-                </div>
-              </div>
+            <div className="study-card-back">
+              <p className="study-card-label">Definition</p>
+              <p className={`study-card-text ${getContentLengthClass(currentCard.definition)}`}>{currentCard.definition}</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="study-navigation">
-        <button 
-          className="nav-btn prev-btn" 
-          onClick={handlePrevious}
-          disabled={currentIndex === 0}
-        >
-          ← Previous
+      {/* Bottom controls */}
+      <div className="study-controls">
+        <button className="study-nav-btn" onClick={handlePrevious} disabled={currentIndex === 0} title="Previous (←)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
         </button>
-        
+
         {showDefinition && (
-          <div className="knowledge-buttons">
-            <button className="dont-know-btn" onClick={handleDontKnowCard}>
-              😕 Don't Know
-            </button>
-            <button className="know-btn" onClick={handleKnowCard}>
-              😊 I Know This
-            </button>
+          <div className="study-rating-btns">
+            <button className="study-rating-btn incorrect" onClick={handleDontKnowCard}>Still Learning</button>
+            <button className="study-rating-btn correct" onClick={handleKnowCard}>Know It</button>
           </div>
         )}
-        
-        <button 
-          className="nav-btn next-btn" 
-          onClick={handleNext}
-          disabled={currentIndex === flashcards.length - 1}
-        >
-          Next →
+
+        <button className="study-nav-btn" onClick={handleNext} disabled={currentIndex === flashcards.length - 1} title="Next (→)">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
         </button>
       </div>
-
-      {error && <div className="error-message">{error}</div>}
     </div>
   );
 };

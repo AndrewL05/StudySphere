@@ -1,17 +1,16 @@
 import React from 'react';
-import PostCard from './PostCard'; 
+import PostCard from './PostCard';
 
 const GroupPostsList = ({ posts, currentUser, isMember, formatTimeAgo }) => {
     return (
         <div className="group-posts-section">
-            <h3>Posts in this Group</h3>
+            <h3 className="group-posts-title">Posts in this Group</h3>
             {posts.length === 0 ? (
-                <p className="no-posts-in-group">
-                    No posts have been tagged to this group yet.
-                    {isMember && " Why not create one?"}
-                </p>
+                <div className="feed-empty">
+                    <p>No posts have been tagged to this group yet.{isMember && " Why not create one?"}</p>
+                </div>
             ) : (
-                <div className="posts-list" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div className="group-posts-list">
                     {posts.map((post) => (
                         <PostCard
                             key={post.id}

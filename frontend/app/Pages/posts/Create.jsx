@@ -112,57 +112,32 @@ const Create = () => {
   };
 
   return (
-    <div className="create-page">
-      <h2>{passedGroupInfo ? `Create Post in ${passedGroupInfo.groupName}` : "Create a New Post"}</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="title">Title</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            placeholder="Enter post title"
-            value={postData.title}
-            onChange={handleChange}
-            required
-            disabled={isLoading}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="content">Content (Optional)</label>
-          <textarea
-            id="content"
-            name="content"
-            placeholder="Write your post content here..."
-            value={postData.content}
-            onChange={handleChange}
-            rows="8"
-            disabled={isLoading}
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="image_url">Image URL (Optional)</label>
-          <input
-            type="text"
-            id="image_url"
-            name="image_url"
-            placeholder="https://example.com/image.jpg"
-            value={postData.image_url}
-            onChange={handleChange}
-            disabled={isLoading}
-          />
-        </div>
-        <div className="form-actions" style={{ justifyContent: 'flex-end' }}>
-          <button type="button" onClick={() => navigate(passedGroupInfo ? `/group/${passedGroupInfo.groupId}` : '/')} className="cancel-btn" disabled={isLoading}>
-            Cancel
-          </button>
-          <button type="submit" className="submit-btn" disabled={isLoading}>
-            {isLoading ? 'Creating...' : 'Create Post'}
-          </button>
-        </div>
-        {error && <div className="error-message" style={{ marginTop: '1rem' }}>{error}</div>}
-        {success && <div className="success-message" style={{ marginTop: '1rem' }}>Post created successfully! Redirecting...</div>}
-      </form>
+    <div className="post-form-page">
+      <div className="post-form-container">
+        <h2 className="post-form-title">
+          {passedGroupInfo ? `Create Post in ${passedGroupInfo.groupName}` : 'Create a New Post'}
+        </h2>
+        <form onSubmit={handleSubmit} className="post-form">
+          <div className="form-field">
+            <label htmlFor="title">Title</label>
+            <input type="text" id="title" name="title" placeholder="Enter post title" value={postData.title} onChange={handleChange} required disabled={isLoading} />
+          </div>
+          <div className="form-field">
+            <label htmlFor="content">Content (Optional)</label>
+            <textarea id="content" name="content" placeholder="Write your post content here..." value={postData.content} onChange={handleChange} rows="8" disabled={isLoading} />
+          </div>
+          <div className="form-field">
+            <label htmlFor="image_url">Image URL (Optional)</label>
+            <input type="text" id="image_url" name="image_url" placeholder="https://example.com/image.jpg" value={postData.image_url} onChange={handleChange} disabled={isLoading} />
+          </div>
+          {error && <div className="form-error">{error}</div>}
+          {success && <div className="form-success">Post created successfully! Redirecting...</div>}
+          <div className="form-actions">
+            <button type="button" onClick={() => navigate(passedGroupInfo ? `/group/${passedGroupInfo.groupId}` : '/')} className="form-cancel-btn" disabled={isLoading}>Cancel</button>
+            <button type="submit" className="form-submit-btn" disabled={isLoading}>{isLoading ? 'Creating...' : 'Create Post'}</button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

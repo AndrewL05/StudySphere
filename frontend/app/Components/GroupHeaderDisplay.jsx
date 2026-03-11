@@ -1,6 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router'; 
-import UserName from './Username'; 
+import { Link } from 'react-router';
+import UserName from './Username';
 
 const GroupHeaderDisplay = ({
     group,
@@ -18,24 +18,23 @@ const GroupHeaderDisplay = ({
 
     return (
         <div className="group-header">
-            <div className="group-info">
-                <h2 className="group-title">{group.name}</h2>
-                <p className="group-description">{group.description || "No description provided."}</p>
-                <div className="group-meta">
-                    <span>Created by: <UserName userId={group.creator_id} /></span>
-                    <span>Members: {group.member_count || 0}</span> 
-                    <span>Created: {new Date(group.created_at).toLocaleDateString()}</span>
-                    {group.topics && group.topics.length > 0 && (
-                        <span>Topics: {group.topics.join(', ')}</span>
-                    )}
-                </div>
+            <h2 className="group-header-name">{group.name}</h2>
+            <p className="group-header-desc">{group.description || "No description provided."}</p>
+            <div className="group-header-meta">
+                <span>Created by: <UserName userId={group.creator_id} /></span>
+                <span>{group.member_count || 0} members</span>
+                <span>Created: {new Date(group.created_at).toLocaleDateString()}</span>
             </div>
-            <div className="group-actions">
+            {group.topics && group.topics.length > 0 && (
+                <div className="group-header-topics">
+                    {group.topics.map(topic => <span key={topic} className="topic-tag">{topic}</span>)}
+                </div>
+            )}
+            <div className="group-header-actions">
                 {isMember && currentUser && (
                     <button
                         onClick={onNavigateToCreatePost}
-                        className="create-post-in-group-btn"
-                        style={{ backgroundColor: 'var(--primary-light)', color: 'var(--background-dark)', border: 'none' }}
+                        className="group-create-post-btn"
                         disabled={actionLoading}
                     >
                         Create Post in Group
@@ -45,7 +44,7 @@ const GroupHeaderDisplay = ({
                     isMember ? (
                         <button
                             onClick={onLeaveGroup}
-                            className="leave-group-btn"
+                            className="group-leave-btn"
                             disabled={actionLoading || isCreator}
                             title={isCreator ? "Creators must manage group via settings" : "Leave this group"}
                         >
@@ -54,7 +53,7 @@ const GroupHeaderDisplay = ({
                     ) : (
                         <button
                             onClick={onJoinGroup}
-                            className="join-group-btn"
+                            className="group-join-btn"
                             disabled={actionLoading}
                         >
                             {actionLoading ? 'Joining...' : 'Join Group'}
@@ -63,13 +62,13 @@ const GroupHeaderDisplay = ({
                 )}
                 {!currentUser && (
                     <Link to="/signin">
-                        <button className="join-group-btn">
+                        <button className="group-join-btn">
                             Sign in to Join
                         </button>
                     </Link>
                 )}
                 {(isCreator || currentUserRole === 'admin') && (
-                    <button onClick={onNavigateToSettings} className="settings-group-btn">
+                    <button onClick={onNavigateToSettings} className="group-settings-btn">
                         Settings
                     </button>
                 )}

@@ -12,8 +12,8 @@ const AvailableGroups = ({
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [currentUser, setCurrentUser] = useState(null); 
-    const [joiningGroupId, setJoiningGroupId] = useState(null); 
+    const [currentUser, setCurrentUser] = useState(null);
+    const [joiningGroupId, setJoiningGroupId] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -32,7 +32,6 @@ const AvailableGroups = ({
 
                 if (fetchError) throw fetchError;
                 setGroups(groupData || []);
-
             } catch (err) {
                 console.error("Error fetching data:", err);
                 setError("Failed to load groups.");
@@ -55,7 +54,7 @@ const AvailableGroups = ({
             navigate('/signin');
             return;
         }
-        setJoiningGroupId(groupId); 
+        setJoiningGroupId(groupId);
         setError(null);
         try {
             const { error: insertError } = await supabase
@@ -67,21 +66,21 @@ const AvailableGroups = ({
                 });
 
             if (insertError) {
-                 if (insertError.code === '23505') {
+                if (insertError.code === '23505') {
                     alert(`You are already a member of "${groupName}".`);
                     navigate(`/group/${groupId}`);
-                 } else {
+                } else {
                     throw insertError;
-                 }
+                }
             } else {
                 alert(`Successfully joined "${groupName}"!`);
-                 navigate(`/group/${groupId}`); 
+                navigate(`/group/${groupId}`);
             }
         } catch (err) {
             console.error("Error joining group:", err);
             alert(`Failed to join "${groupName}". Please try again.`);
         } finally {
-            setJoiningGroupId(null); 
+            setJoiningGroupId(null);
         }
     };
 
@@ -90,48 +89,48 @@ const AvailableGroups = ({
     };
 
     const handleViewAllGroups = () => {
-        navigate('/groups'); 
+        navigate('/groups');
     };
 
     return (
-        <div className="available-groups-sidebar">
-            <h3>{title}</h3>
+        <div className="available-groups-section">
+            <h3 className="available-groups-title">{title}</h3>
             {loading ? (
-                <div className="loading">Loading...</div>
+                <div className="available-groups-loading">Loading...</div>
             ) : error ? (
-                 <div className="error">{error}</div>
+                <div className="available-groups-error">{error}</div>
             ) : groups.length === 0 ? (
-                <p>No groups found.</p>
+                <p className="available-groups-empty">No groups found.</p>
             ) : (
-                <ul className="group-list-sidebar">
+                <div className="available-groups-list">
                     {groups.map(group => (
-                        <li key={group.id} onClick={() => handleViewGroup(group.id)} className="group-list-item-sidebar">
-                            <span className="group-name-sidebar">{group.name}</span>
+                        <div key={group.id} className="available-group-item" onClick={() => handleViewGroup(group.id)}>
+                            <span className="available-group-name">{group.name}</span>
                             <button
                                 onClick={(e) => handleJoinGroup(e, group.id, group.name)}
-                                className="join-button-sidebar"
-                                disabled={joiningGroupId === group.id} 
+                                className="available-group-join-btn"
+                                disabled={joiningGroupId === group.id}
                             >
                                 {joiningGroupId === group.id ? 'Joining...' : 'Join'}
                             </button>
-                        </li>
+                        </div>
                     ))}
-                </ul>
-            )}
-
-            {showCreateButton && (
-                <button onClick={handleCreateGroup} className="create-group-button-sidebar">
-                    Create Group
-                </button>
-            )}
-
-            {showViewAllButton && (
-                <div className="view-all-container">
-                    <button onClick={handleViewAllGroups} className="view-all-button">
-                        View All Groups
-                    </button>
                 </div>
             )}
+
+            <div className="available-groups-actions">
+                {showCreateButton && (
+                    <button onClick={handleCreateGroup} className="available-groups-create-btn">
+                        Create Group
+                    </button>
+                )}
+
+                {showViewAllButton && (
+                    <button onClick={handleViewAllGroups} className="available-groups-viewall-btn">
+                        View All Groups
+                    </button>
+                )}
+            </div>
         </div>
     );
 };

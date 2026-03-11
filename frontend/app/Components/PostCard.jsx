@@ -207,54 +207,62 @@ const PostCard = ({
   };
 
   return (
-    <div className="post-cards" onClick={handleCardClick}>
-      <div className="post-header">
-        <span className="post-author">
+    <article className="post-card" onClick={handleCardClick}>
+      <div className="post-card-meta">
+        <span className="post-card-author">
           <UserName userId={authorId} />
         </span>
-        <span className="post-time">• Posted {time}</span>
+        <span className="post-card-time">{time}</span>
       </div>
-      <h3>{title}</h3>
-      {displayedContent && (<p className="post-content">{displayedContent}</p>)}
+      <h3 className="post-card-title">{title}</h3>
+      {displayedContent && (
+        <p className="post-card-preview">{displayedContent}</p>
+      )}
       {needsTruncation && (
-        <button onClick={toggleReadMore} className="read-more-btn">
-          {isExpanded ? 'Read Less' : 'Read More'}
+        <button onClick={toggleReadMore} className="post-card-readmore">
+          {isExpanded ? 'Show less' : 'Read more'}
         </button>
       )}
       {image && (
-        <div className="post-image">
+        <div className="post-card-image">
           <img src={image} alt={title || 'Post image'} />
         </div>
       )}
-      <div className="post-actions">
+      <div className="post-card-actions">
         <button
-          className={`upvote-btn ${upvoted ? 'upvoted' : ''}`}
+          className={`post-action-btn ${upvoted ? 'active' : ''}`}
           onClick={handleUpvote}
           disabled={loadingInitialState || loadingVote || !userId}
-          aria-pressed={upvoted}
-          title={upvoted ? "Remove upvote" : "Upvote"}
+          title={upvoted ? 'Remove upvote' : 'Upvote'}
         >
-          ↑ {loadingInitialState ? '...' : currentUpvotes}
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill={upvoted ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 19V5M5 12l7-7 7 7"/>
+          </svg>
+          <span>{loadingInitialState ? '...' : currentUpvotes}</span>
         </button>
-        <button className="comment-btn" onClick={handleCommentClick} title="View comments">
-          💬 {commentCount} Comments
+        <button className="post-action-btn" onClick={handleCommentClick} title="Comments">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>{commentCount}</span>
         </button>
-        <button className="share-btn" onClick={handleShare} title="Share post">
-          Share
+        <button className="post-action-btn" onClick={handleShare} title="Share">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>
+          </svg>
         </button>
         {userId && (
-            <button
-                className={`bookmark-btn ${isBookmarked ? 'bookmarked' : ''}`}
-                onClick={handleBookmarkToggle}
-                disabled={loadingInitialState || loadingBookmark}
-                title={isBookmarked ? "Remove bookmark" : "Bookmark post"}
-                aria-pressed={isBookmarked}
-            >
-                <BookmarkIcon filled={isBookmarked} />
-            </button>
+          <button
+            className={`post-action-btn ${isBookmarked ? 'active' : ''}`}
+            onClick={handleBookmarkToggle}
+            disabled={loadingInitialState || loadingBookmark}
+            title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
+          >
+            <BookmarkIcon filled={isBookmarked} />
+          </button>
         )}
       </div>
-    </div>
+    </article>
   );
 };
 
