@@ -1,0 +1,26 @@
+name: Scheduled Workflow
+
+on:
+  schedule:
+    - cron: '0 8 */4 * *'
+  workflow_dispatch: 
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run scheduled tasks
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/profiles?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
+
+          echo "Response status: $response"
+
+          if [ "$response" -ge 200 ] && [ "$response" -lt 300 ]; then
+            echo "Supabase database is alive!"
+          else
+            echo "Failed to ping Supabase. Status: $response"
+            exit 1
+          fi
