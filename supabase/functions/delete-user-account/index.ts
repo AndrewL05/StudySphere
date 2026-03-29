@@ -11,7 +11,7 @@ const handleCorsAndRespond = (
 
   const allowedOrigins = [
     'http://localhost:5173', 
-    'https://andrewl-studysphere.netlify.app' 
+    'https://mystudysphere.netlify.app' 
   ];
 
   const requestOrigin = req.headers.get('Origin');
