@@ -1,4 +1,4 @@
-# 🌟 StudySphere
+# StudySphere
 
 > **A Learning Hub for Students and Educators**
 
@@ -6,7 +6,7 @@ StudySphere is a full-stack study platform where students can make flashcard set
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 ### 📚 **Content Management**
 - **Smart Post System** - Create, edit, and organize study posts with rich content support
