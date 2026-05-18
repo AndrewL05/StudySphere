@@ -2,7 +2,7 @@
 
 > **A Learning Hub for Students and Educators**
 
-StudySphere is a cutting-edge, full-stack learning platform that revolutionizes how students and educators create, explore, and share study content. Built with modern web technologies and featuring a sleek, glassmorphism-inspired design, StudySphere combines social learning with AI-powered tools to create the ultimate study experience.
+StudySphere is a full-stack study platform where students can make flashcard sets, take AI-generated quizzes, join topic-based groups, and share study posts all in one place.
 
 ---
 
